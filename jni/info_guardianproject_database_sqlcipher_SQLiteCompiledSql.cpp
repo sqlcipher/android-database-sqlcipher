@@ -32,7 +32,7 @@
 #include "sqlite3_exception.h"
 
 
-namespace android {
+namespace guardianproject {
 
 static jfieldID gHandleField;
 static jfieldID gStatementField;
@@ -127,8 +127,8 @@ int register_android_database_SQLiteCompiledSql(JNIEnv * env)
         return -1;
     }
 
-    return AndroidRuntime::registerNativeMethods(env,
-        "android/database/sqlite/SQLiteCompiledSql", sMethods, NELEM(sMethods));
+//    return AndroidRuntime::registerNativeMethods(env,
+//        "android/database/sqlite/SQLiteCompiledSql", sMethods, NELEM(sMethods));
 }
 
-} // namespace android
+} // namespace guardianproject

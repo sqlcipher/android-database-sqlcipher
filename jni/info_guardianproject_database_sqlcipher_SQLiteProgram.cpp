@@ -32,7 +32,7 @@
 #include "sqlite3_exception.h"
 
 
-namespace android {
+namespace guardianproject {
 
 static jfieldID gHandleField;
 static jfieldID gStatementField;
@@ -170,6 +170,7 @@ static JNINativeMethod sMethods[] =
     {"native_clear_bindings", "()V", (void *)native_clear_bindings},
 };
 
+/*
 int register_android_database_SQLiteProgram(JNIEnv * env)
 {
     jclass clazz;
@@ -191,5 +192,6 @@ int register_android_database_SQLiteProgram(JNIEnv * env)
     return AndroidRuntime::registerNativeMethods(env,
         "android/database/sqlite/SQLiteProgram", sMethods, NELEM(sMethods));
 }
+*/
 
-} // namespace android
+} // namespace guardianproject

@@ -24,7 +24,7 @@
 
 #include <sqlite3.h>
 
-namespace android {
+namespace guardianproject {
 
 /* throw a SQLiteException with a message appropriate for the error in handle */
 void throw_sqlite3_exception(JNIEnv* env, sqlite3* handle);

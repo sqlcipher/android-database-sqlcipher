@@ -29,7 +29,7 @@
 // From mem_mspace.c in libsqlite
 extern "C" mspace sqlite3_get_mspace();
 
-namespace android {
+namespace guardianproject {
 
 static jfieldID gMemoryUsedField;
 static jfieldID gPageCacheOverfloField;
@@ -227,4 +227,4 @@ int register_android_database_SQLiteDebug(JNIEnv *env)
             gMethods, NELEM(gMethods));
 }
 
-} // namespace android
+} // namespace guardianproject

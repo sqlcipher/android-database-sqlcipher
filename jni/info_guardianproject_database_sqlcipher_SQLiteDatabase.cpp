@@ -22,8 +22,8 @@
 #include <utils/String16.h>
 
 #include <jni.h>
-#include <JNIHelp.h>
-#include <android_runtime/AndroidRuntime.h>
+//#include <JNIHelp.h>
+//#include <android_runtime/AndroidRuntime.h>
 
 #include <sqlite3.h>
 #include <sqlite3_android.h>
@@ -51,7 +51,7 @@
 /* uncomment the next line to force-enable logging of all statements */
 // #define DB_LOG_STATEMENTS
 
-namespace android {
+namespace guardianproject {
 
 enum {
     OPEN_READWRITE          = 0x00000000,
@@ -282,7 +282,7 @@ static void native_execSQL(JNIEnv* env, jobject object, jstring sqlString)
         }
     } else
 #ifndef DB_LOG_STATEMENTS
-    IF_LOGV()
+//    IF_LOGV()
 #endif
     {
         char const * sql8 = env->GetStringUTFChars(sqlString, NULL);
@@ -474,7 +474,7 @@ int register_android_database_SQLiteDatabase(JNIEnv *env)
         return -1;
     }
 
-    return AndroidRuntime::registerNativeMethods(env, "android/database/sqlite/SQLiteDatabase", sMethods, NELEM(sMethods));
+//    return AndroidRuntime::registerNativeMethods(env, "android/database/sqlite/SQLiteDatabase", sMethods, NELEM(sMethods));
 }
 
 /* throw a SQLiteException with a message appropriate for the error in handle */
@@ -564,4 +564,4 @@ void throw_sqlite3_exception(JNIEnv* env, int errcode,
 }
 
 
-} // namespace android
+} // namespace guardianproject

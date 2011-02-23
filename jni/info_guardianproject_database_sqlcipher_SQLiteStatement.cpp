@@ -32,7 +32,7 @@
 
 #include "sqlite3_exception.h"
 
-namespace android {
+namespace guardianproject {
 
 
 sqlite3_stmt * compile(JNIEnv* env, jobject object,
@@ -124,6 +124,7 @@ static JNINativeMethod sMethods[] =
     {"native_1x1_string", "()Ljava/lang/String;", (void *)native_1x1_string},
 };
 
+/*
 int register_android_database_SQLiteStatement(JNIEnv * env)
 {
     jclass clazz;
@@ -145,5 +146,6 @@ int register_android_database_SQLiteStatement(JNIEnv * env)
     return AndroidRuntime::registerNativeMethods(env,
         "android/database/sqlite/SQLiteStatement", sMethods, NELEM(sMethods));
 }
+*/
 
-} // namespace android
+} // namespace guardianproject
