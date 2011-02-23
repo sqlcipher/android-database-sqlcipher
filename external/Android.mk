@@ -1,6 +1,8 @@
 #
 # Before building using this do:
 #	make -f Android.mk build-local-hack
+#   ndk-build
+#   ndk-build
 
 LOCAL_PATH := $(call my-dir)
 
@@ -16,6 +18,7 @@ sqlcipher/sqlite3.c:
 	cp openssl/libs/armeabi/libcrypto.so openssl/libs/armeabi/libssl.so \
 		../obj/local/armeabi/
 
+project_ldflags:= -L../obj/local/armeabi/
 
 #------------------------------------------------------------------------------#
 # libsqlite3
@@ -30,13 +33,13 @@ sqlcipher_files := \
 	sqlcipher/sqlite3.c
 
 sqlcipher_cflags := -DSQLITE_HAS_CODEC -DHAVE_FDATASYNC=0 -Dfdatasync=fsync
-sqlcipher_ldflags:= -Lopenssl/libs/armeabi -lcrypto
 
 include $(CLEAR_VARS)
 
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlcipher_cflags)
 LOCAL_C_INCLUDES := openssl/include sqlcipher
-LOCAL_LDFLAGS += $(sqlcipher_ldflags)
+LOCAL_LDFLAGS += $(project_ldflags)
+LOCAL_LDLIBS += -lcrypto
 LOCAL_MODULE    := libsqlcipher
 LOCAL_SRC_FILES := $(sqlcipher_files)
 
@@ -48,22 +51,32 @@ include $(BUILD_SHARED_LIBRARY)
 
 # these are all files from various external git repos
 libsqlite3_android_local_src_files := \
-	android-sqlite/android/sqlite3_android.cpp
-#	android-sqlite/android/PhonebookIndex.cpp \
+	android-sqlite/android/PhonebookIndex.cpp \
 	android-sqlite/android/PhoneNumberUtils.cpp \
-	android-sqlite/android/PhoneNumberUtilsTest.cpp \
+	android-sqlite/android/OldPhoneNumberUtils.cpp \
 	android-sqlite/android/PhoneticStringUtils.cpp \
+	android-sqlite/android/sqlite3_android.cpp
+#	android-sqlite/android/PhoneNumberUtilsTest.cpp \
 	android-sqlite/android/PhoneticStringUtilsTest.cpp \
 
 include $(CLEAR_VARS)
 
+## this might save us linking against the private android shared libraries like
+## libnativehelper.so, libutils.so, libcutils.so, libicuuc, libicui18n.so
+LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+
+# TODO this needs to depend on libsqlcipher being built, how to do that?
+
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags)
-LOCAL_C_INCLUDES := sqlcipher icu4c/i18n icu4c/common platform-system-core/include
-LOCAL_MODULE    := libsqlite3_android
+LOCAL_C_INCLUDES := \
+	sqlcipher \
+	icu4c/i18n \
+	icu4c/common \
+	platform-system-core/include \
+	platform-frameworks-base/include
+LOCAL_LDFLAGS += $(project_ldflags)
+LOCAL_LDLIBS := -lsqlcipher -llog
+LOCAL_MODULE := libsqlcipher_android
 LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files)
 
 include $(BUILD_SHARED_LIBRARY)
-
-## this might save us linking against the private android shared libraries like
-## libnativehelper.so, libutils.so, libcutils.so, libicuuc, libicui18n.so
-# LOCAL_ALLOW_UNDEFINED_SYMBOLS := true

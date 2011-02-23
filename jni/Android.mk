@@ -40,14 +40,11 @@ LOCAL_C_INCLUDES += \
 	$(EXTERNAL_PATH)/platform-system-core/include \
 	$(EXTERNAL_PATH)/android-sqlite/android
 
-
-LOCAL_STATIC_LIBRARIES := \
-	libsqlcipher \
-	libsqlite3_android
-
 LOCAL_SHARED_LIBRARIES := \
 	libcrypto \
-	libssl
+	libssl \
+	libsqlcipher \
+	libsqlite3_android
 
 ifneq ($(TARGET_SIMULATOR),true)
 LOCAL_SHARED_LIBRARIES += \
