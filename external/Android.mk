@@ -57,7 +57,6 @@ libsqlite3_android_local_src_files := \
 
 include $(CLEAR_VARS)
 
-APP_STL := stlport_static
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags)
 LOCAL_C_INCLUDES := sqlcipher icu4c/i18n icu4c/common platform-system-core/include
 LOCAL_MODULE    := libsqlite3_android
