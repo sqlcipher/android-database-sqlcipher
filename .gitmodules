@@ -16,3 +16,6 @@
 [submodule "external/platform-frameworks-base"]
 	path = external/platform-frameworks-base
 	url = git://android.git.kernel.org/platform/frameworks/base.git
+[submodule "external/icu4c"]
+	path = external/icu4c
+	url = git://android.git.kernel.org/platform/external/icu4c.git
