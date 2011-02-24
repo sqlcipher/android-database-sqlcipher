@@ -129,9 +129,9 @@ int register_android_database_SQLiteStatement(JNIEnv * env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("android/database/sqlite/SQLiteStatement");
+    clazz = env->FindClass("info/guardianproject/database/sqlcipher/SQLiteStatement");
     if (clazz == NULL) {
-        LOGE("Can't find android/database/sqlite/SQLiteStatement");
+        LOGE("Can't find info/guardianproject/database/sqlcipher/SQLiteStatement");
         return -1;
     }
 

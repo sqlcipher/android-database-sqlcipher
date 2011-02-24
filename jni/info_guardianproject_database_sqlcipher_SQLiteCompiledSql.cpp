@@ -113,9 +113,9 @@ int register_android_database_SQLiteCompiledSql(JNIEnv * env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("android/database/sqlite/SQLiteCompiledSql");
+    clazz = env->FindClass("info/guardianproject/database/sqlcipher/SQLiteCompiledSql");
     if (clazz == NULL) {
-        LOGE("Can't find android/database/sqlite/SQLiteCompiledSql");
+        LOGE("Can't find info/guardianproject/database/sqlcipher/SQLiteCompiledSql");
         return -1;
     }
 

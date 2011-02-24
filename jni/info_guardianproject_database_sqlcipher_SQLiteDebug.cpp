@@ -187,7 +187,7 @@ static void getHeapDirtyPages(JNIEnv *env, jobject clazz, jintArray pages)
 
 static JNINativeMethod gMethods[] =
 {
-    { "getPagerStats", "(Landroid/database/sqlite/SQLiteDebug$PagerStats;)V",
+    { "getPagerStats", "(Linfo/guardianproject/database/sqlcipher/SQLiteDebug$PagerStats;)V",
             (void*) getPagerStats },
     { "getHeapSize", "()J", (void*) getHeapSize },
     { "getHeapAllocatedSize", "()J", (void*) getHeapAllocatedSize },
@@ -199,9 +199,9 @@ int register_android_database_SQLiteDebug(JNIEnv *env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("android/database/sqlite/SQLiteDebug$PagerStats");
+    clazz = env->FindClass("info/guardianproject/database/sqlcipher/SQLiteDebug$PagerStats");
     if (clazz == NULL) {
-        LOGE("Can't find android/database/sqlite/SQLiteDebug$PagerStats");
+        LOGE("Can't find info/guardianproject/database/sqlcipher/SQLiteDebug$PagerStats");
         return -1;
     }
 
@@ -223,7 +223,7 @@ int register_android_database_SQLiteDebug(JNIEnv *env)
         return -1;
     }
 
-    return jniRegisterNativeMethods(env, "android/database/sqlite/SQLiteDebug",
+    return jniRegisterNativeMethods(env, "info/guardianproject/database/sqlcipher/SQLiteDebug",
             gMethods, NELEM(gMethods));
 }
 

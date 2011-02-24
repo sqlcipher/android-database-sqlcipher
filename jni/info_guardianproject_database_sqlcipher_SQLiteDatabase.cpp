@@ -153,7 +153,7 @@ static void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
         const char *text = (const char*)sqlite3_column_text(statement, 0);
         if (strcmp(text, "ok") != 0) {
             LOGE("integrity check failed for \"%s\": %s\n", integritySql, path8, text);
-            jniThrowException(env, "android/database/sqlite/SQLiteDatabaseCorruptException", text);
+            jniThrowException(env, "info/guardianproject/database/sqlcipher/SQLiteDatabaseCorruptException", text);
             goto done;
         }
     }
@@ -462,9 +462,9 @@ int register_android_database_SQLiteDatabase(JNIEnv *env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("android/database/sqlite/SQLiteDatabase");
+    clazz = env->FindClass("info/guardianproject/database/sqlcipher/SQLiteDatabase");
     if (clazz == NULL) {
-        LOGE("Can't find android/database/sqlite/SQLiteDatabase\n");
+        LOGE("Can't find info/guardianproject/database/sqlcipher/SQLiteDatabase\n");
         return -1;
     }
 
@@ -520,28 +520,28 @@ void throw_sqlite3_exception(JNIEnv* env, int errcode,
     const char* exceptionClass;
     switch (errcode) {
         case SQLITE_IOERR:
-            exceptionClass = "android/database/sqlite/SQLiteDiskIOException";
+            exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteDiskIOException";
             break;
         case SQLITE_CORRUPT:
-            exceptionClass = "android/database/sqlite/SQLiteDatabaseCorruptException";
+            exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteDatabaseCorruptException";
             break;
         case SQLITE_CONSTRAINT:
-           exceptionClass = "android/database/sqlite/SQLiteConstraintException";
+           exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteConstraintException";
            break;
         case SQLITE_ABORT:
-           exceptionClass = "android/database/sqlite/SQLiteAbortException";
+           exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteAbortException";
            break;
         case SQLITE_DONE:
-           exceptionClass = "android/database/sqlite/SQLiteDoneException";
+           exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteDoneException";
            break;
         case SQLITE_FULL:
-           exceptionClass = "android/database/sqlite/SQLiteFullException";
+           exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteFullException";
            break;
         case SQLITE_MISUSE:
-           exceptionClass = "android/database/sqlite/SQLiteMisuseException";
+           exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteMisuseException";
            break;
         default:
-           exceptionClass = "android/database/sqlite/SQLiteException";
+           exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteException";
            break;
     }
 
