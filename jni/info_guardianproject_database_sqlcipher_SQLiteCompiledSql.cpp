@@ -127,8 +127,8 @@ int register_android_database_SQLiteCompiledSql(JNIEnv * env)
         return -1;
     }
 
-//    return AndroidRuntime::registerNativeMethods(env,
-//        "android/database/sqlite/SQLiteCompiledSql", sMethods, NELEM(sMethods));
+    return android::AndroidRuntime::registerNativeMethods(env,
+        "info/guardianproject/database/sqlcipher/SQLiteCompiledSql", sMethods, NELEM(sMethods));
 }
 
 } // namespace guardianproject

@@ -46,8 +46,12 @@ LOCAL_SHARED_LIBRARIES := \
 
 LOCAL_CFLAGS += -U__APPLE__
 LOCAL_LDFLAGS += -L../obj/local/armeabi/
-# libnativehelper is included with Android but not the NDK
-LOCAL_LDLIBS += -ldl -llog -lnativehelper -lsqlcipher
+# libs from the NDK
+LOCAL_LDLIBS += -ldl -llog
+# libnativehelper and libandroid_runtime are included with Android but not the NDK
+LOCAL_LDLIBS += -lnativehelper -landroid_runtime
+# these are build in the ../external section
+LOCAL_LDLIBS += -lsqlcipher -lsqlcipher_android
 
 ifeq ($(WITH_MALLOC_LEAK_CHECK),true)
 	LOCAL_CFLAGS += -DMALLOC_LEAK_CHECK

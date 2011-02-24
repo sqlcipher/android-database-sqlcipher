@@ -22,8 +22,8 @@
 #include <utils/String16.h>
 
 #include <jni.h>
-//#include <JNIHelp.h>
-//#include <android_runtime/AndroidRuntime.h>
+#include <JNIHelp.h>
+#include <android_runtime/AndroidRuntime.h>
 
 #include <sqlite3.h>
 #include <sqlite3_android.h>
@@ -474,7 +474,7 @@ int register_android_database_SQLiteDatabase(JNIEnv *env)
         return -1;
     }
 
-//    return AndroidRuntime::registerNativeMethods(env, "android/database/sqlite/SQLiteDatabase", sMethods, NELEM(sMethods));
+    return android::AndroidRuntime::registerNativeMethods(env, "info/guardianproject/database/sqlcipher/SQLiteDatabase", sMethods, NELEM(sMethods));
 }
 
 /* throw a SQLiteException with a message appropriate for the error in handle */

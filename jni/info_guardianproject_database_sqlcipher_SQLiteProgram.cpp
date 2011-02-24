@@ -189,8 +189,8 @@ int register_android_database_SQLiteProgram(JNIEnv * env)
         return -1;
     }
 
-    return AndroidRuntime::registerNativeMethods(env,
-        "android/database/sqlite/SQLiteProgram", sMethods, NELEM(sMethods));
+    return android::AndroidRuntime::registerNativeMethods(env,
+        "info/guardianproject/database/sqlcipher/SQLiteProgram", sMethods, NELEM(sMethods));
 }
 */
 
