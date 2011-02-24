@@ -21,8 +21,9 @@ sqlcipher/sqlite3.c:
 		 ../obj/local/armeabi/
 
 copy-libs-hack: build-local-hack
-	install -p openssl/libs/armeabi/*.so ../obj/local/armeabi/
-	install -p libs/armeabi/*.so ../obj/local/armeabi/
+	install -p -m644 openssl/libs/armeabi/*.so ../obj/local/armeabi/
+	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
+	install -p -m644 android-2.2/*.so ../obj/local/armeabi/
 
 project_ldflags:= -L../obj/local/armeabi/
 
