@@ -3,6 +3,7 @@
 #	make -f Android.mk build-local-hack
 #   ndk-build
 #   ndk-build
+#	make -f Android.mk copy-libs-hack
 
 LOCAL_PATH := $(call my-dir)
 
@@ -13,10 +14,15 @@ sqlcipher/sqlite3.c:
 	cd sqlcipher && ./configure
 	make -C sqlcipher sqlite3.c
 
+# TODO include this Android.mk to integrate this into the build
 ../obj/local/armeabi/libcrypto.so:
-	cd openssl && ndk-build
-	cp openssl/libs/armeabi/libcrypto.so openssl/libs/armeabi/libssl.so \
-		../obj/local/armeabi/
+	cd openssl && ndk-build -j4
+	install -p openssl/libs/armeabi/libcrypto.so openssl/libs/armeabi/libssl.so \
+		 ../obj/local/armeabi/
+
+copy-libs-hack: build-local-hack
+	install -p openssl/libs/armeabi/*.so ../obj/local/armeabi/
+	install -p libs/armeabi/*.so ../obj/local/armeabi/
 
 project_ldflags:= -L../obj/local/armeabi/
 
@@ -47,7 +53,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 
 #------------------------------------------------------------------------------#
-# libsqlite3_android
+# libsqlcipher_android (our version of Android's libsqlite_android)
 
 # these are all files from various external git repos
 libsqlite3_android_local_src_files := \
@@ -67,13 +73,14 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
 
 # TODO this needs to depend on libsqlcipher being built, how to do that?
 
+LOCAL_REQUIRED_MODULES += libsqlcipher
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags)
 LOCAL_C_INCLUDES := \
-	sqlcipher \
-	icu4c/i18n \
-	icu4c/common \
-	platform-system-core/include \
-	platform-frameworks-base/include
+	$(LOCAL_PATH)/sqlcipher \
+	$(LOCAL_PATH)/icu4c/i18n \
+	$(LOCAL_PATH)/icu4c/common \
+	$(LOCAL_PATH)/platform-system-core/include \
+	$(LOCAL_PATH)/platform-frameworks-base/include
 LOCAL_LDFLAGS += $(project_ldflags)
 LOCAL_LDLIBS := -lsqlcipher -llog
 LOCAL_MODULE := libsqlcipher_android
