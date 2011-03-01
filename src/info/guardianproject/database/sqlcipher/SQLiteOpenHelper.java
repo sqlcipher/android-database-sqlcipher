@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package android.database.sqlite;
+package info.guardianproject.database.sqlcipher;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import info.guardianproject.database.sqlcipher.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
 /**

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package android.database.sqlite;
+package info.guardianproject.database.sqlcipher;
 
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import info.guardianproject.database.sqlcipher.SQLiteDatabase.CursorFactory;
 
 /**
  * A driver for SQLiteCursors that is used to create them and gets notified

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.database.sqlite;
+package info.guardianproject.database.sqlcipher;
 
 import com.google.android.collect.Maps;
 
@@ -24,7 +24,7 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.SQLException;
-import android.database.sqlite.SQLiteDebug.DbStats;
+import info.guardianproject.database.sqlcipher.SQLiteDebug.DbStats;
 import android.os.Debug;
 import android.os.SystemClock;
 import android.os.SystemProperties;

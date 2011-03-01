@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package android.database.sqlite;
+package info.guardianproject.database.sqlcipher;
 
 public class SQLiteMisuseException extends SQLiteException {
     public SQLiteMisuseException() {}
