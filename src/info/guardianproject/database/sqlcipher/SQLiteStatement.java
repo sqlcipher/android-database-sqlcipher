@@ -18,8 +18,6 @@ package info.guardianproject.database.sqlcipher;
 
 import android.os.SystemClock;
 
-import dalvik.system.BlockGuard;
-
 /**
  * A pre-compiled statement against a {@link SQLiteDatabase} that can be reused.
  * The statement cannot return multiple rows, but 1x1 result sets are allowed.
@@ -49,7 +47,6 @@ public class SQLiteStatement extends SQLiteProgram
      *         some reason
      */
     public void execute() {
-        BlockGuard.getThreadPolicy().onWriteToDisk();
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -76,7 +73,6 @@ public class SQLiteStatement extends SQLiteProgram
      *         some reason
      */
     public long executeInsert() {
-        BlockGuard.getThreadPolicy().onWriteToDisk();
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -103,7 +99,6 @@ public class SQLiteStatement extends SQLiteProgram
      * @throws android.database.sqlite.SQLiteDoneException if the query returns zero rows
      */
     public long simpleQueryForLong() {
-        BlockGuard.getThreadPolicy().onReadFromDisk();
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -130,7 +125,6 @@ public class SQLiteStatement extends SQLiteProgram
      * @throws android.database.sqlite.SQLiteDoneException if the query returns zero rows
      */
     public String simpleQueryForString() {
-        BlockGuard.getThreadPolicy().onReadFromDisk();
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
