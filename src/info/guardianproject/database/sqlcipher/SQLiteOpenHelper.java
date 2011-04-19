@@ -96,7 +96,9 @@ public abstract class SQLiteOpenHelper {
                 db = SQLiteDatabase.create(null);
                 
             } else {
-            	
+                String path = mContext.getDatabasePath(mName).getPath();
+                db = SQLiteDatabase.openDatabase(path, mFactory, SQLiteDatabase.OPEN_READWRITE);
+
                 //db = mContext.openOrCreateDatabase(mName, 0, mFactory);
             	
             }
