@@ -16,11 +16,12 @@
 
 package info.guardianproject.database;
 
+import java.util.Map;
+
 import android.content.ContentResolver;
+import android.database.CharArrayBuffer;
 import android.net.Uri;
 import android.os.Bundle;
-
-import java.util.Map;
 
 /**
  * This interface provides random read-write access to the result set returned

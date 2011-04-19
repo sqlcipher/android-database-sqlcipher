@@ -16,20 +16,16 @@
 
 package info.guardianproject.database;
 
-import android.content.ContentResolver;
-import android.net.Uri;
-import android.util.Config;
-import android.util.Log;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.os.Message;
-
 import java.lang.ref.WeakReference;
-import java.lang.UnsupportedOperationException;
 import java.util.HashMap;
 import java.util.Map;
+
+import android.content.ContentResolver;
+import android.database.CharArrayBuffer;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Config;
+import android.util.Log;
 
 
 /**

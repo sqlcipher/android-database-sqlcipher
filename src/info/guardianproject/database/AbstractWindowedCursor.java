@@ -16,6 +16,8 @@
 
 package info.guardianproject.database;
 
+import android.database.CharArrayBuffer;
+
 /**
  * A base class for Cursors that store their data in {@link CursorWindow}s.
  */

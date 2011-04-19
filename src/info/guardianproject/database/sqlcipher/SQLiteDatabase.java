@@ -1808,7 +1808,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param flags 0 or {@link #NO_LOCALIZED_COLLATORS}.  If the database file already
      *              exists, mFlags will be updated appropriately.
      */
-    private SQLiteDatabase(String path, CursorFactory factory, int flags) {
+    public SQLiteDatabase(String path, CursorFactory factory, int flags) {
         if (path == null) {
             throw new IllegalArgumentException("path should not be null");
         }

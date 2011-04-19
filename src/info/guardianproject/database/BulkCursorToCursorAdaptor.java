@@ -313,4 +313,6 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 }

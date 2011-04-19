@@ -18,6 +18,8 @@ package info.guardianproject.database;
 
 import android.database.CharArrayBuffer;
 
+
+
 /**
  * A convience class that lets you present an array of Cursors as a single linear Cursor.
  * The schema of the cursors presented is entirely up to the creator of the MergeCursor, and
@@ -259,11 +261,6 @@ public class MergeCursor extends AbstractCursor
     private Cursor mCursor; // updated in onMove
     private Cursor[] mCursors;
 
-	@Override
-	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void registerContentObserver(
@@ -292,4 +289,14 @@ public class MergeCursor extends AbstractCursor
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void copyStringToBuffer(int columnIndex,
+			android.database.CharArrayBuffer buffer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	
 }

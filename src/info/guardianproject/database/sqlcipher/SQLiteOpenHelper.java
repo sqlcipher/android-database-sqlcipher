@@ -98,7 +98,9 @@ public abstract class SQLiteOpenHelper {
             } else {
             	
                 //db = mContext.openOrCreateDatabase(mName, 0, mFactory);
+            	
             }
+            
 
             int version = db.getVersion();
             if (version != mNewVersion) {

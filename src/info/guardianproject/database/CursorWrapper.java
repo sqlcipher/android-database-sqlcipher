@@ -17,6 +17,7 @@
 package info.guardianproject.database;
 
 import android.content.ContentResolver;
+import android.database.CharArrayBuffer;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -134,9 +135,6 @@ public class CursorWrapper implements Cursor {
         return mCursor.getString(columnIndex);
     }
     
-    public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-        mCursor.copyStringToBuffer(columnIndex, buffer);
-    }
 
     public byte[] getBlob(int columnIndex) {
         return mCursor.getBlob(columnIndex);
@@ -334,6 +332,8 @@ public class CursorWrapper implements Cursor {
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 
     
 }

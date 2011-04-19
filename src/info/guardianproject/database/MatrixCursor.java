@@ -19,8 +19,7 @@ package info.guardianproject.database;
 import java.util.ArrayList;
 
 import android.database.CharArrayBuffer;
-import android.database.ContentObserver;
-import android.database.DataSetObserver;
+
 
 /**
  * A mutable cursor implementation backed by an array of {@code Object}s. Use
@@ -280,11 +279,6 @@ public class MatrixCursor extends AbstractCursor {
         return get(column) == null;
     }
 
-	@Override
-	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void registerContentObserver(ContentObserver observer) {
@@ -306,6 +300,41 @@ public class MatrixCursor extends AbstractCursor {
 
 	@Override
 	public void unregisterDataSetObserver(DataSetObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void copyStringToBuffer(int columnIndex,
+			android.database.CharArrayBuffer buffer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerContentObserver(
+			android.database.ContentObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerDataSetObserver(
+			android.database.DataSetObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterContentObserver(
+			android.database.ContentObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterDataSetObserver(
+			android.database.DataSetObserver observer) {
 		// TODO Auto-generated method stub
 		
 	}

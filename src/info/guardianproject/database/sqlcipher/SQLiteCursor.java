@@ -18,6 +18,8 @@ package info.guardianproject.database.sqlcipher;
 
 import info.guardianproject.database.*;
 
+import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -633,24 +635,4 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 		
 	}
 
-	@Override
-	public void copyStringToBuffer(int columnIndex,
-			android.database.CharArrayBuffer buffer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void registerContentObserver(
-			android.database.ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterContentObserver(
-			android.database.ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
 }
