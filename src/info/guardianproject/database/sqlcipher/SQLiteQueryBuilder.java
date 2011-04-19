@@ -15,9 +15,8 @@
  */
 
 package info.guardianproject.database.sqlcipher;
+import info.guardianproject.database.*;
 
-import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.provider.BaseColumns;
 import android.text.TextUtils;
 import android.util.Log;

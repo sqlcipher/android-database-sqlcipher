@@ -16,10 +16,7 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import android.database.AbstractWindowedCursor;
-import android.database.CursorWindow;
-import android.database.DataSetObserver;
-import android.database.SQLException;
+import info.guardianproject.database.*;
 
 import android.os.Handler;
 import android.os.Message;
@@ -160,12 +157,15 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         }        
     }
     
+    
     /**
      * @hide
      */   
     protected class MainThreadNotificationHandler extends Handler {
         public void handleMessage(Message msg) {
-            notifyDataSetChange();
+            
+        	notifyDataSetChange();
+            
         }
     }
     
@@ -182,7 +182,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             try {
                 mNotificationHandler = new MainThreadNotificationHandler();
                 if (mPendingData) {
-                    notifyDataSetChange();
+                	notifyDataSetChange();
                     mPendingData = false;
                 }
             } finally {
@@ -325,7 +325,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
      * @hide
      * @deprecated
      */
-    @Override
+   // @Override
     public boolean deleteRow() {
         checkPosition();
 
@@ -384,16 +384,17 @@ public class SQLiteCursor extends AbstractWindowedCursor {
      * @hide
      * @deprecated
      */
-    @Override
+  //  @Override
     public boolean supportsUpdates() {
-        return super.supportsUpdates() && !TextUtils.isEmpty(mEditTable);
+       // return super.supportsUpdates() && !TextUtils.isEmpty(mEditTable);
+    	return  !TextUtils.isEmpty(mEditTable);
     }
 
     /**
      * @hide
      * @deprecated
      */
-    @Override
+  //  @Override
     public boolean commitUpdates(Map<? extends Long,
             ? extends Map<String, Object>> additionalValues) {
         if (!supportsUpdates()) {
@@ -599,4 +600,57 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             super.finalize();
         }
     }
+
+	@Override
+	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerContentObserver(ContentObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerDataSetObserver(
+			android.database.DataSetObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterContentObserver(ContentObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterDataSetObserver(
+			android.database.DataSetObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void copyStringToBuffer(int columnIndex,
+			android.database.CharArrayBuffer buffer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void registerContentObserver(
+			android.database.ContentObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterContentObserver(
+			android.database.ContentObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
 }

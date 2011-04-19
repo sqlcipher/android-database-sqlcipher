@@ -16,8 +16,8 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import android.database.Cursor;
 import info.guardianproject.database.sqlcipher.SQLiteDatabase.CursorFactory;
+import info.guardianproject.database.*;
 
 /**
  * A driver for SQLiteCursors that is used to create them and gets notified

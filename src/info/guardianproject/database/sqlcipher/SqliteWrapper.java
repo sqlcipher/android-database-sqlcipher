@@ -20,8 +20,7 @@ package info.guardianproject.database.sqlcipher;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import info.guardianproject.database.sqlcipher.SQLiteException;
+import info.guardianproject.database.*;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
@@ -46,7 +45,7 @@ public final class SqliteWrapper {
 
     public static void checkSQLiteException(Context context, SQLiteException e) {
         if (isLowMemory(e)) {
-            Toast.makeText(context, com.android.internal.R.string.low_memory,
+            Toast.makeText(context, e.getMessage(),
                     Toast.LENGTH_SHORT).show();
         } else {
             throw e;
@@ -56,7 +55,7 @@ public final class SqliteWrapper {
     public static Cursor query(Context context, ContentResolver resolver, Uri uri,
             String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         try {
-            return resolver.query(uri, projection, selection, selectionArgs, sortOrder);
+            return (Cursor) resolver.query(uri, projection, selection, selectionArgs, sortOrder);
         } catch (SQLiteException e) {
             Log.e(TAG, "Catch a SQLiteException when query: ", e);
             checkSQLiteException(context, e);

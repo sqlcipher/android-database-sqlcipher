@@ -16,7 +16,7 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import android.database.CursorWindow;
+import info.guardianproject.database.*;
 
 /**
  * An object created from a SQLiteDatabase that can be closed.
@@ -67,10 +67,11 @@ public abstract class SQLiteClosable {
                 this instanceof SQLiteQuery) {
             buff.append("mSql = ");
             buff.append(((SQLiteProgram)this).mSql);
-        } else if (this instanceof CursorWindow) {
+        }
+        /*else if (this instanceof CursorWindow) {
             buff.append("mStartPos = ");
             buff.append(((CursorWindow)this).getStartPosition());
-        }
+        }*/
         buff.append(") ");
         return buff.toString();
     }

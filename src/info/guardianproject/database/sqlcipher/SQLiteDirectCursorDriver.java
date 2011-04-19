@@ -16,7 +16,7 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import android.database.Cursor;
+import info.guardianproject.database.*;
 import info.guardianproject.database.sqlcipher.SQLiteDatabase.CursorFactory;
 
 /**

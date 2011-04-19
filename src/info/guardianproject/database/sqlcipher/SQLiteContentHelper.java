@@ -15,9 +15,9 @@
  */
 
 package info.guardianproject.database.sqlcipher;
+import info.guardianproject.database.*;
 
 import android.content.res.AssetFileDescriptor;
-import android.database.Cursor;
 import android.os.MemoryFile;
 
 import java.io.FileNotFoundException;
@@ -43,14 +43,14 @@ public class SQLiteContentHelper {
      *         value of column 0 is NULL, or if there is an error creating the
      *         asset file descriptor.
      */
-    public static AssetFileDescriptor getBlobColumnAsAssetFile(SQLiteDatabase db, String sql,
+    public static MemoryFile getBlobColumnAsAssetFile(SQLiteDatabase db, String sql,
             String[] selectionArgs) throws FileNotFoundException {
         try {
             MemoryFile file = simpleQueryForBlobMemoryFile(db, sql, selectionArgs);
             if (file == null) {
                 throw new FileNotFoundException("No results.");
             }
-            return AssetFileDescriptor.fromMemoryFile(file);
+            return file;
         } catch (IOException ex) {
             throw new FileNotFoundException(ex.toString());
         }
@@ -82,7 +82,7 @@ public class SQLiteContentHelper {
             }
             MemoryFile file = new MemoryFile(null, bytes.length);
             file.writeBytes(bytes, 0, 0, bytes.length);
-            file.deactivate();
+         //   file.deactivate();
             return file;
         } finally {
             cursor.close();

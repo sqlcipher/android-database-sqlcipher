@@ -94,8 +94,10 @@ public abstract class SQLiteOpenHelper {
             mIsInitializing = true;
             if (mName == null) {
                 db = SQLiteDatabase.create(null);
+                
             } else {
-                db = mContext.openOrCreateDatabase(mName, 0, mFactory);
+            	
+                //db = mContext.openOrCreateDatabase(mName, 0, mFactory);
             }
 
             int version = db.getVersion();

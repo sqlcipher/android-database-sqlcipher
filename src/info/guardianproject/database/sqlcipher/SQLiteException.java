@@ -16,7 +16,7 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import android.database.SQLException;
+import info.guardianproject.database.*;
 
 /**
  * A SQLite exception that indicates there was an error with SQL parsing or execution.

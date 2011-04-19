@@ -16,22 +16,10 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import com.google.android.collect.Maps;
-
-import android.app.ActivityThread;
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.SQLException;
+import info.guardianproject.database.Cursor;
+import info.guardianproject.database.DatabaseUtils;
+import info.guardianproject.database.SQLException;
 import info.guardianproject.database.sqlcipher.SQLiteDebug.DbStats;
-import android.os.Debug;
-import android.os.SystemClock;
-import android.os.SystemProperties;
-import android.text.TextUtils;
-import android.util.Config;
-import android.util.EventLog;
-import android.util.Log;
-import android.util.Pair;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -47,6 +35,17 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
+
+import com.google.common.collect.Maps;
+
+import android.content.ContentValues;
+import android.os.Debug;
+import android.os.SystemClock;
+import android.text.TextUtils;
+import android.util.Config;
+import android.util.EventLog;
+import android.util.Log;
+import android.util.Pair;
 
 /**
  * Exposes methods to manage a SQLite database.
@@ -825,7 +824,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             // Try to recover from this, if we can.
             // TODO: should we do this for other open failures?
             Log.e(TAG, "Deleting and re-creating corrupt database " + path, e);
-            EventLog.writeEvent(EVENT_DB_CORRUPT, path);
+           // EventLog.writeEvent(EVENT_DB_CORRUPT, path);
             if (!path.equalsIgnoreCase(":memory")) {
                 // delete is only for non-memory database files
                 new File(path).delete();
@@ -1550,6 +1549,7 @@ public class SQLiteDatabase extends SQLiteClosable {
                 for (int i = 0; i < size; i++) {
                     Map.Entry<String, Object> entry = entriesIter.next();
                     DatabaseUtils.bindObjectToProgram(statement, i + 1, entry.getValue());
+                    
                 }
             }
 
@@ -1814,7 +1814,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
         mFlags = flags;
         mPath = path;
-        mSlowQueryThreshold = SystemProperties.getInt(LOG_SLOW_QUERIES_PROPERTY, -1);
+        mSlowQueryThreshold = -1;//SystemProperties.getInt(LOG_SLOW_QUERIES_PROPERTY, -1);
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
         dbopen(mPath, mFlags);
@@ -1888,7 +1888,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             return;
         }
         if (sQueryLogTimeInMillis == 0) {
-            sQueryLogTimeInMillis = SystemProperties.getInt("db.db_operation.threshold_ms", 500);
+            sQueryLogTimeInMillis = 500;//SystemProperties.getInt("db.db_operation.threshold_ms", 500);
         }
         if (durationMillis >= sQueryLogTimeInMillis) {
             samplePercent = 100;
@@ -1913,7 +1913,8 @@ public class SQLiteDatabase extends SQLiteClosable {
         // main thread, or when we are invoked via Binder (e.g. ContentProvider).
         // Hopefully the full path to the database will be informative enough.
 
-        String blockingPackage = ActivityThread.currentPackageName();
+        //TODO get the current package name
+        String blockingPackage = "unknown";//ActivityThread.currentPackageName();
         if (blockingPackage == null) blockingPackage = "";
 
         EventLog.writeEvent(

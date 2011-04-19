@@ -15,8 +15,8 @@
  */
 
 package info.guardianproject.database.sqlcipher;
+import info.guardianproject.database.*;
 
-import android.database.CursorWindow;
 import android.os.SystemClock;
 import android.util.Log;
 
