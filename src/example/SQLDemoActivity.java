@@ -14,6 +14,26 @@ public class SQLDemoActivity extends Activity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    System.loadLibrary("nativehelper");
+    System.loadLibrary("android_runtime");
+
+    System.loadLibrary("crypto");
+    System.loadLibrary("ssl");
+
+
+    System.loadLibrary("icudata");
+    System.loadLibrary("icui18n");
+    System.loadLibrary("icuuc");
+
+    System.loadLibrary("stlport_shared");
+
+    System.loadLibrary("sqlcipher");
+
+    System.loadLibrary("sqlcipher_android");
+    System.loadLibrary("database_sqlcipher");
+
+
+
     eventsData = new EventDataSQLHelper(this);
     addEvent("Hello Android Event");
     Cursor cursor = getEvents();
