@@ -47,6 +47,8 @@ public class SQLDemoActivity extends Activity {
 
   private void addEvent(String title) {
     SQLiteDatabase db = eventsData.getWritableDatabase();
+    
+    
     ContentValues values = new ContentValues();
     values.put(EventDataSQLHelper.TIME, System.currentTimeMillis());
     values.put(EventDataSQLHelper.TITLE, title);
