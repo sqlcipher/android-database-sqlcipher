@@ -33,9 +33,6 @@
 #include "sqlite3_exception.h"
 
 
-// From android_database_CursorWindow.cpp
-//namespace guardianproject {}
-
 namespace guardianproject {
 
 CursorWindow * get_window_from_object(JNIEnv * env, jobject javaWindow);
@@ -338,7 +335,7 @@ static jstring native_column_name(JNIEnv* env, jobject object, jint columnIndex)
 static JNINativeMethod sMethods[] =
 {
      /* name, signature, funcPtr */
-    {"native_fill_window", "(Landroid/database/CursorWindow;IIII)I", (void *)native_fill_window},
+    {"native_fill_window", "(Linfo/guardianproject/database/CursorWindow;IIII)I", (void *)native_fill_window},
     {"native_column_count", "()I", (void*)native_column_count},
     {"native_column_name", "(I)Ljava/lang/String;", (void *)native_column_name},
 };

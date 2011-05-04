@@ -33,7 +33,6 @@
 #include "sqlite3_exception.h"
 #include "android_util_Binder.h"
 
-
 namespace guardianproject {
 
 static jfieldID gWindowField;
@@ -718,8 +717,8 @@ int register_android_database_CursorWindow(JNIEnv * env)
         return -1;
     }
 
-    return AndroidRuntime::registerNativeMethods(env, "android/database/CursorWindow",
+    return AndroidRuntime::registerNativeMethods(env, "info/guardianproject/database/CursorWindow",
             sMethods, NELEM(sMethods));
 }
 
-} // namespace android
+} // namespace guardianproject

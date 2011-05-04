@@ -31,6 +31,7 @@
 
 #include <jni.h>
 
+
 #define DEFAULT_WINDOW_SIZE 4096
 #define MAX_WINDOW_SIZE (1024 * 1024)
 #define WINDOW_ALLOCATION_SIZE 4096
@@ -106,11 +107,11 @@ class CursorWindow
 public:
                         CursorWindow(size_t maxSize);
                         CursorWindow(){}
-    bool                setMemory(const sp<IMemory>&);
+    bool                setMemory(const android::sp<android::IMemory>&);
                         ~CursorWindow();
 
     bool                initBuffer(bool localOnly);
-    sp<IMemory>         getMemory() {return mMemory;}
+    android::sp<android::IMemory>         getMemory() {return mMemory;}
 
     size_t              size() {return mSize;}
     uint8_t *           data() {return mData;}
@@ -194,7 +195,7 @@ private:
     size_t mSize;
     size_t mMaxSize;
     window_header_t * mHeader;
-    sp<IMemory> mMemory;
+    android::sp<android::IMemory> mMemory;
 
     /**
      * Offset of the lowest unused data byte in the array.
