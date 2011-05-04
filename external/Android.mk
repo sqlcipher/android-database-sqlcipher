@@ -25,7 +25,7 @@ copy-libs-hack: build-local-hack
 	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
 	install -p -m644 android-2.2/*.so ../obj/local/armeabi/
 
-project_ldflags:= -L../obj/local/armeabi/
+project_ldflags:= -L../obj/local/armeabi/ -L/tmp/foolibs/
 
 #------------------------------------------------------------------------------#
 # libsqlite3
@@ -83,7 +83,7 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/platform-system-core/include \
 	$(LOCAL_PATH)/platform-frameworks-base/include
 LOCAL_LDFLAGS += $(project_ldflags)
-LOCAL_LDLIBS := -lsqlcipher -llog
+LOCAL_LDLIBS := -lsqlcipher -llog -licuuc -licui18n -lutils -lcutils -lnativehelper
 LOCAL_MODULE := libsqlcipher_android
 LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files)
 
