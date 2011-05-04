@@ -2,11 +2,14 @@ LOCAL_PATH:= $(call my-dir)
 
 EXTERNAL_PATH := ../external
 
+
 ifeq ($(TARGET_ARCH), arm)
 	LOCAL_CFLAGS += -DPACKED="__attribute__ ((packed))"
 else
 	LOCAL_CFLAGS += -DPACKED=""
 endif
+
+TARGET_PLATFORM := android-8
 
 ifeq ($(WITH_JIT),true)
 	LOCAL_CFLAGS += -DWITH_JIT
@@ -32,13 +35,13 @@ LOCAL_C_INCLUDES += \
 	$(JNI_H_INCLUDE) \
 	$(EXTERNAL_PATH)/sqlcipher \
 	$(EXTERNAL_PATH)/openssl/include \
-	$(EXTERNAL_PATH)/platform-frameworks-base/include \
 	$(EXTERNAL_PATH)/platform-frameworks-base/core/jni \
 	$(EXTERNAL_PATH)/android-sqlite/android \
 	$(EXTERNAL_PATH)/dalvik/libnativehelper/include \
 	$(EXTERNAL_PATH)/dalvik/libnativehelper/include/nativehelper \
 	$(EXTERNAL_PATH)/platform-system-core/include \
-	#$(LOCAL_PATH)/include \
+	$(LOCAL_PATH)/include \
+	$(EXTERNAL_PATH)/platform-frameworks-base/include \
 
 LOCAL_SHARED_LIBRARIES := \
 	libcrypto \
@@ -47,11 +50,11 @@ LOCAL_SHARED_LIBRARIES := \
 	libsqlite3_android
 
 LOCAL_CFLAGS += -U__APPLE__
-LOCAL_LDFLAGS += -L../obj/local/armeabi/
+LOCAL_LDFLAGS += -L../obj/local/armeabi/ -L/tmp/foolibs/
 # libs from the NDK
 LOCAL_LDLIBS += -ldl -llog
 # libnativehelper and libandroid_runtime are included with Android but not the NDK
-LOCAL_LDLIBS += -lnativehelper -landroid_runtime
+LOCAL_LDLIBS += -lnativehelper -landroid_runtime -lutils -lbinder
 # these are build in the ../external section
 LOCAL_LDLIBS += -lsqlcipher -lsqlcipher_android
 

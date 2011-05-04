@@ -36,6 +36,7 @@ int register_android_database_SQLiteStatement(JNIEnv * env);
 
 int register_android_database_SQLiteDebug(JNIEnv *env);
 
+int register_android_database_CursorWindow(JNIEnv *env);
 
 }
 
