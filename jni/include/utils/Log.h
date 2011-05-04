@@ -1,17 +1,33 @@
-/* 
- * The internal Android code uses LOGV, LOGD, LOGI, LOGW, LOGW, etc for
- * logging debug stuff. These are not exposed externally, so we need to define
- * them ourselves.  This is even how its done in the Android NDK sample apps.
- * hans@eds.org
+/*
+ * Copyright (C) 2005 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-#ifndef LOG_HACK_H
-#define LOG_HACK_H
 
-# include <android/log.h> 
-# define LOGV(...) __android_log_print(ANDROID_LOG_VERBOSE,LOG_TAG,__VA_ARGS__) 
-# define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG  ,LOG_TAG,__VA_ARGS__) 
-# define LOGI(...) __android_log_print(ANDROID_LOG_INFO   ,LOG_TAG,__VA_ARGS__) 
-# define LOGW(...) __android_log_print(ANDROID_LOG_WARN   ,LOG_TAG,__VA_ARGS__) 
-# define LOGE(...) __android_log_print(ANDROID_LOG_ERROR  ,LOG_TAG,__VA_ARGS__) 
+//
+// C/C++ logging functions.  See the logging documentation for API details.
+//
+// We'd like these to be available from C code (in case we import some from
+// somewhere), so this has a C interface.
+//
+// The output will be correct when the log file is shared between multiple
+// threads and/or multiple processes so long as the operating system
+// supports O_APPEND.  These calls have mutex-protected data structures
+// and so are NOT reentrant.  Do not use LOG in a signal handler.
+//
+#ifndef _LIBS_UTILS_LOG_H
+#define _LIBS_UTILS_LOG_H
 
-#endif /* LOG_HACK_H */
+#include <cutils/log.h>
+
+#endif // _LIBS_UTILS_LOG_H

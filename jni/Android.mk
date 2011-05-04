@@ -23,20 +23,22 @@ LOCAL_SRC_FILES:= \
 	info_guardianproject_database_sqlcipher_SQLiteDatabase.cpp \
 	info_guardianproject_database_sqlcipher_SQLiteProgram.cpp \
 	info_guardianproject_database_sqlcipher_SQLiteQuery.cpp \
-	info_guardianproject_database_sqlcipher_SQLiteStatement.cpp
+	info_guardianproject_database_sqlcipher_SQLiteStatement.cpp \
+	info_guardianproject_database_CursorWindow.cpp \
+	CursorWindow.cpp
 #	info_guardianproject_database_sqlcipher_SQLiteDebug.cpp
 
 LOCAL_C_INCLUDES += \
 	$(JNI_H_INCLUDE) \
-	$(LOCAL_PATH)/include \
 	$(EXTERNAL_PATH)/sqlcipher \
-	$(EXTERNAL_PATH)/dalvik/libnativehelper/include \
-	$(EXTERNAL_PATH)/dalvik/libnativehelper/include/nativehelper \
 	$(EXTERNAL_PATH)/openssl/include \
 	$(EXTERNAL_PATH)/platform-frameworks-base/include \
 	$(EXTERNAL_PATH)/platform-frameworks-base/core/jni \
+	$(EXTERNAL_PATH)/android-sqlite/android \
+	$(EXTERNAL_PATH)/dalvik/libnativehelper/include \
+	$(EXTERNAL_PATH)/dalvik/libnativehelper/include/nativehelper \
 	$(EXTERNAL_PATH)/platform-system-core/include \
-	$(EXTERNAL_PATH)/android-sqlite/android
+	#$(LOCAL_PATH)/include \
 
 LOCAL_SHARED_LIBRARIES := \
 	libcrypto \

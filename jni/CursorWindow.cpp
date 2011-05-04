@@ -38,7 +38,7 @@ CursorWindow::CursorWindow(size_t maxSize) :
 {
 }
 
-bool CursorWindow::setMemory(const sp<IMemory>& memory)
+bool CursorWindow::setMemory(const android::sp<android::IMemory>& memory)
 {
     mMemory = memory;
     mData = (uint8_t *) memory->pointer();
@@ -60,10 +60,10 @@ bool CursorWindow::initBuffer(bool localOnly)
 {
     //TODO Use a non-memory dealer mmap region for localOnly
 
-    sp<MemoryHeapBase> heap;
-    heap = new MemoryHeapBase(mMaxSize, 0, "CursorWindow");
+    android::sp<android::MemoryHeapBase> heap;
+    heap = new android::MemoryHeapBase(mMaxSize, 0, "CursorWindow");
     if (heap != NULL) {
-        mMemory = new MemoryBase(heap, 0, mMaxSize);
+        mMemory = new android::MemoryBase(heap, 0, mMaxSize);
         if (mMemory != NULL) {
             mData = (uint8_t *) mMemory->pointer();
             if (mData) {
