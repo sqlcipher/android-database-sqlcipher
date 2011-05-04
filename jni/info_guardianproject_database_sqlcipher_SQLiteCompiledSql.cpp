@@ -131,4 +131,7 @@ int register_android_database_SQLiteCompiledSql(JNIEnv * env)
         "info/guardianproject/database/sqlcipher/SQLiteCompiledSql", sMethods, NELEM(sMethods));
 }
 
+
+
+
 } // namespace guardianproject

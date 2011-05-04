@@ -124,7 +124,7 @@ static JNINativeMethod sMethods[] =
     {"native_1x1_string", "()Ljava/lang/String;", (void *)native_1x1_string},
 };
 
-/*
+
 int register_android_database_SQLiteStatement(JNIEnv * env)
 {
     jclass clazz;
@@ -146,6 +146,6 @@ int register_android_database_SQLiteStatement(JNIEnv * env)
     return android::AndroidRuntime::registerNativeMethods(env,
         "info/guardianproject/database/sqlcipher/SQLiteStatement", sMethods, NELEM(sMethods));
 }
-*/
+
 
 } // namespace guardianproject

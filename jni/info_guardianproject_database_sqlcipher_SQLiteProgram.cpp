@@ -170,7 +170,6 @@ static JNINativeMethod sMethods[] =
     {"native_clear_bindings", "()V", (void *)native_clear_bindings},
 };
 
-/*
 int register_android_database_SQLiteProgram(JNIEnv * env)
 {
     jclass clazz;
@@ -192,6 +191,6 @@ int register_android_database_SQLiteProgram(JNIEnv * env)
     return android::AndroidRuntime::registerNativeMethods(env,
         "info/guardianproject/database/sqlcipher/SQLiteProgram", sMethods, NELEM(sMethods));
 }
-*/
+
 
 } // namespace guardianproject

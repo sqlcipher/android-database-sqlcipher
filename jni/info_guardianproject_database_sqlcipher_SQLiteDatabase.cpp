@@ -43,6 +43,7 @@
 #include <sys/ioctl.h>
 
 #include "sqlite3_exception.h"
+#include "sqlcipher_loading.h"
 
 #define UTF16_STORAGE 0
 #define INVALID_VERSION -1
@@ -51,7 +52,10 @@
 /* uncomment the next line to force-enable logging of all statements */
 // #define DB_LOG_STATEMENTS
 
+
+
 namespace guardianproject {
+
 
 enum {
     OPEN_READWRITE          = 0x00000000,
@@ -93,8 +97,12 @@ static void registerLoggingFunc(const char *path) {
     loggingFuncSet = true;
 }
 
+
+
+
+
 /* public native void dbopen(String path, int flags, String locale); */
-static void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
+void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
 {
     int err;
     sqlite3 * handle = NULL;
@@ -456,6 +464,7 @@ static JNINativeMethod sMethods[] =
     {"native_setLocale", "(Ljava/lang/String;I)V", (void *)native_setLocale},
     {"native_getDbLookaside", "()I", (void *)native_getDbLookaside},
     {"releaseMemory", "()I", (void *)native_releaseMemory},
+    
 };
 
 int register_android_database_SQLiteDatabase(JNIEnv *env)
@@ -476,6 +485,37 @@ int register_android_database_SQLiteDatabase(JNIEnv *env)
 
     return android::AndroidRuntime::registerNativeMethods(env, "info/guardianproject/database/sqlcipher/SQLiteDatabase", sMethods, NELEM(sMethods));
 }
+
+
+
+
+//this code is not executed 
+extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved) 
+{ 
+	JNIEnv *env;
+	//gJavaVM = vm;
+	LOGI("JNI_OnLoad called");
+	if (vm->GetEnv((void**) &env, JNI_VERSION_1_2) != JNI_OK) {
+	LOGE("Failed to get the environment using GetEnv()");
+	return -1;
+	}
+	
+	LOGI("JNI_OnLoad register methods ");
+	
+	register_android_database_SQLiteDatabase(env);
+	register_android_database_SQLiteCompiledSql(env);
+
+	register_android_database_SQLiteQuery(env);
+
+	register_android_database_SQLiteProgram(env);
+
+	register_android_database_SQLiteStatement(env);
+
+	//register_android_database_SQLiteDebug(env);
+	
+return JNI_VERSION_1_2;
+
+} 
 
 /* throw a SQLiteException with a message appropriate for the error in handle */
 void throw_sqlite3_exception(JNIEnv* env, sqlite3* handle) {

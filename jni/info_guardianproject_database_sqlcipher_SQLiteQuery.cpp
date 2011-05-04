@@ -34,11 +34,11 @@
 
 
 // From android_database_CursorWindow.cpp
-namespace android {
-    CursorWindow * get_window_from_object(JNIEnv * env, jobject javaWindow);
-}
+//namespace guardianproject {}
 
 namespace guardianproject {
+
+CursorWindow * get_window_from_object(JNIEnv * env, jobject javaWindow);
 
 sqlite3_stmt * compile(JNIEnv* env, jobject object,
                        sqlite3 * handle, jstring sqlString);
@@ -117,7 +117,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
     int numColumns;
     int retryCount;
     int boundParams;
-    android::CursorWindow * window;
+    CursorWindow * window;
     
     if (statement == NULL) {
         LOGE("Invalid statement in fillWindow()");
@@ -143,7 +143,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
     }
 
     // Get the native window
-    window = android::get_window_from_object(env, javaWindow);
+    window = get_window_from_object(env, javaWindow);
     if (!window) {
         LOGE("Invalid CursorWindow");
         jniThrowException(env, "java/lang/IllegalArgumentException",
@@ -181,7 +181,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
             // since it mey be possible for it to be relocated on a call to alloc() when
             // the field data is being allocated.
             {
-                android::field_slot_t * fieldDir = window->allocRow();
+                field_slot_t * fieldDir = window->allocRow();
                 if (!fieldDir) {
                     LOGE("Failed allocating fieldDir at startPos %d row %d", startPos, numRows);
                     return startPos + numRows + finish_program_and_get_row_count(statement) + 1;
@@ -216,7 +216,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
 
                     // This must be updated after the call to alloc(), since that
                     // may move the field around in the window
-                    android::field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
+                    field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
                     fieldSlot->type = FIELD_TYPE_STRING;
                     fieldSlot->data.buffer.offset = offset;
                     fieldSlot->data.buffer.size = size;
@@ -256,7 +256,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
 
                     // This must be updated after the call to alloc(), since that
                     // may move the field around in the window
-                    android::field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
+                    field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
                     fieldSlot->type = FIELD_TYPE_BLOB;
                     fieldSlot->data.buffer.offset = offset;
                     fieldSlot->data.buffer.size = size;
@@ -343,7 +343,7 @@ static JNINativeMethod sMethods[] =
     {"native_column_name", "(I)Ljava/lang/String;", (void *)native_column_name},
 };
 
-/*
+
 int register_android_database_SQLiteQuery(JNIEnv * env)
 {
     jclass clazz;
@@ -365,6 +365,6 @@ int register_android_database_SQLiteQuery(JNIEnv * env)
     return android::AndroidRuntime::registerNativeMethods(env,
         "info/guardianproject/database/sqlcipher/SQLiteQuery", sMethods, NELEM(sMethods));
 }
-*/
+
 
 } // namespace guardianproject
