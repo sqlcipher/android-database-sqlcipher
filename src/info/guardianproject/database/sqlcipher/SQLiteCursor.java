@@ -16,7 +16,15 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import info.guardianproject.database.*;
+import info.guardianproject.database.AbstractWindowedCursor;
+import info.guardianproject.database.CursorWindow;
+import info.guardianproject.database.DataSetObserver;
+import info.guardianproject.database.SQLException;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
@@ -26,11 +34,6 @@ import android.os.Process;
 import android.text.TextUtils;
 import android.util.Config;
 import android.util.Log;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * A Cursor implementation that exposes results from a query on a

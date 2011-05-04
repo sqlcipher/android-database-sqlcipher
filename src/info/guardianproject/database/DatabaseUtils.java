@@ -16,23 +16,32 @@
 
 package info.guardianproject.database;
 
-import org.apache.commons.codec.binary.Hex;
+import android.database.Cursor;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.OperationApplicationException;
-
-import info.guardianproject.database.sqlcipher.*;
-import android.os.Parcel;
-import android.text.TextUtils;
-import android.util.Config;
-import android.util.Log;
+import info.guardianproject.database.sqlcipher.SQLiteAbortException;
+import info.guardianproject.database.sqlcipher.SQLiteConstraintException;
+import info.guardianproject.database.sqlcipher.SQLiteDatabase;
+import info.guardianproject.database.sqlcipher.SQLiteDatabaseCorruptException;
+import info.guardianproject.database.sqlcipher.SQLiteDiskIOException;
+import info.guardianproject.database.sqlcipher.SQLiteException;
+import info.guardianproject.database.sqlcipher.SQLiteFullException;
+import info.guardianproject.database.sqlcipher.SQLiteProgram;
+import info.guardianproject.database.sqlcipher.SQLiteStatement;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.text.Collator;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.codec.binary.Hex;
+
+import android.content.ContentValues;
+import android.content.OperationApplicationException;
+import android.os.Parcel;
+import android.text.TextUtils;
+import android.util.Config;
+import android.util.Log;
 
 /**
  * Static utility methods for dealing with databases and {@link Cursor}s.

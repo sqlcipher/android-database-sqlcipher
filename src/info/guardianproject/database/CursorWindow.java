@@ -25,7 +25,7 @@ import android.os.Parcelable;
 /**
  * A buffer containing multiple cursor rows.
  */
-public class CursorWindow extends SQLiteClosable implements Parcelable {
+public class CursorWindow extends android.database.CursorWindow implements Parcelable {
     /** The pointer to the native window class */
     @SuppressWarnings("unused")
     private int nWindow;
@@ -38,6 +38,7 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
      * @param localWindow true if this window will be used in this process only
      */
     public CursorWindow(boolean localWindow) {
+    	super(localWindow);
         mStartPos = 0;
         native_init(localWindow);
     }
@@ -491,7 +492,7 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
     public static final Parcelable.Creator<CursorWindow> CREATOR
             = new Parcelable.Creator<CursorWindow>() {
         public CursorWindow createFromParcel(Parcel source) {
-            return new CursorWindow(source);
+            return new CursorWindow(source,0);
         }
 
         public CursorWindow[] newArray(int size) {
@@ -512,7 +513,10 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
         dest.writeInt(mStartPos);
     }
 
-    private CursorWindow(Parcel source) {
+    public CursorWindow(Parcel source,int foo) {
+    	
+    	super(true);
+    	
         IBinder nativeBinder = source.readStrongBinder();
         mStartPos = source.readInt();
 

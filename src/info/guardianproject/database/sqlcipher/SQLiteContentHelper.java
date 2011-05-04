@@ -20,6 +20,8 @@ import info.guardianproject.database.*;
 import android.content.res.AssetFileDescriptor;
 import android.os.MemoryFile;
 
+import android.database.Cursor;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 

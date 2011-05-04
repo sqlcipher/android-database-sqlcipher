@@ -27,7 +27,7 @@ import info.guardianproject.database.sqlcipher.SQLiteDatabase.CursorFactory;
 public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
     private String mEditTable; 
     private SQLiteDatabase mDatabase;
-    private Cursor mCursor;
+    private android.database.Cursor mCursor;
     private String mSql;
     private SQLiteQuery mQuery;
 
@@ -37,7 +37,7 @@ public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
         mSql = sql;
     }
 
-    public Cursor query(CursorFactory factory, String[] selectionArgs) {
+    public android.database.Cursor query(CursorFactory factory, String[] selectionArgs) {
         // Compile the query
         SQLiteQuery query = new SQLiteQuery(mDatabase, mSql, 0, selectionArgs);
 

@@ -16,6 +16,8 @@
 
 package info.guardianproject.database.sqlcipher;
 
+import java.io.File;
+
 import android.content.Context;
 import info.guardianproject.database.sqlcipher.SQLiteDatabase.CursorFactory;
 import android.util.Log;
@@ -97,7 +99,14 @@ public abstract class SQLiteOpenHelper {
                 
             } else {
                 String path = mContext.getDatabasePath(mName).getPath();
-                db = SQLiteDatabase.openDatabase(path, mFactory, SQLiteDatabase.OPEN_READWRITE);
+                
+                File dbPathFile = new File (path);
+                if (!dbPathFile.exists())
+                	dbPathFile.getParentFile().mkdirs();
+                
+                db = SQLiteDatabase.openOrCreateDatabase(path, mFactory);
+                
+             //   db = SQLiteDatabase.openDatabase(path,mFactory , SQLiteDatabase.OPEN_READWRITE);
 
                 //db = mContext.openOrCreateDatabase(mName, 0, mFactory);
             	

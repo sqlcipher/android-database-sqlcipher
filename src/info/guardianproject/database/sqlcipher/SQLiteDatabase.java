@@ -16,7 +16,7 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import info.guardianproject.database.Cursor;
+import android.database.Cursor;
 import info.guardianproject.database.DatabaseUtils;
 import info.guardianproject.database.SQLException;
 import info.guardianproject.database.sqlcipher.SQLiteDebug.DbStats;
@@ -67,6 +67,14 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
 
+    static
+    {
+  	  System.loadLibrary("stlport_shared");
+  	    System.loadLibrary("sqlcipher");
+  	    System.loadLibrary("sqlcipher_android");
+  	    System.loadLibrary("database_sqlcipher");
+    }
+    
     /**
      * Algorithms used in ON CONFLICT clause
      * http://www.sqlite.org/lang_conflict.html
@@ -1818,6 +1826,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
         dbopen(mPath, mFlags);
+        
         if (SQLiteDebug.DEBUG_SQL_CACHE) {
             mTimeOpened = getTime();
         }
