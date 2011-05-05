@@ -50,7 +50,8 @@ LOCAL_SHARED_LIBRARIES := \
 	libsqlite3_android
 
 LOCAL_CFLAGS += -U__APPLE__
-LOCAL_LDFLAGS += -L../obj/local/armeabi/ -L/tmp/foolibs/
+LOCAL_LDFLAGS += -L../obj/local/armeabi/ -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libutils_intermediates/LINKED/ -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libbinder_intermediates/LINKED/
+
 # libs from the NDK
 LOCAL_LDLIBS += -ldl -llog
 # libnativehelper and libandroid_runtime are included with Android but not the NDK
