@@ -6,6 +6,7 @@
 #	make -f Android.mk copy-libs-hack
 
 LOCAL_PATH := $(call my-dir)
+LOCAL_PRELINK_MODULE := false
 
 # how on earth to you make this damn Android build system run cmd line progs?!?!
 build-local-hack: sqlcipher/sqlite3.c ../obj/local/armeabi/libcrypto.so
@@ -23,9 +24,9 @@ sqlcipher/sqlite3.c:
 copy-libs-hack: build-local-hack
 	install -p -m644 openssl/libs/armeabi/*.so ../obj/local/armeabi/
 	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
-	install -p -m644 android-2.2/*.so ../obj/local/armeabi/
+##	install -p -m644 android-2.2/*.so ../obj/local/armeabi/
 
-project_ldflags:= -L../obj/local/armeabi/ -L/tmp/foolibs/
+project_ldflags:= -Llibs/armeabi/ -Landroid-2.3/
 
 #------------------------------------------------------------------------------#
 # libsqlite3
@@ -52,25 +53,24 @@ LOCAL_SRC_FILES := $(sqlcipher_files)
 
 include $(BUILD_SHARED_LIBRARY)
 
-
 #------------------------------------------------------------------------------#
 # libsqlcipher_android (our version of Android's libsqlite_android)
 
 # these are all files from various external git repos
 libsqlite3_android_local_src_files := \
-	android-sqlite/android/PhonebookIndex.cpp \
-	android-sqlite/android/PhoneNumberUtils.cpp \
-	android-sqlite/android/OldPhoneNumberUtils.cpp \
-	android-sqlite/android/PhoneticStringUtils.cpp \
 	android-sqlite/android/sqlite3_android.cpp
+#	android-sqlite/android/PhonebookIndex.cpp \
+#	android-sqlite/android/PhoneNumberUtils.cpp \
+#	android-sqlite/android/OldPhoneNumberUtils.cpp \
+#	android-sqlite/android/PhoneticStringUtils.cpp \
 #	android-sqlite/android/PhoneNumberUtilsTest.cpp \
-	android-sqlite/android/PhoneticStringUtilsTest.cpp \
+#	android-sqlite/android/PhoneticStringUtilsTest.cpp \
 
 include $(CLEAR_VARS)
 
 ## this might save us linking against the private android shared libraries like
 ## libnativehelper.so, libutils.so, libcutils.so, libicuuc, libicui18n.so
-LOCAL_ALLOW_UNDEFINED_SYMBOLS := true
+LOCAL_ALLOW_UNDEFINED_SYMBOLS := false
 
 # TODO this needs to depend on libsqlcipher being built, how to do that?
 
@@ -78,12 +78,14 @@ LOCAL_REQUIRED_MODULES += libsqlcipher
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags)
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/sqlcipher \
+	$(LOCAL_PATH)/include \
 	$(LOCAL_PATH)/icu4c/i18n \
 	$(LOCAL_PATH)/icu4c/common \
-	$(LOCAL_PATH)/platform-system-core/include \
-	$(LOCAL_PATH)/platform-frameworks-base/include
-LOCAL_LDFLAGS += $(project_ldflags)
-LOCAL_LDLIBS := -lsqlcipher -llog -licuuc -licui18n -lutils -lcutils -lnativehelper
+#	$(LOCAL_PATH)/platform-system-core/include \
+#	$(LOCAL_PATH)/platform-frameworks-base/include
+#LOCAL_LDFLAGS +=  $(project_ldflags)
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-2.3/ -L$(LOCAL_PATH)/libs/armeabi/
+LOCAL_LDLIBS := -lsqlcipher -llog -licuuc -licui18n -lutils -lcutils
 LOCAL_MODULE := libsqlcipher_android
 LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files)
 
