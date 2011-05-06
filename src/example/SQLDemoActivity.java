@@ -10,44 +10,24 @@ import android.util.Log;
 public class SQLDemoActivity extends Activity {
   EventDataSQLHelper eventsData;
 
-  /*
- 0x00000001 (NEEDED)                     Shared library: [libstlport_shared.so]
- 0x00000001 (NEEDED)                     Shared library: [libc.so]
- 0x00000001 (NEEDED)                     Shared library: [libstdc++.so]
- 0x00000001 (NEEDED)                     Shared library: [libm.so]
- 0x00000001 (NEEDED)                     Shared library: [libsqlcipher.so]
- 0x00000001 (NEEDED)                     Shared library: [liblog.so]
- 0x00000001 (NEEDED)                     Shared library: [libdl.s	  
-   */
 
   
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    
+    //you must set Context on SQLiteDatabase first
+    SQLiteDatabase.loadLibs(this);
 
- //   System.loadLibrary("nativehelper");
- //   System.loadLibrary("android_runtime");
+    String password = "foo123";
 
-  //  System.loadLibrary("crypto");
-  //  System.loadLibrary("ssl");
-
-    /*
-    System.loadLibrary("icudata");
-    System.loadLibrary("icui18n");
-    System.loadLibrary("icuuc"); 
-    */
- 
-   
-    /*
-    System.loadLibrary("lib/libstlport_shared.so");
-    System.loadLibrary("lib/libsqlcipher.so");
-    System.loadLibrary("lib/libdatabase_sqlcipher.so");
-    System.loadLibrary("lib/libsqlcipher_android.so");
-*/
-
+    //then you can open the database using a password
+    SQLiteDatabase db = eventsData.getWritableDatabase(password);
+    db.close();
+    
     eventsData = new EventDataSQLHelper(this);
-    addEvent("Hello Android Event");
-    Cursor cursor = getEvents();
+    addEvent("Hello Android Event", password);
+    Cursor cursor = getEvents(password);
     showEvents(cursor);
   }
   
@@ -56,9 +36,8 @@ public class SQLDemoActivity extends Activity {
     eventsData.close();
   }
 
-  private void addEvent(String title) {
-    SQLiteDatabase db = eventsData.getWritableDatabase();
-    
+  private void addEvent(String title, String password) {
+    SQLiteDatabase db = eventsData.getWritableDatabase(password);
     
     ContentValues values = new ContentValues();
     values.put(EventDataSQLHelper.TIME, System.currentTimeMillis());
@@ -67,8 +46,11 @@ public class SQLDemoActivity extends Activity {
 
   }
 
-  private Cursor getEvents() {
-    SQLiteDatabase db = eventsData.getReadableDatabase();
+  private Cursor getEvents(String password) {
+    SQLiteDatabase db = eventsData.getReadableDatabase(password);
+    
+
+    
     Cursor cursor = db.query(EventDataSQLHelper.TABLE, null, null, null, null,
         null, null);
     

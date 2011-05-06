@@ -16,12 +16,16 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import android.database.Cursor;
 import info.guardianproject.database.DatabaseUtils;
 import info.guardianproject.database.SQLException;
 import info.guardianproject.database.sqlcipher.SQLiteDebug.DbStats;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,16 +40,18 @@ import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import com.google.common.collect.Maps;
-
 import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.os.Debug;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Config;
-import android.util.EventLog;
 import android.util.Log;
 import android.util.Pair;
+
+import com.google.common.collect.Maps;
 
 /**
  * Exposes methods to manage a SQLite database.
@@ -67,12 +73,52 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
 
-    static
+    public static void loadLibs (Context context)
     {
-  	  System.loadLibrary("stlport_shared");
-  	    System.loadLibrary("sqlcipher");
-  	    System.loadLibrary("sqlcipher_android");
-  	    System.loadLibrary("database_sqlcipher");
+    	
+  	  	System.loadLibrary("stlport_shared");
+  	  
+	    System.loadLibrary("sqlcipher");
+	
+	    String soFileName = "libsqlcipher_android";
+	    
+	    File baseFile = context.getFilesDir();
+	    
+	    File soFile = new File(baseFile,soFileName + ".so");
+	    
+	    boolean soLoaded = soFile.exists();
+	    
+	    if (!soLoaded)
+	    {
+	    	File libFile = new File(baseFile.getParent(),"lib");
+	    	File soSrcFile = new File(libFile,soFileName + "-" +  android.os.Build.VERSION.SDK_INT + ".so");
+	    
+	    	try
+	    	{
+		    	 InputStream in = new FileInputStream(soSrcFile);
+		    	 
+		    	 soFile.getParentFile().mkdirs();
+		        OutputStream out = new FileOutputStream(soFile);
+	
+		        // Transfer bytes from in to out
+		        byte[] buf = new byte[1024];
+		        int len;
+		        while ((len = in.read(buf)) > 0) {
+		            out.write(buf, 0, len);
+		        }
+		        in.close();
+		        out.close();
+	    	}
+	    	catch (IOException ioe)
+	    	{
+	    		
+	    	}
+	    	
+	    }
+	    	    
+	    System.load(soFile.getAbsolutePath());
+	    
+		System.loadLibrary("database_sqlcipher");
     }
     
     /**
@@ -355,7 +401,7 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     /* package */ void onCorruption() {
         Log.e(TAG, "Removing corrupt database: " + mPath);
-        EventLog.writeEvent(EVENT_DB_CORRUPT, mPath);
+    //    EventLog.writeEvent(EVENT_DB_CORRUPT, mPath);
         try {
             // Close the database (if we can), which will cause subsequent operations to fail.
             close();
@@ -817,11 +863,11 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @return the newly opened database
      * @throws SQLiteException if the database cannot be opened
      */
-    public static SQLiteDatabase openDatabase(String path, CursorFactory factory, int flags) {
+    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
         SQLiteDatabase sqliteDatabase = null;
         try {
             // Open the database.
-            sqliteDatabase = new SQLiteDatabase(path, factory, flags);
+            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags);
             if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
                 sqliteDatabase.enableSqlTracing(path);
             }
@@ -837,7 +883,7 @@ public class SQLiteDatabase extends SQLiteClosable {
                 // delete is only for non-memory database files
                 new File(path).delete();
             }
-            sqliteDatabase = new SQLiteDatabase(path, factory, flags);
+            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags);
         }
         ActiveDatabases.getInstance().mActiveDatabases.add(
                 new WeakReference<SQLiteDatabase>(sqliteDatabase));
@@ -847,15 +893,15 @@ public class SQLiteDatabase extends SQLiteClosable {
     /**
      * Equivalent to openDatabase(file.getPath(), factory, CREATE_IF_NECESSARY).
      */
-    public static SQLiteDatabase openOrCreateDatabase(File file, CursorFactory factory) {
-        return openOrCreateDatabase(file.getPath(), factory);
+    public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory) {
+        return openOrCreateDatabase(file.getPath(), password, factory);
     }
 
     /**
      * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY).
      */
-    public static SQLiteDatabase openOrCreateDatabase(String path, CursorFactory factory) {
-        return openDatabase(path, factory, CREATE_IF_NECESSARY);
+    public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory) {
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY);
     }
 
     /**
@@ -869,9 +915,9 @@ public class SQLiteDatabase extends SQLiteClosable {
      *            cursor when query is called
      * @return a SQLiteDatabase object, or null if the database can't be created
      */
-    public static SQLiteDatabase create(CursorFactory factory) {
+    public static SQLiteDatabase create(CursorFactory factory, String password) {
         // This is a magic string with special meaning for SQLite.
-        return openDatabase(":memory:", factory, CREATE_IF_NECESSARY);
+        return openDatabase(":memory:", password, factory, CREATE_IF_NECESSARY);
     }
 
     /**
@@ -1816,7 +1862,9 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param flags 0 or {@link #NO_LOCALIZED_COLLATORS}.  If the database file already
      *              exists, mFlags will be updated appropriately.
      */
-    public SQLiteDatabase(String path, CursorFactory factory, int flags) {
+    public SQLiteDatabase(String path, String password, CursorFactory factory, int flags) {
+    	
+    	
         if (path == null) {
             throw new IllegalArgumentException("path should not be null");
         }
@@ -1826,6 +1874,8 @@ public class SQLiteDatabase extends SQLiteClosable {
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
         dbopen(mPath, mFlags);
+        
+        execSQL("PRAGMA key = '" + password + "'");
         
         if (SQLiteDebug.DEBUG_SQL_CACHE) {
             mTimeOpened = getTime();
@@ -1926,13 +1976,14 @@ public class SQLiteDatabase extends SQLiteClosable {
         String blockingPackage = "unknown";//ActivityThread.currentPackageName();
         if (blockingPackage == null) blockingPackage = "";
 
+        /*
         EventLog.writeEvent(
             EVENT_DB_OPERATION,
             getPathForLogs(),
             sql,
             durationMillis,
             blockingPackage,
-            samplePercent);
+            samplePercent);*/
     }
 
     /**
