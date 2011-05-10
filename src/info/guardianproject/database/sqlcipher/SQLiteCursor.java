@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
+import android.database.CrossProcessCursor;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -42,7 +43,7 @@ import android.util.Log;
  * SQLiteCursor is not internally synchronized so code using a SQLiteCursor from multiple
  * threads should perform its own synchronization when using the SQLiteCursor.
  */
-public class SQLiteCursor extends AbstractWindowedCursor {
+public class SQLiteCursor extends AbstractWindowedCursor implements CrossProcessCursor {
     static final String TAG = "Cursor";
     static final int NO_COUNT = -1;
 
@@ -608,14 +609,14 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 
 	@Override
 	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-		// TODO Auto-generated method stub
+		
 		
 	}
 
 	@Override
 	public void registerContentObserver(ContentObserver observer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -637,5 +638,21 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void fillWindow(int startPos, android.database.CursorWindow window) {
+	
+		
+		window.setStartPosition(startPos);
+        mCount = mQuery.fillWindow((info.guardianproject.database.CursorWindow)window, mInitialRead, 0);
+        // return -1 means not finished
+        if (mCount == NO_COUNT){
+            mCount = startPos + mInitialRead;
+            Thread t = new Thread(new QueryThread(mCursorState), "query thread");
+            t.start();
+        } 
+		
+	}
+
 
 }
