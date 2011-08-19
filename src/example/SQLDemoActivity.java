@@ -21,14 +21,17 @@ public class SQLDemoActivity extends Activity {
 
     String password = "foo123";
 
+    eventsData = new EventDataSQLHelper(this);
+    
     //then you can open the database using a password
     SQLiteDatabase db = eventsData.getWritableDatabase(password);
-    db.close();
     
-    eventsData = new EventDataSQLHelper(this);
     addEvent("Hello Android Event", password);
     Cursor cursor = getEvents(password);
     showEvents(cursor);
+    
+    db.close();
+
   }
   
   @Override

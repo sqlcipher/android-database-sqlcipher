@@ -76,13 +76,17 @@ public class SQLiteDatabase extends SQLiteClosable {
     public static void loadLibs (Context context)
     {
     	
+    	File baseFile = context.getFilesDir();
+	    
+    	File libFile = new File(baseFile.getParent(),"lib");
+    	
+
   	  	System.loadLibrary("stlport_shared");
   	  
 	    System.loadLibrary("sqlcipher");
 	
 	    String soFileName = "libsqlcipher_android";
 	    
-	    File baseFile = context.getFilesDir();
 	    
 	    File soFile = new File(baseFile,soFileName + ".so");
 	    
@@ -90,7 +94,7 @@ public class SQLiteDatabase extends SQLiteClosable {
 	    
 	    if (!soLoaded)
 	    {
-	    	File libFile = new File(baseFile.getParent(),"lib");
+	    	libFile = new File(baseFile.getParent(),"lib");
 	    	File soSrcFile = new File(libFile,soFileName + "-" +  android.os.Build.VERSION.SDK_INT + ".so");
 	    
 	    	try
