@@ -36,10 +36,7 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <string.h>
-#include <netdb.h>
 #include <sys/ioctl.h>
 
 #include "sqlite3_exception.h"
@@ -173,6 +170,8 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
         goto done;
     }
 
+    sqlite3_enable_load_extension(handle, 1);
+    
     LOGV("Opened '%s' - %p\n", path8, handle);
     env->SetIntField(object, offset_db_handle, (int) handle);
     handle = NULL;  // The caller owns the handle now.

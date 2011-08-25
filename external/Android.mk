@@ -12,7 +12,7 @@ LOCAL_PRELINK_MODULE := false
 build-local-hack: sqlcipher/sqlite3.c ../obj/local/armeabi/libcrypto.so
 
 sqlcipher/sqlite3.c:
-	cd sqlcipher && ./configure
+	cd sqlcipher && ./configure --enable-tempstore=yes CFLAGS="-DSQL_HAS_CODEC" LDFLAGS="-lcrypto"
 	make -C sqlcipher sqlite3.c
 
 # TODO include this Android.mk to integrate this into the build
@@ -35,7 +35,7 @@ project_ldflags:= -Llibs/armeabi/ -Landroid-2.3/
 #   SQLITE_TEMP_STORE=3 causes all TEMP files to go into RAM. and thats the behavior we want
 #   SQLITE_ENABLE_FTS3   enables usage of FTS3 - NOT FTS1 or 2.
 #   SQLITE_DEFAULT_AUTOVACUUM=1  causes the databases to be subject to auto-vacuum
-android_sqlite_cflags :=  -DHAVE_USLEEP=1 -DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 -DSQLITE_THREADSAFE=1 -DNDEBUG=1 -DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 -DSQLITE_DEFAULT_AUTOVACUUM=1 -DSQLITE_TEMP_STORE=3 -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_BACKWARDS
+android_sqlite_cflags :=  -DHAVE_USLEEP=1 -DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 -DSQLITE_THREADSAFE=1 -DNDEBUG=1 -DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 -DSQLITE_DEFAULT_AUTOVACUUM=1 -DSQLITE_TEMP_STORE=3 -DSQLITE_ENABLE_FTS3 -DSQLITE_ENABLE_FTS3_BACKWARDS -DSQLITE_ENABLE_LOAD_EXTENSION
 
 sqlcipher_files := \
 	sqlcipher/sqlite3.c
@@ -58,11 +58,11 @@ include $(BUILD_SHARED_LIBRARY)
 
 # these are all files from various external git repos
 libsqlite3_android_local_src_files := \
-	android-sqlite/android/sqlite3_android.cpp
-#	android-sqlite/android/PhonebookIndex.cpp \
-#	android-sqlite/android/PhoneNumberUtils.cpp \
-#	android-sqlite/android/OldPhoneNumberUtils.cpp \
-#	android-sqlite/android/PhoneticStringUtils.cpp \
+	android-sqlite/android/sqlite3_android.cpp \
+	android-sqlite/android/PhonebookIndex.cpp \
+	android-sqlite/android/PhoneNumberUtils.cpp \
+	android-sqlite/android/OldPhoneNumberUtils.cpp \
+	android-sqlite/android/PhoneticStringUtils.cpp \
 #	android-sqlite/android/PhoneNumberUtilsTest.cpp \
 #	android-sqlite/android/PhoneticStringUtilsTest.cpp \
 
@@ -81,8 +81,8 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/include \
 	$(LOCAL_PATH)/icu4c/i18n \
 	$(LOCAL_PATH)/icu4c/common \
-#	$(LOCAL_PATH)/platform-system-core/include \
-#	$(LOCAL_PATH)/platform-frameworks-base/include
+	$(LOCAL_PATH)/platform-system-core/include \
+	$(LOCAL_PATH)/platform-frameworks-base/include
 #LOCAL_LDFLAGS +=  $(project_ldflags)
 LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-2.3/ -L$(LOCAL_PATH)/libs/armeabi/
 LOCAL_LDLIBS := -lsqlcipher -llog -licuuc -licui18n -lutils -lcutils
