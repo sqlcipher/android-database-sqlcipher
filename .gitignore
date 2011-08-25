@@ -2,3 +2,4 @@ TAGS
 external/libs
 jni/libs
 obj/
+.DS_Store
