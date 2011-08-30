@@ -18,7 +18,8 @@ package info.guardianproject.database;
 
 import java.util.ArrayList;
 
-import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
+import android.database.DataSetObserver;
 
 
 /**
@@ -280,29 +281,7 @@ public class MatrixCursor extends AbstractCursor {
     }
 
 
-	@Override
-	public void registerContentObserver(ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void registerDataSetObserver(DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterContentObserver(ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterDataSetObserver(DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 	@Override
 	public void copyStringToBuffer(int columnIndex,
@@ -311,31 +290,5 @@ public class MatrixCursor extends AbstractCursor {
 		
 	}
 
-	@Override
-	public void registerContentObserver(
-			android.database.ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void registerDataSetObserver(
-			android.database.DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterContentObserver(
-			android.database.ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterDataSetObserver(
-			android.database.DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 }

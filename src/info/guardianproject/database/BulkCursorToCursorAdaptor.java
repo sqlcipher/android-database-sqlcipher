@@ -18,12 +18,11 @@ package info.guardianproject.database;
 
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
+import android.database.CursorWindow;
 import android.database.DataSetObserver;
-import android.os.RemoteException;
 import android.os.Bundle;
+import android.os.RemoteException;
 import android.util.Log;
-
-import java.util.Map;
 
 /**
  * Adapts an {@link IBulkCursor} to a {@link Cursor} for use in the local
@@ -89,7 +88,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
         if (mObserverBridge == null) {
             mObserverBridge = new SelfContentObserver(this);
         }
-        return mObserverBridge.getContentObserver();
+        return null;//mObserverBridge.getContentObserver();
     }
 
     @Override
@@ -181,6 +180,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
      * @hide
      * @deprecated
      */
+    /*
     @Override
     public boolean deleteRow() {
         try {
@@ -207,7 +207,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
             Log.e(TAG, "Unable to delete row because the remote process is dead");
             return false;
         }
-    }
+    }*/
 
     @Override
     public String[] getColumnNames() {
@@ -225,7 +225,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
     /**
      * @hide
      * @deprecated
-     */
+     *//*
     @Override
     public boolean commitUpdates(Map<? extends Long,
             ? extends Map<String,Object>> additionalValues) {
@@ -258,7 +258,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
                 return false;
             }
         }
-    }
+    }*/
 
     @Override
     public Bundle getExtras() {
@@ -313,6 +313,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
 		// TODO Auto-generated method stub
 		
 	}
+
 
 
 }

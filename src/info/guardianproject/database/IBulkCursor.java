@@ -16,12 +16,13 @@
 
 package info.guardianproject.database;
 
-import android.os.RemoteException;
+import java.util.Map;
+
+import android.database.CursorWindow;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IInterface;
-import android.os.Bundle;
-
-import java.util.Map;
+import android.os.RemoteException;
 
 /**
  * This interface provides a low-level way to pass bulk cursor data across

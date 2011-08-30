@@ -16,12 +16,13 @@
 
 package info.guardianproject.database;
 
+import java.util.Map;
+
 import android.content.ContentResolver;
-import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
+import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
-
-import java.util.Map;
 
 /**
  * Wrapper class for Cursor that delegates all calls to the actual cursor object
@@ -196,14 +197,6 @@ public class CursorWrapper implements Cursor {
         return mCursor.moveToPrevious();
     }
 
-    public void registerContentObserver(ContentObserver observer) {
-        mCursor.registerContentObserver(observer);   
-    }
-
-    public void registerDataSetObserver(DataSetObserver observer) {
-        mCursor.registerDataSetObserver(observer);   
-    }
-
     public boolean requery() {
         return mCursor.requery();
     }
@@ -222,14 +215,6 @@ public class CursorWrapper implements Cursor {
      */
     public boolean supportsUpdates() {
         return mCursor.supportsUpdates();
-    }
-
-    public void unregisterContentObserver(ContentObserver observer) {
-        mCursor.unregisterContentObserver(observer);        
-    }
-
-    public void unregisterDataSetObserver(DataSetObserver observer) {
-        mCursor.unregisterDataSetObserver(observer);
     }
 
     /**

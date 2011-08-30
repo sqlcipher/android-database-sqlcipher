@@ -16,14 +16,15 @@
 
 package info.guardianproject.database;
 
-import android.os.Binder;
-import android.os.RemoteException;
-import android.os.IBinder;
-import android.os.Parcel;
-import android.os.Bundle;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import android.database.CursorWindow;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
 
 /**
  * Native implementation of the bulk cursor. This is only for use in implementing

@@ -43,7 +43,7 @@ public interface SQLiteCursorDriver {
      * 
      * @return The new count value.
      */
-    void cursorRequeried(Cursor cursor);
+    void cursorRequeried(android.database.Cursor cursor);
 
     /**
      * Called by a SQLiteCursor when it it closed to destroy this object as well.

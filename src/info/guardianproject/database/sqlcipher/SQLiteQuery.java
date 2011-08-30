@@ -15,8 +15,7 @@
  */
 
 package info.guardianproject.database.sqlcipher;
-import info.guardianproject.database.*;
-
+import android.database.CursorWindow;
 import android.os.SystemClock;
 import android.util.Log;
 
@@ -58,7 +57,8 @@ public class SQLiteQuery extends SQLiteProgram {
      * @param window The window to fill into
      * @return number of total rows in the query
      */
-    /* package */ int fillWindow(CursorWindow window,
+    /* package */    
+    int fillWindow(CursorWindow window,
             int maxRead, int lastPos) {
         long timeStart = SystemClock.uptimeMillis();
         mDatabase.lock();
@@ -185,9 +185,11 @@ public class SQLiteQuery extends SQLiteProgram {
         if (!mClosed) super.bindString(index, value);
     }
 
+    
     private final native int native_fill_window(CursorWindow window, 
             int startPos, int offsetParam, int maxRead, int lastPos);
 
+    
     private final native int native_column_count();
 
     private final native String native_column_name(int columnIndex);

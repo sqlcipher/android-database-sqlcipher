@@ -16,7 +16,8 @@
 
 package info.guardianproject.database;
 
-import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
+import android.database.DataSetObserver;
 
 
 
@@ -262,40 +263,7 @@ public class MergeCursor extends AbstractCursor
     private Cursor[] mCursors;
 
 
-	@Override
-	public void registerContentObserver(
-			android.database.ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void registerDataSetObserver(
-			android.database.DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterContentObserver(
-			android.database.ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterDataSetObserver(
-			android.database.DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void copyStringToBuffer(int columnIndex,
-			android.database.CharArrayBuffer buffer) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 	

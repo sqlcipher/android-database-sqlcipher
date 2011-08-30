@@ -106,9 +106,6 @@ public abstract class SQLiteOpenHelper {
                 
                 db = SQLiteDatabase.openOrCreateDatabase(path, password, mFactory);
                 
-             //   db = SQLiteDatabase.openDatabase(path,mFactory , SQLiteDatabase.OPEN_READWRITE);
-
-                //db = mContext.openOrCreateDatabase(mName, 0, mFactory);
             	
             }
             
