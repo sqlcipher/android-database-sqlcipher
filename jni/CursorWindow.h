@@ -62,7 +62,7 @@
 // When defined to true numberic values are stored inline in the field_slot_t, otherwise they're allocated in the window
 #define WINDOW_STORAGE_INLINE_NUMERICS 1
 
-namespace guardianproject {
+namespace android {
 
 typedef struct
 {

@@ -31,7 +31,7 @@
 #include "CursorWindow.h"
 
 
-namespace guardianproject {
+namespace android {
 
 CursorWindow::CursorWindow(size_t maxSize) :
     mMaxSize(maxSize)
