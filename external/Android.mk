@@ -58,11 +58,11 @@ include $(BUILD_SHARED_LIBRARY)
 
 # these are all files from various external git repos
 libsqlite3_android_local_src_files := \
-	android-sqlite/android/sqlite3_android.cpp
-#	android-sqlite/android/PhonebookIndex.cpp \
-#	android-sqlite/android/PhoneNumberUtils.cpp \
-#	android-sqlite/android/OldPhoneNumberUtils.cpp \
-#	android-sqlite/android/PhoneticStringUtils.cpp \
+	android-sqlite/android/sqlite3_android.cpp \
+	android-sqlite/android/PhonebookIndex.cpp \
+	android-sqlite/android/PhoneNumberUtils.cpp \
+	android-sqlite/android/OldPhoneNumberUtils.cpp \
+	android-sqlite/android/PhoneticStringUtils.cpp \
 #	android-sqlite/android/PhoneNumberUtilsTest.cpp \
 #	android-sqlite/android/PhoneticStringUtilsTest.cpp \
 
@@ -81,8 +81,8 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/include \
 	$(LOCAL_PATH)/icu4c/i18n \
 	$(LOCAL_PATH)/icu4c/common \
-#	$(LOCAL_PATH)/platform-system-core/include \
-#	$(LOCAL_PATH)/platform-frameworks-base/include
+	$(LOCAL_PATH)/platform-system-core/include \
+	$(LOCAL_PATH)/platform-frameworks-base/include
 #LOCAL_LDFLAGS +=  $(project_ldflags)
 LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-2.3/ -L$(LOCAL_PATH)/libs/armeabi/
 LOCAL_LDLIBS := -lsqlcipher -llog -licuuc -licui18n -lutils -lcutils
