@@ -6,16 +6,19 @@
 	url = git@github.com:guardianproject/sqlcipher-android.git
 [submodule "external/dalvik"]
 	path = external/dalvik
-	url = git://android.git.kernel.org/platform/dalvik.git
+	url = git://github.com/android/platform_dalvik.git
 [submodule "external/android-sqlite"]
 	path = external/android-sqlite
-	url = git://android.git.kernel.org/platform/external/sqlite.git
+	url = git://github.com/android/platform_external_sqlite.git
 [submodule "external/platform-system-core"]
 	path = external/platform-system-core
-	url = git://android.git.kernel.org/platform/system/core.git
+	url = git://github.com/android/platform_system_core.git
 [submodule "external/platform-frameworks-base"]
 	path = external/platform-frameworks-base
-	url = git://android.git.kernel.org/platform/frameworks/base.git
+	url = git://github.com/android/platform_frameworks_base.git
 [submodule "external/icu4c"]
 	path = external/icu4c
-	url = git://android.git.kernel.org/platform/external/icu4c.git
+	url = git://github.com/android/platform_external_icu4c.git
+[submodule "notepadbot"]
+	path = dist/SQLCipherForAndroid-SDK/samples/notepadbot
+	url = git://github.com/guardianproject/notepadbot.git
