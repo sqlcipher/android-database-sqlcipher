@@ -19,3 +19,6 @@
 [submodule "external/icu4c"]
 	path = external/icu4c
 	url = git://android.git.kernel.org/platform/external/icu4c.git
+[submodule "notepadbot"]
+  path = dist/SQLCipherForAndroid-SDK/samples/notepadbot
+  url = git://github.com/guardianproject/notepadbot.git
