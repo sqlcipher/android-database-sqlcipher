@@ -26,7 +26,7 @@ copy-libs-hack: build-local-hack
 	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
 ##	install -p -m644 android-2.2/*.so ../obj/local/armeabi/
 
-project_ldflags:= -Llibs/armeabi/ -Landroid-2.3/
+project_ldflags:= -Llibs/armeabi/ -Landroid-2.1/
 
 #------------------------------------------------------------------------------#
 # libsqlite3
@@ -51,7 +51,7 @@ LOCAL_LDLIBS += -lcrypto
 LOCAL_MODULE    := libsqlcipher
 LOCAL_SRC_FILES := $(sqlcipher_files)
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 #------------------------------------------------------------------------------#
 # libsqlcipher_android (our version of Android's libsqlite_android)
@@ -63,6 +63,7 @@ libsqlite3_android_local_src_files := \
 	android-sqlite/android/PhoneNumberUtils.cpp \
 	android-sqlite/android/OldPhoneNumberUtils.cpp \
 	android-sqlite/android/PhoneticStringUtils.cpp \
+	platform-frameworks-base/libs/utils/String8.cpp
 #	android-sqlite/android/PhoneNumberUtilsTest.cpp \
 #	android-sqlite/android/PhoneticStringUtilsTest.cpp \
 
@@ -73,9 +74,11 @@ include $(CLEAR_VARS)
 LOCAL_ALLOW_UNDEFINED_SYMBOLS := false
 
 # TODO this needs to depend on libsqlcipher being built, how to do that?
+#LOCAL_REQUIRED_MODULES += libsqlcipher libicui18n libicuuc 
+LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc
 
-LOCAL_REQUIRED_MODULES += libsqlcipher
-LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags)
+LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) -DOS_PATH_SEPARATOR="'/'"
+
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/sqlcipher \
 	$(LOCAL_PATH)/include \
@@ -83,10 +86,13 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/icu4c/common \
 	$(LOCAL_PATH)/platform-system-core/include \
 	$(LOCAL_PATH)/platform-frameworks-base/include
-#LOCAL_LDFLAGS +=  $(project_ldflags)
-LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-2.3/ -L$(LOCAL_PATH)/libs/armeabi/
-LOCAL_LDLIBS := -lsqlcipher -llog -licuuc -licui18n -lutils -lcutils
+
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-2.1/ -L$(LOCAL_PATH)/libs/armeabi/
+LOCAL_LDLIBS := -llog -lutils -lcutils -lcrypto
 LOCAL_MODULE := libsqlcipher_android
+LOCAL_MODULE_FILENAME := libsqlcipher_android
 LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files)
 
 include $(BUILD_SHARED_LIBRARY)
+
+include $(LOCAL_PATH)/icu4c/Android.mk

@@ -8,7 +8,7 @@ else
 	LOCAL_CFLAGS += -DPACKED=""
 endif
 
-TARGET_PLATFORM := android-8
+#TARGET_PLATFORM := android-8
 
 ifeq ($(WITH_JIT),true)
 	LOCAL_CFLAGS += -DWITH_JIT
@@ -50,7 +50,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libsqlite3_android
 
 LOCAL_CFLAGS += -U__APPLE__
-LOCAL_LDFLAGS += -L../external/android-2.2/ -L../external/libs/armeabi/
+LOCAL_LDFLAGS += -L../external/android-2.3/ -L../external/libs/armeabi/
 LOCAL_LDFLAGS += -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libutils_intermediates/LINKED/ -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libbinder_intermediates/LINKED/ -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libandroid_runtime_intermediates/LINKED/
 
 # libs from the NDK
@@ -58,7 +58,9 @@ LOCAL_LDLIBS += -ldl -llog
 # libnativehelper and libandroid_runtime are included with Android but not the NDK
 LOCAL_LDLIBS += -lnativehelper -landroid_runtime -lutils -lbinder
 # these are build in the ../external section
-LOCAL_LDLIBS += -lsqlcipher -lsqlcipher_android
+
+#LOCAL_REQUIRED_MODULES += libsqlcipher libicuuc libicui18n
+LOCAL_LDLIBS += -lsqlcipher_android
 
 ifeq ($(WITH_MALLOC_LEAK_CHECK),true)
 	LOCAL_CFLAGS += -DMALLOC_LEAK_CHECK

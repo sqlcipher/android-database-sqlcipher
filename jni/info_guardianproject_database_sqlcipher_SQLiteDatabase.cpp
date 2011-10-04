@@ -94,8 +94,13 @@ static void registerLoggingFunc(const char *path) {
     loggingFuncSet = true;
 }
 
-
-
+/* public native void setICURoot(String path); */
+void setICURoot(JNIEnv* env, jobject object, jstring ICURoot)
+{
+  char const * ICURootPath = env->GetStringUTFChars(ICURoot, NULL);
+  setenv("SQLCIPHER_ICU_PREFIX", ICURootPath, 1);
+  env->ReleaseStringUTFChars(ICURoot, ICURootPath);
+}
 
 
 /* public native void dbopen(String path, int flags, String locale); */
@@ -463,7 +468,7 @@ static JNINativeMethod sMethods[] =
     {"native_setLocale", "(Ljava/lang/String;I)V", (void *)native_setLocale},
     {"native_getDbLookaside", "()I", (void *)native_getDbLookaside},
     {"releaseMemory", "()I", (void *)native_releaseMemory},
-    
+    {"setICURoot", "(Ljava/lang/String;)V", (void *)setICURoot},
 };
 
 int register_android_database_SQLiteDatabase(JNIEnv *env)
