@@ -16,6 +16,7 @@
 
 package info.guardianproject.database.sqlcipher;
 
+import info.guardianproject.database.CrossProcessCursorWrapper;
 import info.guardianproject.database.DatabaseUtils;
 import info.guardianproject.database.SQLException;
 import info.guardianproject.database.sqlcipher.SQLiteDebug.DbStats;
@@ -1418,7 +1419,7 @@ public class SQLiteDatabase extends SQLiteClosable {
                 }
             }
         }
-        return cursor;
+        return new CrossProcessCursorWrapper(cursor);
     }
 
     /**
