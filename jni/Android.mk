@@ -1,6 +1,7 @@
-LOCAL_PATH:= $(call my-dir)
+uOCAL_PATH:= $(call my-dir)
 
 EXTERNAL_PATH := ../external
+
 
 ifeq ($(TARGET_ARCH), arm)
 	LOCAL_CFLAGS += -DPACKED="__attribute__ ((packed))"
@@ -21,14 +22,13 @@ endif
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-	CursorWindow.cpp \
+	info_guardianproject_database_sqlcipher_SQLiteCompiledSql.cpp \
 	info_guardianproject_database_sqlcipher_SQLiteDatabase.cpp \
 	info_guardianproject_database_sqlcipher_SQLiteProgram.cpp \
 	info_guardianproject_database_sqlcipher_SQLiteQuery.cpp \
 	info_guardianproject_database_sqlcipher_SQLiteStatement.cpp \
-	info_guardianproject_database_sqlcipher_SQLiteCompiledSql.cpp
-	#android_database_CursorWindow.cpp \
-	#info_guardianproject_database_CursorWindow.cpp \
+	info_guardianproject_database_CursorWindow.cpp \
+	CursorWindow.cpp
 #	info_guardianproject_database_sqlcipher_SQLiteDebug.cpp
 
 LOCAL_C_INCLUDES += \
