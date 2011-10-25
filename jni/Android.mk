@@ -1,4 +1,4 @@
-uOCAL_PATH:= $(call my-dir)
+LOCAL_PATH:= $(call my-dir)
 
 EXTERNAL_PATH := ../external
 
