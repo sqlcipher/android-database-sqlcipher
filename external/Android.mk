@@ -19,6 +19,7 @@ sqlcipher/sqlite3.c:
 # TODO include this Android.mk to integrate this into the build
 ../obj/local/armeabi/libcrypto.so:
 	cd openssl && ndk-build -j4
+	mkdir -p ../obj/local/armeabi
 	install -p openssl/libs/armeabi/libcrypto.so openssl/libs/armeabi/libssl.so \
 		 ../obj/local/armeabi/
 
