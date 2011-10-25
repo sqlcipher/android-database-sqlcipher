@@ -1395,7 +1395,6 @@ public class SQLiteDatabase extends SQLiteClosable {
 
         Cursor cursor = null;
         try {
-
             cursor = driver.query(
                                   cursorFactory != null ? cursorFactory : mFactory,
                                   selectionArgs);

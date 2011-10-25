@@ -16,16 +16,15 @@
 
 package info.guardianproject.database;
 
-import java.util.Map;
-
-import android.database.ContentObserver;
-import android.database.CursorWindow;
+import info.guardianproject.database.*;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Config;
 import android.util.Log;
+
+import java.util.Map;
 
 
 /**
@@ -36,7 +35,7 @@ import android.util.Log;
 public final class CursorToBulkCursorAdaptor extends BulkCursorNative 
         implements IBinder.DeathRecipient {
     private static final String TAG = "Cursor";
-    private final android.database.CrossProcessCursor mCursor;
+    private final CrossProcessCursor mCursor;
     private CursorWindow mWindow;
     private final String mProviderName;
     private final boolean mReadOnly;
@@ -76,12 +75,12 @@ public final class CursorToBulkCursorAdaptor extends BulkCursorNative
         }
     }
 
-    public CursorToBulkCursorAdaptor(android.database.Cursor cursor, IContentObserver observer, String providerName,
+    public CursorToBulkCursorAdaptor(Cursor cursor, IContentObserver observer, String providerName,
             boolean allowWrite, CursorWindow window) {
         try {
-            mCursor = (android.database.CrossProcessCursor) cursor;
+            mCursor = (CrossProcessCursor) cursor;
             if (mCursor instanceof AbstractWindowedCursor) {
-            	android.database.AbstractWindowedCursor windowedCursor = (android.database.AbstractWindowedCursor) cursor;
+                AbstractWindowedCursor windowedCursor = (AbstractWindowedCursor) cursor;
                 if (windowedCursor.hasWindow()) {
                     if (Log.isLoggable(TAG, Log.VERBOSE) || Config.LOGV) {
                         Log.v(TAG, "Cross process cursor has a local window before setWindow in "
@@ -206,7 +205,7 @@ public final class CursorToBulkCursorAdaptor extends BulkCursorNative
                     + ", uid=" + Binder.getCallingUid());
             return false;
         }
-        return updateRows(values);
+        return mCursor.commitUpdates(values);
     }
 
     public boolean deleteRow(int position) {
@@ -220,7 +219,7 @@ public final class CursorToBulkCursorAdaptor extends BulkCursorNative
         if (mCursor.moveToPosition(position) == false) {
             return false;
         }
-        return deleteRow(position);
+        return mCursor.deleteRow();
     }
 
     public Bundle getExtras() {

@@ -22,11 +22,6 @@ import java.util.Map;
 
 import android.content.ContentResolver;
 import android.database.CharArrayBuffer;
-import android.database.ContentObservable;
-import android.database.ContentObserver;
-import android.database.CursorWindow;
-import android.database.DataSetObservable;
-import android.database.DataSetObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Config;
@@ -37,7 +32,7 @@ import android.util.Log;
  * This is an abstract cursor class that handles a lot of the common code
  * that all cursors need to deal with and is provided for convenience reasons.
  */
-public abstract class AbstractCursor implements android.database.CrossProcessCursor {
+public abstract class AbstractCursor implements CrossProcessCursor {
     private static final String TAG = "Cursor";
 
     DataSetObservable mDataSetObservable = new DataSetObservable();
@@ -204,14 +199,11 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
      * Copy data from cursor to CursorWindow
      * @param position start position of data
      * @param window
-     */    
-    public void fillWindow(int position, android.database.CursorWindow window) {
-        
-    	
-    	if (position < 0 || position > getCount()) {
+     */
+    public void fillWindow(int position, CursorWindow window) {
+        if (position < 0 || position > getCount()) {
             return;
         }
-    	
         window.acquireReference();
         try {
             int oldpos = mPos;
@@ -483,7 +475,6 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
         return mDataSetObservable;
         
     }
-    
     public void registerDataSetObserver(DataSetObserver observer) {
         mDataSetObservable.registerObserver(observer);
         
@@ -617,8 +608,6 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
                 cursor.onChange(false);
             }
         }
-
-		
     }
 
     /**

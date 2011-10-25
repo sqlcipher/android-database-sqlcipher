@@ -21,7 +21,7 @@ import java.util.ArrayList;
 /**
  * Provides methods for (un)registering arbitrary observers in an ArrayList.
  */
-public abstract class Observable<T> extends android.database.Observable<T> {
+public abstract class Observable<T> {
     /**
      * The list of observers.  An observer can be in the list at most
      * once and will never be null.

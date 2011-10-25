@@ -15,23 +15,10 @@
  */
 
 package info.guardianproject.database.sqlcipher;
-/*
- * Copyright (C) 2006 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 
 import info.guardianproject.database.AbstractWindowedCursor;
+import info.guardianproject.database.CursorWindow;
+import info.guardianproject.database.DataSetObserver;
 import info.guardianproject.database.SQLException;
 
 import java.util.HashMap;
@@ -39,8 +26,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-import android.database.CursorWindow;
-import android.database.DataSetObserver;
+import android.database.CharArrayBuffer;
+import android.database.ContentObserver;
+import android.database.CrossProcessCursor;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -51,8 +39,11 @@ import android.util.Log;
 /**
  * A Cursor implementation that exposes results from a query on a
  * {@link SQLiteDatabase}.
+ *
+ * SQLiteCursor is not internally synchronized so code using a SQLiteCursor from multiple
+ * threads should perform its own synchronization when using the SQLiteCursor.
  */
-public class SQLiteCursor extends AbstractWindowedCursor {
+public class SQLiteCursor extends AbstractWindowedCursor implements CrossProcessCursor {
     static final String TAG = "Cursor";
     static final int NO_COUNT = -1;
 
@@ -146,7 +137,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                 if (mCursorState != mThreadState) {
                     mLock.unlock();
                     break;
-                };
+                }
                 try {
                     int count = mQuery.fillWindow(cw, mMaxRead, mCount);
                     // return -1 means not finished
@@ -172,12 +163,15 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         }        
     }
     
+    
     /**
      * @hide
      */   
     protected class MainThreadNotificationHandler extends Handler {
         public void handleMessage(Message msg) {
-            notifyDataSetChange();
+            
+        	notifyDataSetChange();
+            
         }
     }
     
@@ -194,7 +188,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             try {
                 mNotificationHandler = new MainThreadNotificationHandler();
                 if (mPendingData) {
-                    notifyDataSetChange();
+                	notifyDataSetChange();
                     mPendingData = false;
                 }
             } finally {
@@ -336,7 +330,8 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     /**
      * @hide
      * @deprecated
-     */    
+     */
+   // @Override
     public boolean deleteRow() {
         checkPosition();
 
@@ -395,16 +390,17 @@ public class SQLiteCursor extends AbstractWindowedCursor {
      * @hide
      * @deprecated
      */
-    @Override
+  //  @Override
     public boolean supportsUpdates() {
-        return super.supportsUpdates() && !TextUtils.isEmpty(mEditTable);
+       // return super.supportsUpdates() && !TextUtils.isEmpty(mEditTable);
+    	return  !TextUtils.isEmpty(mEditTable);
     }
 
     /**
      * @hide
      * @deprecated
      */
-    @Override
+  //  @Override
     public boolean commitUpdates(Map<? extends Long,
             ? extends Map<String, Object>> additionalValues) {
         if (!supportsUpdates()) {
@@ -610,5 +606,53 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             super.finalize();
         }
     }
-}
 
+	@Override
+	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
+		
+		
+	}
+
+	@Override
+	public void registerContentObserver(ContentObserver observer) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void registerDataSetObserver(
+			android.database.DataSetObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterContentObserver(ContentObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void unregisterDataSetObserver(
+			android.database.DataSetObserver observer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void fillWindow(int startPos, android.database.CursorWindow window) {
+	
+		
+		window.setStartPosition(startPos);
+        mCount = mQuery.fillWindow((info.guardianproject.database.CursorWindow)window, mInitialRead, 0);
+        // return -1 means not finished
+        if (mCount == NO_COUNT){
+            mCount = startPos + mInitialRead;
+            Thread t = new Thread(new QueryThread(mCursorState), "query thread");
+            t.start();
+        } 
+		
+	}
+
+
+}
