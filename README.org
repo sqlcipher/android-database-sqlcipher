@@ -1,14 +1,14 @@
 
 Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here:
- https://github.com/guardianproject/android-database-sqlcipher/downloads
+ [[https://github.com/guardianproject/android-database-sqlcipher/downloads]]
 
 A full demonstration app with the bundled SQLCipher R1 release is here:
-https://github.com/guardianproject/notepadbot
+[[https://github.com/guardianproject/notepadbot]]
 
 SQLCipher for Android project source repo is here: 
-https://github.com/guardianproject/android-database-sqlcipher
+[[https://github.com/guardianproject/android-database-sqlcipher]]
 
-Update May 2011:
+*** Update May 2011:
 
 After some major breakthroughs during last week’s development sprint, we’re extremely excited to announce SQLCipher for Android, Developer Preview r1. SQLCipher is an SQLite extension that provides transparent 256-bit AES encryption of database files. To date, it has been open-sourced, sponsored and maintained by Zetetic LLC, and we are glad to be able to extend their efforts to a new mobile platform. In the mobile space, SQLCipher has enjoyed widespread use in Apple’s iOS, as well as Nokia / QT for quite some time. Given that Android by default provides integrated support for SQLite databases, our goal was to create an almost identical API for SQLCipher, so that developers of all skill level could use it, without a steep learning curve.
 
@@ -16,37 +16,37 @@ In an environment where mobile data privacy is increasingly in the headlines, th
 
 However, while the core SQLCipher database is vetted and market-ready, the Android support libraries in this release are still very much alpha quality, hence the Developer Preview label. This R1 release should not be integrated into critical or production software. Our goal is to give Android developers early access to the technology, so they can provide feedback on our approach, and help us deliver the right offering for securing mobile data. We expect to release a market-ready version this summer, and will be publicly iterating through the codebase until then.
 
-An Illustrative Terminal Listing
+*** An Illustrative Terminal Listing
 
 A typical SQLite database in unencrypted, and visually parseable even as encoded text. The following example shows the difference between hexdumps of a standard SQLite db and one implementing SQLCipher.
 
-~ sjlombardo$ hexdump -C sqlite.db
-00000000 53 51 4c 69 74 65 20 66 6f 72 6d 61 74 20 33 00 |SQLite format 3.|
-…
-000003c0 65 74 32 74 32 03 43 52 45 41 54 45 20 54 41 42 |et2t2.CREATE TAB|
-000003d0 4c 45 20 74 32 28 61 2c 62 29 24 01 06 17 11 11 |LE t2(a,b)$…..|
-…
-000007e0 20 74 68 65 20 73 68 6f 77 15 01 03 01 2f 01 6f | the show…./.o|
-000007f0 6e 65 20 66 6f 72 20 74 68 65 20 6d 6f 6e 65 79 |ne for the money|
-
-~ $ sqlite3 sqlcipher.db
-sqlite> PRAGMA KEY=’test123′;
-sqlite> CREATE TABLE t1(a,b);
-sqlite> INSERT INTO t1(a,b) VALUES (‘one for the money’, ‘two for the show’);
-sqlite> .quit
-
-~ $ hexdump -C sqlite.db
-00000000 84 d1 36 18 eb b5 82 90 c4 70 0d ee 43 cb 61 87 |.?6.?..?p.?C?a.|
-00000010 91 42 3c cd 55 24 ab c6 c4 1d c6 67 b4 e3 96 bb |.B?..?|
-00000bf0 8e 99 ee 28 23 43 ab a4 97 cd 63 42 8a 8e 7c c6 |..?(#C??.?cB..|?|
-
-~ $ sqlite3 sqlcipher.db
-sqlite> SELECT * FROM t1;
-Error: file is encrypted or is not a database
+:  ~ sjlombardo$ hexdump -C sqlite.db
+:  00000000 53 51 4c 69 74 65 20 66 6f 72 6d 61 74 20 33 00 |SQLite format 3.|
+:  …
+:  000003c0 65 74 32 74 32 03 43 52 45 41 54 45 20 54 41 42 |et2t2.CREATE TAB|
+:  000003d0 4c 45 20 74 32 28 61 2c 62 29 24 01 06 17 11 11 |LE t2(a,b)$…..|
+:  …
+:  000007e0 20 74 68 65 20 73 68 6f 77 15 01 03 01 2f 01 6f | the show…./.o|
+:  000007f0 6e 65 20 66 6f 72 20 74 68 65 20 6d 6f 6e 65 79 |ne for the money|
+:  
+:  ~ $ sqlite3 sqlcipher.db
+:  sqlite> PRAGMA KEY=’test123′;
+:  sqlite> CREATE TABLE t1(a,b);
+:  sqlite> INSERT INTO t1(a,b) VALUES (‘one for the money’, ‘two for the show’);
+:  sqlite> .quit
+:  
+:  ~ $ hexdump -C sqlite.db
+:  00000000 84 d1 36 18 eb b5 82 90 c4 70 0d ee 43 cb 61 87 |.?6.?..?p.?C?a.|
+:  00000010 91 42 3c cd 55 24 ab c6 c4 1d c6 67 b4 e3 96 bb |.B?..?|
+:  00000bf0 8e 99 ee 28 23 43 ab a4 97 cd 63 42 8a 8e 7c c6 |..?(#C??.?cB..|?|
+:  
+:  ~ $ sqlite3 sqlcipher.db
+:  sqlite> SELECT * FROM t1;
+:  Error: file is encrypted or is not a database
 
 (example courtesy of SQLCipher)
 
-Details for Developers
+*** Details for Developers
 
 We’ve packaged up a very simple SDK for any Android developer to add SQLCipher into their app with the following three steps:
 
@@ -57,7 +57,7 @@ SQLiteDatabase.loadLibs(this); //first init the db libraries with the context
 SQLiteOpenHelper.getWritableDatabase(“thisismysecret”):
 *Note: we are working on some dialog builder helper methods for password and PIN input, password caching, and other features that we would like to standardize across all applications that use SQLCipher.
 
-Compatibility
+*** Compatibility
 
 The Developer Preview implements SQLCipher v1, is compatible with Android 2.2 & 2.3, and works only within one process (you can’t pass a Cursor from a remote Service to an Activity).
 
@@ -65,15 +65,26 @@ Notepad + SQLCipher = Notepadbot
 
 Notepadbot is a sample application pulled from the standard Android samples code and updated to use SQLCipher. You can browse the source here and download the apk here.
 
+*** Building
 
-Final Notes
+In order to build android-database-sqlcipher from source you will need both the Android SDK as well as Android NDK.  Once you have cloned the repo, change directory into the root of the repository and run the following commands:
+
+:  # this only needs to be done once
+:  make init
+
+:  # to build the source
+:  make
+
+Copy =libsqlcipher_android.so= in =external/libs/armeabi= and  =libdatabase_sqlcipher.so= in =jni/libs/armeabi= to your application =libs/armeabi= folder.  Copy the =sqlcipher.jar= file in =bin/classes= to your =libs= directory.  Copy the =icudt44l.zip= file in the =assets= directory to your =assets= directory.  Finally, you will need to copy =commons-codec.jar= and =guava-r09.jar= located in the =libs= directory into your application =libs= directory.
+
+*** Final Notes
 
 It’s important to note that this project is not intended to be a distinct, long-term fork of SQLCipher. We’ve been working closely with the SQLCipher team at Zetetic and fully intent to closely maintain the project as SQLCipher evolves, re-integrating changes in upcoming releases such as SQLCipher v2.
 
 The Android support libraries are licensed under Apache 2.0, in line with the Android OS code on which they are based. The SQLCipher code itself is licensed under a BSD-style license from Zetetic LLC. Finally, the original SQLite code itself is in the public domain.
 
-Downloads and Source
+*** Downloads and Source
 
-SQLCipher for Android project source repo is here: https://github.com/guardianproject/android-database-sqlcipher
-Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here: https://github.com/guardianproject/android-database-sqlcipher/downloads
+SQLCipher for Android project source repo is here: [[https://github.com/guardianproject/android-database-sqlcipher]]
+Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here: [[https://github.com/guardianproject/android-database-sqlcipher/downloads]]
 

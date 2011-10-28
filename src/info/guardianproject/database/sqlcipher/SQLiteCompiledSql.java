@@ -88,7 +88,6 @@ import android.util.Log;
             try {
                 // Note that the native_compile() takes care of destroying any previously
                 // existing programs before it compiles.
-            	//TODO implement native compile
                 native_compile(sql);
             } finally {
                 mDatabase.unlock();
