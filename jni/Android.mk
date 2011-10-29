@@ -1,7 +1,7 @@
 LOCAL_PATH:= $(call my-dir)
 
 EXTERNAL_PATH := ../external
-
+DROID_ROOT := ~/android/os
 
 ifeq ($(TARGET_ARCH), arm)
 	LOCAL_CFLAGS += -DPACKED="__attribute__ ((packed))"
@@ -50,8 +50,10 @@ LOCAL_SHARED_LIBRARIES := \
 	libsqlite3_android
 
 LOCAL_CFLAGS += -U__APPLE__
-LOCAL_LDFLAGS += -L../external/android-2.3/ -L../external/libs/armeabi/
-LOCAL_LDFLAGS += -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libutils_intermediates/LINKED/ -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libbinder_intermediates/LINKED/ -L/home/n8fr8/android/mydroid/out/target/product/generic/obj/SHARED_LIBRARIES/libandroid_runtime_intermediates/LINKED/
+LOCAL_LDFLAGS += -L../external/android-2.1/ -L../external/libs/armeabi/
+LOCAL_LDFLAGS += -L$(DROID_ROOT)/out/target/product/generic/obj/SHARED_LIBRARIES/libutils_intermediates/LINKED/
+LOCAL_LDFLAGS += -L$(DROID_ROOT)/out/target/product/generic/obj/SHARED_LIBRARIES/libbinder_intermediates/LINKED/
+LOCAL_LDFLAGS += -L$(DROID_ROOT)/out/target/product/generic/obj/SHARED_LIBRARIES/libandroid_runtime_intermediates/LINKED/
 
 # libs from the NDK
 LOCAL_LDLIBS += -ldl -llog
