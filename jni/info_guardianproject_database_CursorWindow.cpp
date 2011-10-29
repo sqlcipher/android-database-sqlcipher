@@ -33,8 +33,7 @@
 #include "sqlite3_exception.h"
 #include "android_util_Binder.h"
 
-
-namespace android {
+namespace guardianproject {
 
 static jfieldID gWindowField;
 static jfieldID gBufferField;
@@ -74,7 +73,8 @@ LOG_WINDOW("native_init_empty: window = %p", window);
 
 static void native_init_memory(JNIEnv * env, jobject object, jobject memObj)
 {
-    sp<IMemory> memory = interface_cast<IMemory>(ibinderForJavaObject(env, memObj));
+    android::sp<android::IMemory> memory = android::interface_cast<android::IMemory>(android::ibinderForJavaObject(env, memObj));
+   
     if (memory == NULL) {
         jniThrowException(env, "java/lang/IllegalStateException", "Couldn't get native binder");
         return;
@@ -99,9 +99,9 @@ static jobject native_getBinder(JNIEnv * env, jobject object)
 {
     CursorWindow * window = GET_WINDOW(env, object);
     if (window) {
-        sp<IMemory> memory = window->getMemory();
+        android::sp<android::IMemory> memory = window->getMemory();
         if (memory != NULL) {
-            sp<IBinder> binder = memory->asBinder();
+            android::sp<android::IBinder> binder = memory->asBinder();
             return javaObjectForIBinder(env, binder);
         }
     }
@@ -308,7 +308,7 @@ LOG_WINDOW("Getting string for %d,%d from %p", row, column, window);
         if (size > 0) {
 #if WINDOW_STORAGE_UTF8
             // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
-            String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
+            android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
             return env->NewString((jchar const *)utf16.string(), utf16.size());
 #else
             return env->NewString((jchar const *)window->offsetToPtr(field.data.buffer.offset), size / 2);
@@ -389,7 +389,7 @@ LOG_WINDOW("Copying string for %d,%d from %p", row, column, window);
         if (size > 0) {
 #if WINDOW_STORAGE_UTF8
             // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
-            String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
+            android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
             int32_t strSize = utf16.size();
             if (strSize > bufferSize || dst == NULL) {
                 newArray = env->NewCharArray(strSize);
@@ -718,8 +718,8 @@ int register_android_database_CursorWindow(JNIEnv * env)
         return -1;
     }
 
-    return AndroidRuntime::registerNativeMethods(env, "android/database/CursorWindow",
+    return android::AndroidRuntime::registerNativeMethods(env, "info/guardianproject/database/CursorWindow",
             sMethods, NELEM(sMethods));
 }
 
-} // namespace android
+} // namespace guardianproject

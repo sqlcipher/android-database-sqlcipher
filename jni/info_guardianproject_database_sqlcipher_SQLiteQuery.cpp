@@ -32,18 +32,13 @@
 #include "CursorWindow.h"
 #include "sqlite3_exception.h"
 
-namespace android {
-
-// From android_database_CursorWindow.cpp
-	CursorWindow * get_window_from_object(JNIEnv * env, jobject javaWindow);
-}
 
 namespace guardianproject {
 
+CursorWindow * get_window_from_object(JNIEnv * env, jobject javaWindow);
 
 sqlite3_stmt * compile(JNIEnv* env, jobject object,
                        sqlite3 * handle, jstring sqlString);
-
 
 static jfieldID gHandleField;
 static jfieldID gStatementField;
@@ -53,7 +48,6 @@ static jfieldID gStatementField;
         (sqlite3_stmt *)env->GetIntField(object, gStatementField)
 #define GET_HANDLE(env, object) \
         (sqlite3 *)env->GetIntField(object, gHandleField)
-
 
 static int skip_rows(sqlite3_stmt *statement, int maxRows) {
     int retryCount = 0;
@@ -120,7 +114,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
     int numColumns;
     int retryCount;
     int boundParams;
-    android::CursorWindow * window;
+    CursorWindow * window;
     
     if (statement == NULL) {
         LOGE("Invalid statement in fillWindow()");
@@ -146,9 +140,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
     }
 
     // Get the native window
-    window = android::get_window_from_object(env, javaWindow);
-    //window = GET_WINDOW(env, javaWindow);
-
+    window = get_window_from_object(env, javaWindow);
     if (!window) {
         LOGE("Invalid CursorWindow");
         jniThrowException(env, "java/lang/IllegalArgumentException",
@@ -186,7 +178,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
             // since it mey be possible for it to be relocated on a call to alloc() when
             // the field data is being allocated.
             {
-                android::field_slot_t * fieldDir = window->allocRow();
+                field_slot_t * fieldDir = window->allocRow();
                 if (!fieldDir) {
                     LOGE("Failed allocating fieldDir at startPos %d row %d", startPos, numRows);
                     return startPos + numRows + finish_program_and_get_row_count(statement) + 1;
@@ -221,7 +213,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
 
                     // This must be updated after the call to alloc(), since that
                     // may move the field around in the window
-                    android::field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
+                    field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
                     fieldSlot->type = FIELD_TYPE_STRING;
                     fieldSlot->data.buffer.offset = offset;
                     fieldSlot->data.buffer.size = size;
@@ -261,7 +253,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
 
                     // This must be updated after the call to alloc(), since that
                     // may move the field around in the window
-                    android::field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
+                    field_slot_t * fieldSlot = window->getFieldSlot(numRows, i);
                     fieldSlot->type = FIELD_TYPE_BLOB;
                     fieldSlot->data.buffer.offset = offset;
                     fieldSlot->data.buffer.size = size;
@@ -343,7 +335,7 @@ static jstring native_column_name(JNIEnv* env, jobject object, jint columnIndex)
 static JNINativeMethod sMethods[] =
 {
      /* name, signature, funcPtr */
-    {"native_fill_window", "(Landroid/database/CursorWindow;IIII)I", (void *)native_fill_window},
+    {"native_fill_window", "(Linfo/guardianproject/database/CursorWindow;IIII)I", (void *)native_fill_window},
     {"native_column_count", "()I", (void*)native_column_count},
     {"native_column_name", "(I)Ljava/lang/String;", (void *)native_column_name},
 };

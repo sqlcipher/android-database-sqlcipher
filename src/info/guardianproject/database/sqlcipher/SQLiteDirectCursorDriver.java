@@ -79,7 +79,7 @@ public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
         // Do nothing
     }
 
-    public void cursorRequeried(android.database.Cursor cursor) {
+    public void cursorRequeried(Cursor cursor) {
         // Do nothing
     }
 

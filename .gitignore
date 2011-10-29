@@ -2,3 +2,9 @@ TAGS
 external/libs
 jni/libs
 obj/
+.DS_Store
+local.properties
+build.xml
+proguard.cfg
+bin/
+gen/

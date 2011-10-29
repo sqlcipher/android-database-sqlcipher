@@ -36,10 +36,7 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <string.h>
-#include <netdb.h>
 #include <sys/ioctl.h>
 
 #include "sqlite3_exception.h"
@@ -97,8 +94,13 @@ static void registerLoggingFunc(const char *path) {
     loggingFuncSet = true;
 }
 
-
-
+/* public native void setICURoot(String path); */
+void setICURoot(JNIEnv* env, jobject object, jstring ICURoot)
+{
+  char const * ICURootPath = env->GetStringUTFChars(ICURoot, NULL);
+  setenv("SQLCIPHER_ICU_PREFIX", ICURootPath, 1);
+  env->ReleaseStringUTFChars(ICURoot, ICURootPath);
+}
 
 
 /* public native void dbopen(String path, int flags, String locale); */
@@ -173,6 +175,8 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
         goto done;
     }
 
+    sqlite3_enable_load_extension(handle, 1);
+    
     LOGV("Opened '%s' - %p\n", path8, handle);
     env->SetIntField(object, offset_db_handle, (int) handle);
     handle = NULL;  // The caller owns the handle now.
@@ -464,7 +468,7 @@ static JNINativeMethod sMethods[] =
     {"native_setLocale", "(Ljava/lang/String;I)V", (void *)native_setLocale},
     {"native_getDbLookaside", "()I", (void *)native_getDbLookaside},
     {"releaseMemory", "()I", (void *)native_releaseMemory},
-    
+    {"setICURoot", "(Ljava/lang/String;)V", (void *)setICURoot},
 };
 
 int register_android_database_SQLiteDatabase(JNIEnv *env)
@@ -511,7 +515,7 @@ extern "C" jint JNI_OnLoad(JavaVM* vm, void* reserved)
 
 	register_android_database_SQLiteStatement(env);
 
-//	register_android_database_CursorWindow(env);
+	register_android_database_CursorWindow(env);
 
 	//register_android_database_SQLiteDebug(env);
 	
