@@ -40,6 +40,8 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -82,8 +84,10 @@ public class SQLiteDatabase extends SQLiteClosable {
             if(!icuDir.exists()) icuDir.mkdirs();
             File icuDataFile = new File(icuDir, "icudt44l.dat");
             if(!icuDataFile.exists()) {
-                InputStream in = context.getAssets().open("icudt44l.mp3");
-                OutputStream out = new FileOutputStream(icuDataFile);
+            	ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt44l.zip"));
+            	in.getNextEntry();
+            	
+                OutputStream out =  new FileOutputStream(icuDataFile);
                 byte[] buf = new byte[1024];
                 int len;
                 while ((len = in.read(buf)) > 0) {
