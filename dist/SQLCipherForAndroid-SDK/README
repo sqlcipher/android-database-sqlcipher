@@ -3,6 +3,8 @@ SQLCipher for Android - Beta 0.0.5 - Developer Preview 3
 2011/10/29
 
 CHANGELOG
+- complete support for original Android SQLite/database package APIs
+- improved platform support through unified library (less lib .so files)
 - added support for CrossProcess Cursors
 - now support Observers/callbacks
 
