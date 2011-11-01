@@ -1,0 +1,8 @@
+
+Stephen Lombardo - original SQLCipher
+
+Hans-Christoph Steiner - original port to Android, including build scripts
+
+Nathan Freitas - additional Android development, Database API integration
+
+Nick Parker - improvements in Android platform compatibility and build scripts
