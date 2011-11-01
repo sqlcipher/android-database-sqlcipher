@@ -534,6 +534,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
 
     @Override
     protected void onAllReferencesReleased() {
-        close_native();        
+        close_native();
+		super.onAllReferencesReleased();
     }
 }

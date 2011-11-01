@@ -685,9 +685,9 @@ int register_android_database_CursorWindow(JNIEnv * env)
 {
     jclass clazz;
 
-    clazz = env->FindClass("android/database/CursorWindow");
+    clazz = env->FindClass("info/guardianproject/database/CursorWindow");
     if (clazz == NULL) {
-        LOGE("Can't find android/database/CursorWindow");
+        LOGE("Can't find info/guardianproject/database/CursorWindow");
         return -1;
     }
 
