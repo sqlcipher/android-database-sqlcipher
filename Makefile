@@ -1,11 +1,12 @@
 
 .DEFAULT_GOAL := all
+LIBRARY_ROOT := libs
 
 init:
 	git submodule update --init
 	android update project -p .
 
-all: build-external build-jni build-java
+all: clean build-external build-jni build-java copy-libs
 
 build-external:
 	cd external/ && \
@@ -20,3 +21,15 @@ build-java:
 	ant compile && \
 	cd bin/classes && \
 	jar -cvf sqlcipher.jar .
+
+clean:
+	rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so && \
+	rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so && \
+	rm ${LIBRARY_ROOT}/sqlcipher.jar
+
+copy-libs:
+	cp external/libs/armeabi/libsqlcipher_android.so \
+		 ${LIBRARY_ROOT}/armeabi  && \
+  cp jni/libs/armeabi/libdatabase_sqlcipher.so \
+     ${LIBRARY_ROOT}/armeabi && \
+  cp bin/classes/sqlcipher.jar ${LIBRARY_ROOT}
