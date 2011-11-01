@@ -49,7 +49,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libsqlite3_android
 
 LOCAL_CFLAGS += -U__APPLE__
-LOCAL_LDFLAGS += -L../external/android-2.1/ -L../external/libs/armeabi/
+LOCAL_LDFLAGS += -L../external/android-libs/ -L../external/libs/armeabi/
 
 # libs from the NDK
 LOCAL_LDLIBS += -ldl -llog
