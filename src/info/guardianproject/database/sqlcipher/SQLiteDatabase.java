@@ -22,10 +22,7 @@ import info.guardianproject.database.SQLException;
 import info.guardianproject.database.sqlcipher.SQLiteDebug.DbStats;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -41,13 +38,12 @@ import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import android.content.ContentValues;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.os.Debug;
-import android.os.Environment;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Config;
@@ -1414,7 +1410,7 @@ public class SQLiteDatabase extends SQLiteClosable {
                 long duration = System.currentTimeMillis() - timeStart;
 
                 if (Config.LOGV || duration >= mSlowQueryThreshold) {
-                    Log.v(SQLiteCursor.TAG,
+                    Log.v(TAG,
                           "query (" + duration + " ms): " + driver.toString() + ", args are "
                           + (selectionArgs != null
                              ? TextUtils.join(",", selectionArgs)
@@ -1448,6 +1444,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         SQLiteCursor c = (SQLiteCursor)rawQueryWithFactory(
                                                            null, sql, selectionArgs, null);
         c.setLoadStyle(initialRead, maxRead);
+        
         return c;
     }
 

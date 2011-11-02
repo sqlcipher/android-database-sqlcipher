@@ -16,7 +16,6 @@
 
 package info.guardianproject.database;
 
-import info.guardianproject.database.sqlcipher.SQLiteClosable;
 import android.database.CharArrayBuffer;
 import android.os.IBinder;
 import android.os.Parcel;

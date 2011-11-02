@@ -22,6 +22,10 @@ import java.util.Map;
 
 import android.content.ContentResolver;
 import android.database.CharArrayBuffer;
+import android.database.ContentObservable;
+import android.database.DataSetObservable;
+import android.database.DataSetObserver;
+import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Config;
@@ -32,7 +36,7 @@ import android.util.Log;
  * This is an abstract cursor class that handles a lot of the common code
  * that all cursors need to deal with and is provided for convenience reasons.
  */
-public abstract class AbstractCursor implements CrossProcessCursor {
+public abstract class AbstractCursor implements android.database.CrossProcessCursor {
     private static final String TAG = "Cursor";
 
     DataSetObservable mDataSetObservable = new DataSetObservable();
@@ -79,7 +83,7 @@ public abstract class AbstractCursor implements CrossProcessCursor {
      */
     public void deactivateInternal() {
         if (mSelfObserver != null) {
-      //      mContentResolver.unregisterContentObserver(mSelfObserver);
+            mContentResolver.unregisterContentObserver(mSelfObserver);
             mSelfObserverRegistered = false;
         }
         mDataSetObservable.notifyInvalidated();
@@ -88,7 +92,7 @@ public abstract class AbstractCursor implements CrossProcessCursor {
     public boolean requery() {
         if (mSelfObserver != null && mSelfObserverRegistered == false) {
         	
-      //      mContentResolver.registerContentObserver(mNotifyUri, true, mSelfObserver);
+            mContentResolver.registerContentObserver(mNotifyUri, true, mSelfObserver);
             mSelfObserverRegistered = true;
         }
         mDataSetObservable.notifyChanged();
@@ -200,7 +204,7 @@ public abstract class AbstractCursor implements CrossProcessCursor {
      * @param position start position of data
      * @param window
      */
-    public void fillWindow(int position, CursorWindow window) {
+    public void fillWindow(int position, android.database.CursorWindow window) {
         if (position < 0 || position > getCount()) {
             return;
         }
@@ -608,6 +612,7 @@ public abstract class AbstractCursor implements CrossProcessCursor {
                 cursor.onChange(false);
             }
         }
+
     }
 
     /**

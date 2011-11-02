@@ -18,7 +18,6 @@ package info.guardianproject.database.sqlcipher;
 
 import info.guardianproject.database.AbstractWindowedCursor;
 import info.guardianproject.database.CursorWindow;
-import info.guardianproject.database.DataSetObserver;
 import info.guardianproject.database.SQLException;
 
 import java.util.HashMap;
@@ -27,8 +26,7 @@ import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import android.database.CharArrayBuffer;
-import android.database.ContentObserver;
-import android.database.CrossProcessCursor;
+import android.database.DataSetObserver;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
@@ -43,7 +41,7 @@ import android.util.Log;
  * SQLiteCursor is not internally synchronized so code using a SQLiteCursor from multiple
  * threads should perform its own synchronization when using the SQLiteCursor.
  */
-public class SQLiteCursor extends AbstractWindowedCursor implements CrossProcessCursor {
+public class SQLiteCursor extends AbstractWindowedCursor {
     static final String TAG = "Cursor";
     static final int NO_COUNT = -1;
 
@@ -613,36 +611,11 @@ public class SQLiteCursor extends AbstractWindowedCursor implements CrossProcess
 		
 	}
 
-	@Override
-	public void registerContentObserver(ContentObserver observer) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void registerDataSetObserver(
-			android.database.DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterContentObserver(ContentObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void unregisterDataSetObserver(
-			android.database.DataSetObserver observer) {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	@Override
 	public void fillWindow(int startPos, android.database.CursorWindow window) {
 	
-		
+		/*
 		window.setStartPosition(startPos);
         mCount = mQuery.fillWindow((info.guardianproject.database.CursorWindow)window, mInitialRead, 0);
         // return -1 means not finished
@@ -650,9 +623,30 @@ public class SQLiteCursor extends AbstractWindowedCursor implements CrossProcess
             mCount = startPos + mInitialRead;
             Thread t = new Thread(new QueryThread(mCursorState), "query thread");
             t.start();
-        } 
+        } */
+        
+        if (mWindow == null) {
+            // If there isn't a window set already it will only be accessed locally
+            mWindow = new CursorWindow(true /* the window is local only */);
+        } else {
+            mCursorState++;
+                queryThreadLock();
+                try {
+                    mWindow.clear();
+                } finally {
+                    queryThreadUnlock();
+                }
+        }
+        mWindow.setStartPosition(startPos);
+        mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
+        // return -1 means not finished
+        if (mCount == NO_COUNT){
+            mCount = startPos + mInitialRead;
+            Thread t = new Thread(new QueryThread(mCursorState), "query thread");
+            t.start();
+        }
+
 		
 	}
-
 
 }

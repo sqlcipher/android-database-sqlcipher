@@ -20,6 +20,7 @@ package info.guardianproject.database.sqlcipher;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import info.guardianproject.database.*;
 import android.net.Uri;
 import android.util.Log;

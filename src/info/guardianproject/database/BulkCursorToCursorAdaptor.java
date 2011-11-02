@@ -16,14 +16,15 @@
 
 package info.guardianproject.database;
 
+import java.util.Map;
+
 import android.database.CharArrayBuffer;
 import android.database.ContentObserver;
 import android.database.DataSetObserver;
-import android.os.RemoteException;
-import android.os.Bundle;
-import android.util.Log;
 
-import java.util.Map;
+import android.os.Bundle;
+import android.os.RemoteException;
+import android.util.Log;
 
 /**
  * Adapts an {@link IBulkCursor} to a {@link Cursor} for use in the local
@@ -89,7 +90,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
         if (mObserverBridge == null) {
             mObserverBridge = new SelfContentObserver(this);
         }
-        return mObserverBridge.getContentObserver();
+        return null;//mObserverBridge.getContentObserver(); //TODO nf fix this
     }
 
     @Override

@@ -16,8 +16,8 @@
 
 package info.guardianproject.database.sqlcipher;
 
-import info.guardianproject.database.*;
 import info.guardianproject.database.sqlcipher.SQLiteDatabase.CursorFactory;
+import android.database.Cursor;
 
 /**
  * A cursor driver that uses the given query directly.
@@ -51,6 +51,7 @@ public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
             // Create the cursor
             if (factory == null) {
                 mCursor = new SQLiteCursor(mDatabase, this, mEditTable, query);
+                
             } else {
                 mCursor = factory.newCursor(mDatabase, this, mEditTable, query);
             }
