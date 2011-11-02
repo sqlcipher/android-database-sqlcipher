@@ -26,8 +26,14 @@ public class SQLDemoActivity extends Activity {
     //then you can open the database using a password
     SQLiteDatabase db = eventsData.getWritableDatabase(password);
     
-    addEvent("Hello Android Event", password);
-    Cursor cursor = getEvents(password);
+    for (int i = 1; i < 100; i++)
+    	addEvent("Hello Android Event: " + i, db);
+    
+   db.close();
+   
+   db = eventsData.getReadableDatabase(password);
+   
+    Cursor cursor = getEvents(db);
     showEvents(cursor);
     
     db.close();
@@ -39,20 +45,15 @@ public class SQLDemoActivity extends Activity {
     eventsData.close();
   }
 
-  private void addEvent(String title, String password) {
-    SQLiteDatabase db = eventsData.getWritableDatabase(password);
+  private void addEvent(String title, SQLiteDatabase db) {
     
     ContentValues values = new ContentValues();
     values.put(EventDataSQLHelper.TIME, System.currentTimeMillis());
     values.put(EventDataSQLHelper.TITLE, title);
     db.insert(EventDataSQLHelper.TABLE, null, values);
-
   }
 
-  private Cursor getEvents(String password) {
-    SQLiteDatabase db = eventsData.getReadableDatabase(password);
-    
-
+  private Cursor getEvents(SQLiteDatabase db) {
     
     Cursor cursor = db.query(EventDataSQLHelper.TABLE, null, null, null, null,
         null, null);

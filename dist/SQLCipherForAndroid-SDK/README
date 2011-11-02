@@ -1,14 +1,15 @@
 
-SQLCipher for Android - 0.0.6-BETA - Developer Preview 3
+SQLCipher for Android v1 (0.0.6-RC1)
 2011/10/29
 
 CHANGELOG
+- includes icu44 data file for devices without it built-in ( < 2.2)
 - complete support for original Android SQLite/database package APIs
 - improved platform support through unified library (less lib .so files)
 - added support for CrossProcess Cursors
 - now support Observers/callbacks
 
-CURRENT SUPPORT
+CURRENT TESTED PLATFORM SUPPORT
 
 Android 2.1 (SDK Level 7)
 Android 2.2 (SDK Level 8)
@@ -16,7 +17,7 @@ Android 2.3 (SDK Level 9)
 Android 2.3.3 (SDK Level 10)
 Android 3.0 (SDK Level 11)
 Android 3.1 (SDK Level 12)
-Android 3.2 (SDK Level 13 - only emulator tested)
+Android 3.2 (SDK Level 13)
 
 HOW TO
 
@@ -29,7 +30,7 @@ HOW TO
 
 and you are secured!
 
-You will need to implement some sort of PIN or password entry user interface to your application, as well.
+You will need to implement a passcode entry user interface to your application, as well. The longer the passcode, the better.
 
 ABOUT
 
@@ -37,13 +38,22 @@ More info and source code at:
 https://guardianproject.info/code/sqlcipher/
 http://sqlcipher.net
 
-Or email:
+Or contact us:
 root@guardianproject.info
+#guardianproject on freenode
 
 EXPORT CONTROL
 
-This distribution includes cryptographic software. The country in which you currently reside may have restrictions on the import, possession, use, and/or re-export to another country, of encryption software. BEFORE using any encryption software, please check your country's laws, regulations and policies concerning the import, possession, or use, and re-export of encryption software, to see if this is permitted. See <http://www.wassenaar.org/> for more information.
+This distribution includes cryptographic software. The country in which you currently reside may have restrictions 
+on the import, possession, use, and/or re-export to another country, of encryption software. BEFORE using any 
+encryption software, please check your country's laws, regulations and policies concerning the import, possession, 
+or use, and re-export of encryption software, to see if this is permitted. See <http://www.wassenaar.org/> for more
+information.
 
-The U.S. Government Department of Commerce, Bureau of Industry and Security (BIS), has classified this software as Export Commodity Control Number (ECCN) 5D002.C.1, which includes information security software using or performing cryptographic functions with asymmetric algorithms. The form and manner of this Apache Software Foundation distribution makes it eligible for export under the License Exception ENC Technology Software Unrestricted (TSU) exception (see the BIS Export Administration Regulations, Section 740.13) for both object code and source code.
+The U.S. Government Department of Commerce, Bureau of Industry and Security (BIS), has classified this software as 
+Export Commodity Control Number (ECCN) 5D002.C.1, which includes information security software using or performing 
+cryptographic functions with asymmetric algorithms. The form and manner of this Apache Software Foundation distribution 
+makes it eligible for export under the License Exception ENC Technology Software Unrestricted (TSU) exception 
+(see the BIS Export Administration Regulations, Section 740.13) for both object code and source code.
 
 More information is available here: https://guardianproject.info/home/export-information/
