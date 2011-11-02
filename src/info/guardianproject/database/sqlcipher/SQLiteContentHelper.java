@@ -45,18 +45,29 @@ public class SQLiteContentHelper {
      *         value of column 0 is NULL, or if there is an error creating the
      *         asset file descriptor.
      */
-    public static MemoryFile getBlobColumnAsAssetFile(SQLiteDatabase db, String sql,
-            String[] selectionArgs) throws FileNotFoundException {
-        try {
-            MemoryFile file = simpleQueryForBlobMemoryFile(db, sql, selectionArgs);
-            if (file == null) {
-                throw new FileNotFoundException("No results.");
-            }
-            return file;
-        } catch (IOException ex) {
-            throw new FileNotFoundException(ex.toString());
-        }
-    }
+	public static AssetFileDescriptor getBlobColumnAsAssetFile(SQLiteDatabase db, String sql,
+	        String[] selectionArgs) throws FileNotFoundException {
+	    android.os.ParcelFileDescriptor fd = null;
+
+	    try {
+	        MemoryFile file = simpleQueryForBlobMemoryFile(db, sql, selectionArgs);
+	        if (file == null) {
+	            throw new FileNotFoundException("No results.");
+	        }
+	        Class c = file.getClass();
+	        try {
+	            java.lang.reflect.Method m = c.getDeclaredMethod("getParcelFileDescriptor");
+	            m.setAccessible(true);
+	            fd = (android.os.ParcelFileDescriptor)m.invoke(file);
+	        } catch (Exception e) {
+	            android.util.Log.i("SQLiteContentHelper", "SQLiteCursor.java: " + e);
+	        }       
+	        AssetFileDescriptor afd = new AssetFileDescriptor(fd, 0, file.length());
+	        return afd;
+	    } catch (IOException ex) {
+	        throw new FileNotFoundException(ex.toString());
+	    }
+	}
 
     /**
      * Runs an SQLite query and returns a MemoryFile for the
@@ -84,6 +95,7 @@ public class SQLiteContentHelper {
             }
             MemoryFile file = new MemoryFile(null, bytes.length);
             file.writeBytes(bytes, 0, 0, bytes.length);
+            
          //   file.deactivate();
             return file;
         } finally {
