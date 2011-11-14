@@ -605,11 +605,6 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         }
     }
 
-	@Override
-	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
-		
-		
-	}
 
 	
 	@Override
