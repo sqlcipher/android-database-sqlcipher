@@ -32,4 +32,6 @@ copy-libs:
 		 ${LIBRARY_ROOT}/armeabi  && \
   cp jni/libs/armeabi/libdatabase_sqlcipher.so \
      ${LIBRARY_ROOT}/armeabi && \
-  cp bin/classes/sqlcipher.jar ${LIBRARY_ROOT}
+  cp bin/classes/sqlcipher.jar ${LIBRARY_ROOT} && \
+  cp ${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so \
+		 ${LIBRARY_ROOT}/armeabi
