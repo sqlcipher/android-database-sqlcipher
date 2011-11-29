@@ -11,11 +11,14 @@ all: clean build-external build-jni build-java copy-libs
 build-external:
 	cd external/ && \
 	make -f Android.mk build-local-hack && \
+	ndk-build clean && \
 	ndk-build && \
   make -f Android.mk copy-libs-hack
 
 build-jni:
-	cd jni/ && ndk-build
+	cd jni/ && \
+	ndk-build clean && \
+	ndk-build
 
 build-java:
 	ant clean && \
@@ -36,3 +39,7 @@ copy-libs:
   cp bin/classes/sqlcipher.jar ${LIBRARY_ROOT} && \
   cp ${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so \
 		 ${LIBRARY_ROOT}/armeabi
+
+copy-libs-dist:
+	cp ${LIBRARY_ROOT}/*.jar dist/SQLCipherForAndroid-SDK/libs/ && \
+	cp ${LIBRARY_ROOT}/armeabi/*.so dist/SQLCipherForAndroid-SDK/libs/armeabi/
