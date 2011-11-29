@@ -75,7 +75,7 @@ In order to build android-database-sqlcipher from source you will need both the 
 :  # to build the source
 :  make
 
-Copy =libsqlcipher_android.so= in =external/libs/armeabi= and  =libdatabase_sqlcipher.so= in =jni/libs/armeabi= to your application =libs/armeabi= folder.  Copy the =sqlcipher.jar= file in =bin/classes= to your =libs= directory.  Copy the =icudt44l.zip= file in the =assets= directory to your =assets= directory.  Finally, you will need to copy =commons-codec.jar= and =guava-r09.jar= located in the =libs= directory into your application =libs= directory.
+Recursively copy the =libs= directory into the root of your application, you will also need the =assets= directory copied into the root of your application folder.  A detailed set of instructions and further customization can be found [[http://sqlcipher.net/sqlcipher-for-android/][here]].
 
 *** Final Notes
 
