@@ -8,3 +8,5 @@ build.xml
 proguard.cfg
 bin/
 gen/
+external/openssl
+external/sqlcipher

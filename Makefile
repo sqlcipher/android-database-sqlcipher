@@ -18,7 +18,8 @@ build-jni:
 	cd jni/ && ndk-build
 
 build-java:
-	ant compile && \
+	ant clean && \
+	ant release && \
 	cd bin/classes && \
 	jar -cvf sqlcipher.jar .
 
