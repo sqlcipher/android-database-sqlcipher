@@ -109,6 +109,8 @@ include $(BUILD_SHARED_LIBRARY)
 
 ICU_COMMON_PATH := icu4c/common
 
+# new icu common build begin
+
 icu_src_files := \
 	$(ICU_COMMON_PATH)/cmemory.c          $(ICU_COMMON_PATH)/cstring.c          \
 	$(ICU_COMMON_PATH)/cwchar.c           $(ICU_COMMON_PATH)/locmap.c           \
@@ -130,7 +132,7 @@ icu_src_files := \
 	$(ICU_COMMON_PATH)/ucnv_set.c         $(ICU_COMMON_PATH)/ucnv_u16.c         \
 	$(ICU_COMMON_PATH)/ucnv_u32.c         $(ICU_COMMON_PATH)/ucnv_u7.c          \
 	$(ICU_COMMON_PATH)/ucnv_u8.c                             \
-	$(ICU_COMMON_PATH)/udata.c            $(ICU_COMMON_PATH)/udatamem.c         \
+	$(ICU_COMMON_PATH)/udatamem.c         \
 	$(ICU_COMMON_PATH)/udataswp.c         $(ICU_COMMON_PATH)/uenum.c            \
 	$(ICU_COMMON_PATH)/uhash.c            $(ICU_COMMON_PATH)/uinit.c            \
 	$(ICU_COMMON_PATH)/uinvchar.c         $(ICU_COMMON_PATH)/uloc.c             \
@@ -188,12 +190,15 @@ icu_src_files += \
 	$(ICU_COMMON_PATH)/loclikely.cpp            $(ICU_COMMON_PATH)/locresdata.cpp     \
 	$(ICU_COMMON_PATH)/normalizer2impl.cpp      $(ICU_COMMON_PATH)/normalizer2.cpp    \
 	$(ICU_COMMON_PATH)/filterednormalizer2.cpp  $(ICU_COMMON_PATH)/ucol_swp.cpp       \
-	$(ICU_COMMON_PATH)/uprops.cpp      $(ICU_COMMON_PATH)/utrie2.cpp
-
+	$(ICU_COMMON_PATH)/uprops.cpp      $(ICU_COMMON_PATH)/utrie2.cpp \
+  $(ICU_COMMON_PATH)/charstr.cpp     $(ICU_COMMON_PATH)/uts46.cpp \
+  $(ICU_COMMON_PATH)/udata.cpp
 
 # This is the empty compiled-in icu data structure
 # that we need to satisfy the linker.
 icu_src_files += $(ICU_COMMON_PATH)/../stubdata/stubdata.c
+
+# new icu common build end
 
 icu_c_includes := \
 	$(ICU_COMMON_PATH)/ \
@@ -203,10 +208,10 @@ icu_c_includes := \
 # device and sim builds can use the same codepath, and it's hard to break one
 # without noticing because the other still works.
 
-icu_local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3 -DHAVE_ANDROID_OS=1
+icu_local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3 -DHAVE_ANDROID_OS=1 -fvisibility=hidden
 icu_local_cflags += '-DICU_DATA_DIR_PREFIX_ENV_VAR="SQLCIPHER_ICU_PREFIX"'
 icu_local_cflags += '-DICU_DATA_DIR="/icu"'
-icu_local_ldlibs := -lc
+icu_local_ldlibs := -lc -lpthread -lm
 
 #
 # Build for the target (device).
@@ -216,6 +221,8 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(icu_src_files)
 LOCAL_C_INCLUDES := $(icu_c_includes)
 LOCAL_CFLAGS := $(icu_local_cflags) -DPIC -fPIC
+LOCAL_RTTI_FLAG := -frtti
+LOCAL_SHARED_LIBRARIES += libgabi++
 LOCAL_LDLIBS += $(icu_local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc
@@ -233,15 +240,17 @@ LOCAL_PATH := $(PROJECT_ROOT_PATH)
 #ICU_I18N_PATH := $(LOCAL_PATH)/icu4c/i18n
 ICU_I18N_PATH := icu4c/i18n
 
+# start new icu18n
+
 src_files := \
 	$(ICU_I18N_PATH)/bocsu.c     $(ICU_I18N_PATH)/ucln_in.c  $(ICU_I18N_PATH)/decContext.c \
 	$(ICU_I18N_PATH)/ulocdata.c  $(ICU_I18N_PATH)/utmscale.c $(ICU_I18N_PATH)/decNumber.c
 
 src_files += \
-        $(ICU_I18N_PATH)/indiancal.cpp   $(ICU_I18N_PATH)/dtptngen.cpp $(ICU_I18N_PATH)/dtrule.cpp   \
-        $(ICU_I18N_PATH)/persncal.cpp    $(ICU_I18N_PATH)/rbtz.cpp     $(ICU_I18N_PATH)/reldtfmt.cpp \
-        $(ICU_I18N_PATH)/taiwncal.cpp    $(ICU_I18N_PATH)/tzrule.cpp   $(ICU_I18N_PATH)/tztrans.cpp  \
-        $(ICU_I18N_PATH)/udatpg.cpp      $(ICU_I18N_PATH)/vtzone.cpp                \
+  $(ICU_I18N_PATH)/indiancal.cpp   $(ICU_I18N_PATH)/dtptngen.cpp $(ICU_I18N_PATH)/dtrule.cpp   \
+  $(ICU_I18N_PATH)/persncal.cpp    $(ICU_I18N_PATH)/rbtz.cpp     $(ICU_I18N_PATH)/reldtfmt.cpp \
+  $(ICU_I18N_PATH)/taiwncal.cpp    $(ICU_I18N_PATH)/tzrule.cpp   $(ICU_I18N_PATH)/tztrans.cpp  \
+  $(ICU_I18N_PATH)/udatpg.cpp      $(ICU_I18N_PATH)/vtzone.cpp                \
 	$(ICU_I18N_PATH)/anytrans.cpp    $(ICU_I18N_PATH)/astro.cpp    $(ICU_I18N_PATH)/buddhcal.cpp \
 	$(ICU_I18N_PATH)/basictz.cpp     $(ICU_I18N_PATH)/calendar.cpp $(ICU_I18N_PATH)/casetrn.cpp  \
 	$(ICU_I18N_PATH)/choicfmt.cpp    $(ICU_I18N_PATH)/coleitr.cpp  $(ICU_I18N_PATH)/coll.cpp     \
@@ -281,17 +290,18 @@ src_files += \
 	$(ICU_I18N_PATH)/plurfmt.cpp     $(ICU_I18N_PATH)/dtitvfmt.cpp $(ICU_I18N_PATH)/dtitvinf.cpp \
 	$(ICU_I18N_PATH)/tmunit.cpp      $(ICU_I18N_PATH)/tmutamt.cpp  $(ICU_I18N_PATH)/tmutfmt.cpp  \
 	$(ICU_I18N_PATH)/colldata.cpp    $(ICU_I18N_PATH)/bmsearch.cpp $(ICU_I18N_PATH)/bms.cpp      \
-        $(ICU_I18N_PATH)/currpinf.cpp    $(ICU_I18N_PATH)/uspoof.cpp   $(ICU_I18N_PATH)/uspoof_impl.cpp \
-        $(ICU_I18N_PATH)/uspoof_build.cpp     \
-        $(ICU_I18N_PATH)/regextxt.cpp    $(ICU_I18N_PATH)/selfmt.cpp   $(ICU_I18N_PATH)/uspoof_conf.cpp \
-        $(ICU_I18N_PATH)/uspoof_wsconf.cpp $(ICU_I18N_PATH)/ztrans.cpp $(ICU_I18N_PATH)/zrule.cpp  \
-        $(ICU_I18N_PATH)/vzone.cpp       $(ICU_I18N_PATH)/fphdlimp.cpp $(ICU_I18N_PATH)/fpositer.cpp\
-        $(ICU_I18N_PATH)/locdspnm.cpp    $(ICU_I18N_PATH)/decnumstr.cpp $(ICU_I18N_PATH)/ucol_wgt.cpp
+  $(ICU_I18N_PATH)/currpinf.cpp    $(ICU_I18N_PATH)/uspoof.cpp   $(ICU_I18N_PATH)/uspoof_impl.cpp \
+  $(ICU_I18N_PATH)/uspoof_build.cpp     \
+  $(ICU_I18N_PATH)/regextxt.cpp    $(ICU_I18N_PATH)/selfmt.cpp   $(ICU_I18N_PATH)/uspoof_conf.cpp \
+  $(ICU_I18N_PATH)/uspoof_wsconf.cpp $(ICU_I18N_PATH)/ztrans.cpp $(ICU_I18N_PATH)/zrule.cpp  \
+  $(ICU_I18N_PATH)/vzone.cpp       $(ICU_I18N_PATH)/fphdlimp.cpp $(ICU_I18N_PATH)/fpositer.cpp\
+  $(ICU_I18N_PATH)/locdspnm.cpp    $(ICU_I18N_PATH)/decnumstr.cpp $(ICU_I18N_PATH)/ucol_wgt.cpp
+
+# end new icu18n
 
 c_includes = \
 	$(ICU_I18N_PATH)/ \
 	$(ICU_I18N_PATH)/../common
-
 
 #
 # Build for the target (device).
@@ -300,13 +310,14 @@ c_includes = \
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES := $(src_files)
-LOCAL_C_INCLUDES := $(c_includes)
-
-LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC 
+LOCAL_C_INCLUDES := $(c_includes) \
+										abi/cpp/include
+LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC -fvisibility=hidden
 LOCAL_CFLAGS += -O3
-
+LOCAL_RTTI_FLAG := -frtti
+LOCAL_SHARED_LIBRARIES += libgabi++
 LOCAL_STATIC_LIBRARIES += libicuuc
-LOCAL_LDLIBS += -lc
+LOCAL_LDLIBS += -lc -lpthread -lm
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicui18n
 
