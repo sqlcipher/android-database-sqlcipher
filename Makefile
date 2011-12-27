@@ -27,9 +27,9 @@ build-java:
 	jar -cvf sqlcipher.jar .
 
 clean:
-	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so && \
-	rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so && \
-	rm ${LIBRARY_ROOT}/sqlcipher.jar
+	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
+	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
+	-rm ${LIBRARY_ROOT}/sqlcipher.jar
 
 copy-libs:
 	cp external/libs/armeabi/libsqlcipher_android.so \
