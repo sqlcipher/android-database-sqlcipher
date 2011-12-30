@@ -32,6 +32,7 @@ clean:
 	-rm ${LIBRARY_ROOT}/sqlcipher.jar
 
 copy-libs:
+	mkdir -p ${LIBRARY_ROOT}/armeabi
 	cp external/libs/armeabi/libsqlcipher_android.so \
 		 ${LIBRARY_ROOT}/armeabi  && \
 	cp jni/libs/armeabi/libdatabase_sqlcipher.so \
