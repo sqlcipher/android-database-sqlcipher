@@ -46,7 +46,7 @@ sqlcipher_cflags := -DSQLITE_HAS_CODEC -DHAVE_FDATASYNC=0 -Dfdatasync=fsync
 include $(CLEAR_VARS)
 
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlcipher_cflags)
-LOCAL_C_INCLUDES := openssl/include sqlcipher
+LOCAL_C_INCLUDES := includes openssl/include sqlcipher
 LOCAL_LDFLAGS += $(project_ldflags)
 LOCAL_LDLIBS += -lcrypto
 LOCAL_MODULE    := libsqlcipher
@@ -64,7 +64,8 @@ libsqlite3_android_local_src_files := \
 	android-sqlite/android/PhoneNumberUtils.cpp \
 	android-sqlite/android/OldPhoneNumberUtils.cpp \
 	android-sqlite/android/PhoneticStringUtils.cpp \
-	platform-frameworks-base/libs/utils/String8.cpp
+	String16.cpp \
+	String8.cpp 
 #	android-sqlite/android/PhoneNumberUtilsTest.cpp \
 #	android-sqlite/android/PhoneticStringUtilsTest.cpp \
 
@@ -81,8 +82,8 @@ LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) -DOS_PATH_SEPARATOR="'/'"
 
 LOCAL_C_INCLUDES := \
+	$(LOCAL_PATH)/includes \
 	$(LOCAL_PATH)/sqlcipher \
-	$(LOCAL_PATH)/include \
 	$(LOCAL_PATH)/icu4c/i18n \
 	$(LOCAL_PATH)/icu4c/common \
 	$(LOCAL_PATH)/platform-system-core/include \
