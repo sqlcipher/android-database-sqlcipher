@@ -18,8 +18,6 @@
 #define LOG_TAG "Database"
 
 #include <utils/Log.h>
-#include <utils/String8.h>
-#include <utils/String16.h>
 
 #include <jni.h>
 #include <JNIHelp.h>
