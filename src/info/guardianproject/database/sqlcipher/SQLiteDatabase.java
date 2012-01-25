@@ -78,9 +78,9 @@ public class SQLiteDatabase extends SQLiteClosable {
             File applicationFilesDirectory = context.getFilesDir();
             File icuDir = new File(applicationFilesDirectory, "icu");
             if(!icuDir.exists()) icuDir.mkdirs();
-            File icuDataFile = new File(icuDir, "icudt44l.dat");
+            File icuDataFile = new File(icuDir, "icudt46l.dat");
             if(!icuDataFile.exists()) {
-            	ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt44l.zip"));
+            	ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
             	in.getNextEntry();
             	
                 OutputStream out =  new FileOutputStream(icuDataFile);
@@ -104,12 +104,13 @@ public class SQLiteDatabase extends SQLiteClosable {
         System.loadLibrary("stlport_shared");
         System.loadLibrary("sqlcipher_android");
         System.loadLibrary("database_sqlcipher");
-        
+
+        boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
         File applicationFilesDirectory = context.getFilesDir();
-        String icuRootPath = android.os.Build.VERSION.SDK_INT < 9 ? applicationFilesDirectory.getAbsolutePath()
-                                                                  : "/system/usr";            
+        String icuRootPath = systemICUFileExists ? "/system/usr" : applicationFilesDirectory.getAbsolutePath();
         setICURoot(icuRootPath);
-        if(android.os.Build.VERSION.SDK_INT < 9){
+        
+        if(!systemICUFileExists){
             loadICUData(context);
         }
     }
@@ -917,6 +918,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Close the database.
      */
     public void close() {
+        
         if (!isOpen()) {
             return; // already closed
         }

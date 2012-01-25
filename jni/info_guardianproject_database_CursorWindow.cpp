@@ -22,8 +22,6 @@
 #include <android_runtime/AndroidRuntime.h>
 
 #include <utils/Log.h>
-#include <utils/String8.h>
-#include <utils/String16.h>
 
 #include <stdio.h>
 #include <string.h>
