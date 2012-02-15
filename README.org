@@ -1,12 +1,16 @@
 
 Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here:
- [[https://github.com/guardianproject/android-database-sqlcipher/downloads]]
+ [[https://github.com/sqlcipher/android-database-sqlcipher/downloads]]
 
 A full demonstration app with the bundled SQLCipher R1 release is here:
 [[https://github.com/guardianproject/notepadbot]]
 
 SQLCipher for Android project source repo is here: 
-[[https://github.com/guardianproject/android-database-sqlcipher]]
+[[https://github.com/sqlcipher/android-database-sqlcipher]]
+
+*** Update February 2012
+
+    Adding ICS support to release 1.1.0, SQLCipher for Android now supports platform versions 2.1 - 4.0.3.
 
 *** Update May 2011:
 
