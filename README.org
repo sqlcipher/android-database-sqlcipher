@@ -89,6 +89,6 @@ The Android support libraries are licensed under Apache 2.0, in line with the An
 
 *** Downloads and Source
 
-SQLCipher for Android project source repo is here: [[https://github.com/guardianproject/android-database-sqlcipher]]
-Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here: [[https://github.com/guardianproject/android-database-sqlcipher/downloads]]
+SQLCipher for Android project source repo is here: [[https://github.com/sqlcipher/android-database-sqlcipher]]
+Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here: [[https://github.com/sqlcipher/android-database-sqlcipher/downloads]]
 
