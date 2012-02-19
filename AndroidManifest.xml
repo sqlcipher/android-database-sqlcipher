@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="info.guardianproject.database" android:versionCode="4"
+	package="net.sqlcipher" android:versionCode="4"
 	android:versionName="v1 (0.0.6.FINAL)">
 	<uses-sdk android:minSdkVersion="7"></uses-sdk>
 	<application android:icon="@drawable/icon" android:label="@string/app_name">

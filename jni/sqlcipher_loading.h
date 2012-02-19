@@ -22,7 +22,7 @@
 
 #include <sqlite3.h>
 
-namespace guardianproject {
+namespace sqlcipher {
 
 int register_android_database_SQLiteDatabase(JNIEnv *env);
 
