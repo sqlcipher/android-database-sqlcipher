@@ -28,7 +28,7 @@ LOCAL_SRC_FILES:= \
 	net_sqlcipher_database_SQLiteStatement.cpp \
 	net_sqlcipher_CursorWindow.cpp \
 	CursorWindow.cpp
-#	info_guardianproject_database_sqlcipher_SQLiteDebug.cpp
+#	net_sqlcipher_database_sqlcipher_SQLiteDebug.cpp
 
 LOCAL_C_INCLUDES += \
 	$(JNI_H_INCLUDE) \

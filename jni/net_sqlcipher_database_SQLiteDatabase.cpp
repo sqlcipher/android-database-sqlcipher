@@ -585,7 +585,7 @@ void throw_sqlite3_exception(JNIEnv* env, int errcode,
            exceptionClass = "net/sqlcipher/database/SQLiteMisuseException";
            break;
         default:
-           exceptionClass = "info/guardianproject/database/sqlcipher/SQLiteException";
+           exceptionClass = "net/sqlcipher/database/sqlcipher/SQLiteException";
            break;
     }
 
