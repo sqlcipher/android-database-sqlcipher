@@ -1,9 +1,9 @@
 [submodule "external/openssl"]
 	path = external/openssl
-	url = git@github.com:guardianproject/openssl-android.git
+	url = git://github.com/guardianproject/openssl-android.git
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
-	url = git@github.com:guardianproject/sqlcipher-android.git
+	url = git://github.com/guardianproject/sqlcipher-android.git
 [submodule "external/dalvik"]
 	path = external/dalvik
 	url = git://github.com/android/platform_dalvik.git
