@@ -612,7 +612,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 	
 		/*
 		window.setStartPosition(startPos);
-        mCount = mQuery.fillWindow((info.guardianproject.database.CursorWindow)window, mInitialRead, 0);
+        mCount = mQuery.fillWindow((net.sqlcipher.database.CursorWindow)window, mInitialRead, 0);
         // return -1 means not finished
         if (mCount == NO_COUNT){
             mCount = startPos + mInitialRead;
