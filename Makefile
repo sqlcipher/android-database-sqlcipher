@@ -25,7 +25,8 @@ build-java:
 
 clean:
 	ant clean
-	cd external/ && ndk-build clean 
+	cd external/ && ndk-build clean
+	cd external/sqlcipher && make clean
 	cd jni/ && ndk-build clean 
 	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
 	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
