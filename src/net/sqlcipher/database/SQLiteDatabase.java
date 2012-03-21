@@ -1805,6 +1805,32 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
     }
 
+    public void rawExecSQL(String sql){
+        long timeStart = SystemClock.uptimeMillis();
+        lock();
+        if (!isOpen()) {
+            throw new IllegalStateException("database not open");
+        }
+        logTimeStat(mLastSqlStatement, timeStart, GET_LOCK_LOG_PREFIX);
+        try {
+            native_rawExecSQL(sql);
+        } catch (SQLiteDatabaseCorruptException e) {
+            onCorruption();
+            throw e;
+        } finally {
+            unlock();
+        }
+
+        // Log commit statements along with the most recently executed
+        // SQL statement for disambiguation.  Note that instance
+        // equality to COMMIT_SQL is safe here.
+        if (sql == COMMIT_SQL) {
+            logTimeStat(mLastSqlStatement, timeStart, COMMIT_SQL);
+        } else {
+            logTimeStat(sql, timeStart, null);
+        }
+    }
+    
     /**
      * Execute a single SQL statement that is not a query. For example, CREATE
      * TABLE, DELETE, INSERT, etc. Multiple statements separated by ;s are not
@@ -2355,4 +2381,6 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @return int value of SQLITE_DBSTATUS_LOOKASIDE_USED
      */
     private native int native_getDbLookaside();
+
+    private native void native_rawExecSQL(String sql);
 }
