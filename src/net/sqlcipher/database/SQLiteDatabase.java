@@ -71,6 +71,11 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final String TAG = "Database";
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
+    private static boolean useHMACPageProtection = true;
+
+    public static void setUseHMACPageProtection(boolean value){
+        SQLiteDatabase.useHMACPageProtection = value;
+    }
 
     private static void loadICUData(Context context) {
         
@@ -1871,6 +1876,12 @@ public class SQLiteDatabase extends SQLiteClosable {
         mFactory = factory;
         dbopen(mPath, mFlags);
 
+        if(SQLiteDatabase.useHMACPageProtection){
+            execSQL("PRAGMA cipher_default_use_hmac = ON");
+        } else {
+            execSQL("PRAGMA cipher_default_use_hmac = OFF");
+        }
+        
         execSQL("PRAGMA key = '" + password + "'");
 
         if (SQLiteDebug.DEBUG_SQL_CACHE) {
