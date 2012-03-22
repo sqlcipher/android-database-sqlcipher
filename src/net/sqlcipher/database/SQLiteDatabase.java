@@ -20,6 +20,7 @@ import net.sqlcipher.CrossProcessCursorWrapper;
 import net.sqlcipher.DatabaseUtils;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDebug.DbStats;
+import net.sqlcipher.database.SQLiteDatabaseHook;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -71,11 +72,6 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final String TAG = "Database";
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
-    private static boolean useHMACPageProtection = true;
-
-    public static void setUseHMACPageProtection(boolean value){
-        SQLiteDatabase.useHMACPageProtection = value;
-    }
 
     private static void loadICUData(Context context) {
         
@@ -862,11 +858,11 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @return the newly opened database
      * @throws SQLiteException if the database cannot be opened
      */
-    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
+    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
         SQLiteDatabase sqliteDatabase = null;
         try {
             // Open the database.
-            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags);
+            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, databaseHook);
             if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
                 sqliteDatabase.enableSqlTracing(path);
             }
@@ -882,25 +878,38 @@ public class SQLiteDatabase extends SQLiteClosable {
                 // delete is only for non-memory database files
                 new File(path).delete();
             }
-            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags);
+            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, databaseHook);
         }
         ActiveDatabases.getInstance().mActiveDatabases.add(
                                                            new WeakReference<SQLiteDatabase>(sqliteDatabase));
         return sqliteDatabase;
     }
+    
+    public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook){
+        return openOrCreateDatabase(file.getPath(), password, factory, databaseHook);
+    }
 
+    public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
+    }
+    
     /**
      * Equivalent to openDatabase(file.getPath(), factory, CREATE_IF_NECESSARY).
      */
     public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory) {
-        return openOrCreateDatabase(file.getPath(), password, factory);
+        return openOrCreateDatabase(file.getPath(), password, factory, null);
     }
 
     /**
      * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY).
      */
+    
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory) {
-        return openDatabase(path, password, factory, CREATE_IF_NECESSARY);
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
+    }
+
+    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
 
     /**
@@ -1881,6 +1890,10 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
     }
 
+    public SQLiteDatabase(String path, String password, CursorFactory factory, int flags) {
+        this(path, password, factory, flags, null);
+    }
+    
     /**
      * Private constructor. See {@link #create} and {@link #openDatabase}.
      *
@@ -1889,8 +1902,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param flags 0 or {@link #NO_LOCALIZED_COLLATORS}.  If the database file already
      *              exists, mFlags will be updated appropriately.
      */
-    public SQLiteDatabase(String path, String password, CursorFactory factory, int flags) {
-
+    public SQLiteDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
 
         if (path == null) {
             throw new IllegalArgumentException("path should not be null");
@@ -1901,14 +1913,16 @@ public class SQLiteDatabase extends SQLiteClosable {
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
         dbopen(mPath, mFlags);
-
-        if(SQLiteDatabase.useHMACPageProtection){
-            execSQL("PRAGMA cipher_default_use_hmac = ON");
-        } else {
-            execSQL("PRAGMA cipher_default_use_hmac = OFF");
+        
+        if(databaseHook != null){
+            databaseHook.preKey(this);
         }
         
         execSQL("PRAGMA key = '" + password + "'");
+
+        if(databaseHook != null){
+            databaseHook.postKey(this);
+        }
 
         if (SQLiteDebug.DEBUG_SQL_CACHE) {
             mTimeOpened = getTime();
