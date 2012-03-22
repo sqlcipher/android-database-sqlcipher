@@ -73,6 +73,36 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
 
+    public static void upgradeDatabaseFormatFromVersion1To2(File databaseToMigrate, String password) throws Exception {
+
+        File newDatabasePath = null;
+        boolean renameDatabase = false;
+        SQLiteDatabaseHook hook = new SQLiteDatabaseHook(){
+          public void preKey(SQLiteDatabase database){
+            database.execSQL("PRAGMA cipher_default_use_hmac = off");
+          }
+          public void postKey(SQLiteDatabase database){
+            database.execSQL("PRAGMA cipher_default_use_hmac = on");
+          }
+        };
+ 
+        try {
+            newDatabasePath = File.createTempFile("temp", "db", databaseToMigrate.getParentFile());
+            SQLiteDatabase source = SQLiteDatabase.openOrCreateDatabase(databaseToMigrate, password, null, hook);
+            source.rawExecSQL(String.format("ATTACH DATABASE '%s' as newdb", newDatabasePath.getAbsolutePath()));
+            source.rawExecSQL("SELECT sqlcipher_export('newdb')");
+            source.rawExecSQL("DETACH DATABASE newdb");
+            source.close();
+            renameDatabase = true;
+        } catch(Exception e){
+            throw e;
+        }
+        if(renameDatabase){
+            databaseToMigrate.delete();
+            newDatabasePath.renameTo(databaseToMigrate);
+        }
+    }
+
     private static void loadICUData(Context context) {
         
         try {
@@ -81,8 +111,8 @@ public class SQLiteDatabase extends SQLiteClosable {
             if(!icuDir.exists()) icuDir.mkdirs();
             File icuDataFile = new File(icuDir, "icudt46l.dat");
             if(!icuDataFile.exists()) {
-            	ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
-            	in.getNextEntry();
+                ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
+                in.getNextEntry();
             	
                 OutputStream out =  new FileOutputStream(icuDataFile);
                 byte[] buf = new byte[1024];
