@@ -103,11 +103,10 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
     }
 
-    private static void loadICUData(Context context) {
-        
+    private static void loadICUData(Context context, File workingDir) {
+
         try {
-            File applicationFilesDirectory = context.getFilesDir();
-            File icuDir = new File(applicationFilesDirectory, "icu");
+            File icuDir = new File(workingDir, "icu");
             if(!icuDir.exists()) icuDir.mkdirs();
             File icuDataFile = new File(icuDir, "icudt46l.dat");
             if(!icuDataFile.exists()) {
@@ -130,19 +129,23 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
     }
 
-    public static void loadLibs (Context context)
+    public static void loadLibs (Context context) {
+        loadLibs(context, context.getFilesDir());
+    }
+
+    public static void loadLibs (Context context, File workingDir)
     {
         System.loadLibrary("stlport_shared");
         System.loadLibrary("sqlcipher_android");
         System.loadLibrary("database_sqlcipher");
 
         boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
-        File applicationFilesDirectory = context.getFilesDir();
-        String icuRootPath = systemICUFileExists ? "/system/usr" : applicationFilesDirectory.getAbsolutePath();
+
+        String icuRootPath = systemICUFileExists ? "/system/usr" : workingDir.getAbsolutePath();
         setICURoot(icuRootPath);
         
         if(!systemICUFileExists){
-            loadICUData(context);
+            loadICUData(context, workingDir);
         }
     }
 
