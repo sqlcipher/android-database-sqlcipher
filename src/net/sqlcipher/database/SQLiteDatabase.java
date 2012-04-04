@@ -73,6 +73,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
 
+    public int status(int operation, boolean reset){
+        return native_status(operation, reset);
+    }
+    
     public static void upgradeDatabaseFormatFromVersion1To2(File databaseToMigrate, String password) throws Exception {
 
         File newDatabasePath = null;
@@ -2430,4 +2434,6 @@ public class SQLiteDatabase extends SQLiteClosable {
     private native int native_getDbLookaside();
 
     private native void native_rawExecSQL(String sql);
+
+    private native int native_status(int operation, boolean reset);
 }

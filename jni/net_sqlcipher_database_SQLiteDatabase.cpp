@@ -92,6 +92,18 @@ static void registerLoggingFunc(const char *path) {
     loggingFuncSet = true;
 }
 
+int native_status(JNIEnv* env, jobject object, jint operation, jboolean reset)
+{
+  int value;
+  int highWater;
+  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+  int status = sqlite3_status(operation, &value, &highWater, reset);
+  if(status != SQLITE_OK){
+    throw_sqlite3_exception(env, handle);
+  }
+  return value;
+}
+
 void native_rawExecSQL(JNIEnv* env, jobject object, jstring sql)
 {
     sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
@@ -479,6 +491,7 @@ static JNINativeMethod sMethods[] =
     {"releaseMemory", "()I", (void *)native_releaseMemory},
     {"setICURoot", "(Ljava/lang/String;)V", (void *)setICURoot},
     {"native_rawExecSQL", "(Ljava/lang/String;)V", (void *)native_rawExecSQL},
+    {"native_status", "(IZ)I", (void *)native_status},
 };
 
 int register_android_database_SQLiteDatabase(JNIEnv *env)
