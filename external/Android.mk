@@ -13,7 +13,7 @@ LOCAL_PRELINK_MODULE := false
 build-local-hack: sqlcipher/sqlite3.c
 
 sqlcipher/sqlite3.c:
-	cd sqlcipher && ./configure
+	cd ${CURDIR}/sqlcipher && ./configure
 	make -C sqlcipher sqlite3.c
 
 copy-libs-hack: build-local-hack
