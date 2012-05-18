@@ -29,7 +29,7 @@ build-java:
 clean:
 	ant clean
 	cd ${EXTERNAL_DIR} && ndk-build clean
-	cd ${SQLCIPHER_DIR} && make clean
+	-cd ${SQLCIPHER_DIR} && make clean
 	cd ${JNI_DIR} && ndk-build clean 
 	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
 	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
