@@ -31,7 +31,7 @@
 #include "CursorWindow.h"
 
 
-namespace guardianproject {
+namespace sqlcipher {
 
 CursorWindow::CursorWindow(size_t maxSize) :
     mMaxSize(maxSize)
@@ -410,4 +410,4 @@ bool CursorWindow::getNull(unsigned int row, unsigned int col, bool * valueOut)
     return true;
 }
 
-}; // namespace guardianproject
+}; // namespace sqlcipher

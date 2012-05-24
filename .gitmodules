@@ -3,7 +3,7 @@
 	url = git://github.com/guardianproject/openssl-android.git
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
-	url = git://github.com/guardianproject/sqlcipher-android.git
+	url = git://github.com/sqlcipher/sqlcipher.git
 [submodule "external/dalvik"]
 	path = external/dalvik
 	url = git://github.com/android/platform_dalvik.git

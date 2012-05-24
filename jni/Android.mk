@@ -21,14 +21,14 @@ endif
 include $(CLEAR_VARS)
 
 LOCAL_SRC_FILES:= \
-	info_guardianproject_database_sqlcipher_SQLiteCompiledSql.cpp \
-	info_guardianproject_database_sqlcipher_SQLiteDatabase.cpp \
-	info_guardianproject_database_sqlcipher_SQLiteProgram.cpp \
-	info_guardianproject_database_sqlcipher_SQLiteQuery.cpp \
-	info_guardianproject_database_sqlcipher_SQLiteStatement.cpp \
-	info_guardianproject_database_CursorWindow.cpp \
+	net_sqlcipher_database_SQLiteCompiledSql.cpp \
+	net_sqlcipher_database_SQLiteDatabase.cpp \
+	net_sqlcipher_database_SQLiteProgram.cpp \
+	net_sqlcipher_database_SQLiteQuery.cpp \
+	net_sqlcipher_database_SQLiteStatement.cpp \
+	net_sqlcipher_CursorWindow.cpp \
 	CursorWindow.cpp
-#	info_guardianproject_database_sqlcipher_SQLiteDebug.cpp
+#	net_sqlcipher_database_sqlcipher_SQLiteDebug.cpp
 
 LOCAL_C_INCLUDES += \
 	$(JNI_H_INCLUDE) \

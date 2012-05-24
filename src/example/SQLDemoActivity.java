@@ -1,7 +1,7 @@
 package example;
 
 import android.database.Cursor;
-import info.guardianproject.database.sqlcipher.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteDatabase;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.os.Bundle;

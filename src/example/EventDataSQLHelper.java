@@ -1,7 +1,7 @@
 package example;
 
-import info.guardianproject.database.sqlcipher.SQLiteDatabase;
-import info.guardianproject.database.sqlcipher.SQLiteOpenHelper;
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
 import android.content.Context;
 import android.provider.BaseColumns;
 import android.util.Log;
