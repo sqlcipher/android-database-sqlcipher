@@ -173,6 +173,18 @@ public abstract class SQLiteOpenHelper {
         try {
             mIsInitializing = true;
             String path = mContext.getDatabasePath(mName).getPath();
+            File databasePath = new File(path);
+            File databasesDirectory = new File(mContext.getDatabasePath(mName).getParent());
+            
+            if(!databasesDirectory.exists()){
+                databasesDirectory.mkdirs();
+            }
+            if(!databasePath.exists()){
+                mIsInitializing = false;
+                db = getWritableDatabase(password);
+                mIsInitializing = true;
+                db.close();
+            }
             db = SQLiteDatabase.openDatabase(path, password, mFactory, SQLiteDatabase.OPEN_READONLY);
             if (db.getVersion() != mNewVersion) {
                 throw new SQLiteException("Can't upgrade read-only database from version " +
