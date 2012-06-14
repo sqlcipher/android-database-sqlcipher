@@ -39,7 +39,7 @@ public abstract class SQLiteOpenHelper {
     private final CursorFactory mFactory;
     private final int mNewVersion;
 
-    private SQLiteDatabase mDatabaseRO, mDatabaseRW = null;
+    private SQLiteDatabase mDatabase = null;
     private boolean mIsInitializing = false;
 
     /**
@@ -75,8 +75,8 @@ public abstract class SQLiteOpenHelper {
      * @return a read/write database object valid until {@link #close} is called
      */
     public synchronized SQLiteDatabase getWritableDatabase(String password) {
-        if (mDatabaseRW != null && mDatabaseRW.isOpen()) {
-            return mDatabaseRW;  // The database is already open for business
+        if (mDatabase != null && mDatabase.isOpen() && !mDatabase.isReadOnly()) {
+            return mDatabase;  // The database is already open for business
         }
 
         if (mIsInitializing) {
@@ -91,7 +91,7 @@ public abstract class SQLiteOpenHelper {
 
         boolean success = false;
         SQLiteDatabase db = null;
-        if (mDatabaseRW != null) mDatabaseRW.lock();
+        if (mDatabase != null) mDatabase.lock();
         try {
             mIsInitializing = true;
             if (mName == null) {
@@ -135,13 +135,13 @@ public abstract class SQLiteOpenHelper {
         } finally {
             mIsInitializing = false;
             if (success) {
-                if (mDatabaseRW != null) {
-                    try { mDatabaseRW.close(); } catch (Exception e) { }
-                    mDatabaseRW.unlock();
+                if (mDatabase != null) {
+                    try { mDatabase.close(); } catch (Exception e) { }
+                    mDatabase.unlock();
                 }
-                mDatabaseRW = db;
+                mDatabase = db;
             } else {
-                if (mDatabaseRW != null) mDatabaseRW.unlock();
+                if (mDatabase != null) mDatabase.unlock();
                 if (db != null) db.close();
             }
         }
@@ -161,12 +161,19 @@ public abstract class SQLiteOpenHelper {
      *     or {@link #close} is called.
      */
     public synchronized SQLiteDatabase getReadableDatabase(String password) {
-        if (mDatabaseRO != null && mDatabaseRO.isOpen()) {        	
-        		return mDatabaseRO;  // The database is already open for business        	
+        if (mDatabase != null && mDatabase.isOpen()) {
+            return mDatabase;  // The database is already open for business
         }
 
         if (mIsInitializing) {
             throw new IllegalStateException("getReadableDatabase called recursively");
+        }
+
+        try {
+            return getWritableDatabase(password);
+        } catch (SQLiteException e) {
+            if (mName == null) throw e;  // Can't open a temp database read-only!
+            Log.e(TAG, "Couldn't open " + mName + " for writing (will try read-only):", e);
         }
 
         SQLiteDatabase db = null;
@@ -193,11 +200,11 @@ public abstract class SQLiteOpenHelper {
 
             onOpen(db);
             Log.w(TAG, "Opened " + mName + " in read-only mode");
-            mDatabaseRO = db;
-            return mDatabaseRO;
+            mDatabase = db;
+            return mDatabase;
         } finally {
             mIsInitializing = false;
-            if (db != null && db != mDatabaseRO) db.close();
+            if (db != null && db != mDatabase) db.close();
         }
     }
 
@@ -207,14 +214,9 @@ public abstract class SQLiteOpenHelper {
     public synchronized void close() {
         if (mIsInitializing) throw new IllegalStateException("Closed during initialization");
 
-        if (mDatabaseRO != null && mDatabaseRO.isOpen()) {
-        	mDatabaseRO.close();
-        	mDatabaseRO = null;
-        }
-        
-        if (mDatabaseRW != null && mDatabaseRW.isOpen()) {
-        	mDatabaseRW.close();
-        	mDatabaseRW = null;
+        if (mDatabase != null && mDatabase.isOpen()) {
+            mDatabase.close();
+            mDatabase = null;
         }
     }
 
