@@ -1,24 +1,10 @@
+*** Download Source and Binaries
 
-Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here:
- [[https://github.com/sqlcipher/android-database-sqlcipher/downloads]]
+Binary packages for developers, with the jar’s, .so’s and a quick sample can be [[https://github.com/sqlcipher/android-database-sqlcipher/downloads][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
 
-A full demonstration app with the bundled SQLCipher R1 release is here:
-[[https://github.com/guardianproject/notepadbot]]
+*** Compatibility
 
-SQLCipher for Android project source repo is here: 
-[[https://github.com/sqlcipher/android-database-sqlcipher]]
-
-*** Update February 2012
-
-    Adding ICS support to release 1.1.0, SQLCipher for Android now supports platform versions 2.1 - 4.0.3.
-
-*** Update May 2011:
-
-After some major breakthroughs during last week’s development sprint, we’re extremely excited to announce SQLCipher for Android, Developer Preview r1. SQLCipher is an SQLite extension that provides transparent 256-bit AES encryption of database files. To date, it has been open-sourced, sponsored and maintained by Zetetic LLC, and we are glad to be able to extend their efforts to a new mobile platform. In the mobile space, SQLCipher has enjoyed widespread use in Apple’s iOS, as well as Nokia / QT for quite some time. Given that Android by default provides integrated support for SQLite databases, our goal was to create an almost identical API for SQLCipher, so that developers of all skill level could use it, without a steep learning curve.
-
-In an environment where mobile data privacy is increasingly in the headlines, this project will make it easier than ever for mobile developers to properly secure their local application data, and in turn better protect the privacy of their users. The data stored by Android apps protected by this type of encryption will be less vulnerable to access by malicious apps, protected in case of device loss or theft, and highly resistant to mobile data forensics tools that are increasingly used to mass copy a mobile device during routine traffic stops.
-
-However, while the core SQLCipher database is vetted and market-ready, the Android support libraries in this release are still very much alpha quality, hence the Developer Preview label. This R1 release should not be integrated into critical or production software. Our goal is to give Android developers early access to the technology, so they can provide feedback on our approach, and help us deliver the right offering for securing mobile data. We expect to release a market-ready version this summer, and will be publicly iterating through the codebase until then.
+    SQLCipher for Android runs on Android 2.1 - 4.1.
 
 *** An Illustrative Terminal Listing
 
@@ -54,20 +40,17 @@ A typical SQLite database in unencrypted, and visually parseable even as encoded
 
 We’ve packaged up a very simple SDK for any Android developer to add SQLCipher into their app with the following three steps:
 
-Add a single sqlcipher.jar and a few .so’s to the application libs directory
-Update the import path from android.database.sqlite.* to info.guardianproject.database.sqlite.* in any source files that reference it. The original android.database.Cursor can still be used unchanged.
-Init the database in onCreate() and pass a variable argument to the open database method with a password*:
+1. Add a single sqlcipher.jar and a few .so’s to the application libs directory
+2. Update the import path from android.database.sqlite.* to net.sqlcipher.database.* in any source files that reference it. The original android.database.Cursor can still be used unchanged.
+3.  Init the database in onCreate() and pass a variable argument to the open database method with a password:
 SQLiteDatabase.loadLibs(this); //first init the db libraries with the context
 SQLiteOpenHelper.getWritableDatabase(“thisismysecret”):
-*Note: we are working on some dialog builder helper methods for password and PIN input, password caching, and other features that we would like to standardize across all applications that use SQLCipher.
 
-*** Compatibility
-
-The Developer Preview implements SQLCipher v1, is compatible with Android 2.2 & 2.3, and works only within one process (you can’t pass a Cursor from a remote Service to an Activity).
+An article covering both integration of SQLCipher into an Android application as well as building the source can be found [[http://sqlcipher.net/sqlcipher-for-android][here]].
 
 Notepad + SQLCipher = Notepadbot
 
-Notepadbot is a sample application pulled from the standard Android samples code and updated to use SQLCipher. You can browse the source here and download the apk here.
+Notepadbot is a sample application pulled from the standard Android samples code and updated to use SQLCipher. You can browse the source [[https://github.com/guardianproject/notepadbot][here]] and download the apk [[https://github.com/guardianproject/notepadbot/downloads][here]].
 
 *** Building
 
@@ -81,14 +64,6 @@ In order to build android-database-sqlcipher from source you will need both the 
 
 Recursively copy the =libs= directory into the root of your application, you will also need the =assets= directory copied into the root of your application folder.  A detailed set of instructions and further customization can be found [[http://sqlcipher.net/sqlcipher-for-android/][here]].
 
-*** Final Notes
-
-It’s important to note that this project is not intended to be a distinct, long-term fork of SQLCipher. We’ve been working closely with the SQLCipher team at Zetetic and fully intent to closely maintain the project as SQLCipher evolves, re-integrating changes in upcoming releases such as SQLCipher v2.
+*** License
 
 The Android support libraries are licensed under Apache 2.0, in line with the Android OS code on which they are based. The SQLCipher code itself is licensed under a BSD-style license from Zetetic LLC. Finally, the original SQLite code itself is in the public domain.
-
-*** Downloads and Source
-
-SQLCipher for Android project source repo is here: [[https://github.com/sqlcipher/android-database-sqlcipher]]
-Current SDK distro for developers, with the jar’s, .so’s and a quick sample can be found here: [[https://github.com/sqlcipher/android-database-sqlcipher/downloads]]
-
