@@ -41,10 +41,11 @@ A typical SQLite database in unencrypted, and visually parseable even as encoded
 We’ve packaged up a very simple SDK for any Android developer to add SQLCipher into their app with the following three steps:
 
 1. Add a single sqlcipher.jar and a few .so’s to the application libs directory
-2. Update the import path from android.database.sqlite.* to net.sqlcipher.database.* in any source files that reference it. The original android.database.Cursor can still be used unchanged.
-3.  Init the database in onCreate() and pass a variable argument to the open database method with a password:
-SQLiteDatabase.loadLibs(this); //first init the db libraries with the context
-SQLiteOpenHelper.getWritableDatabase(“thisismysecret”):
+2. Update the import path from =android.database.sqlite.*= to =net.sqlcipher.database.*= in any source files that reference it. The original =android.database.Cursor= can still be used unchanged.
+3.  Init the database in =onCreate()= and pass a variable argument to the open database method with a password:
+
+  SQLiteDatabase.loadLibs(this); //first init the db libraries with the context
+  SQLiteOpenHelper.getWritableDatabase(“thisismysecret”):
 
 An article covering both integration of SQLCipher into an Android application as well as building the source can be found [[http://sqlcipher.net/sqlcipher-for-android][here]].
 
