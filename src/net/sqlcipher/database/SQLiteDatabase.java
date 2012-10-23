@@ -116,7 +116,6 @@ public class SQLiteDatabase extends SQLiteClosable {
             if(!icuDataFile.exists()) {
                 ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
                 in.getNextEntry();
-            	
                 OutputStream out =  new FileOutputStream(icuDataFile);
                 byte[] buf = new byte[1024];
                 int len;
@@ -129,7 +128,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             }
         }
         catch (Exception e) {
-            Log.e(TAG, "Error copying icu data file" + e.getMessage());
+            Log.e(TAG, "Error copying icu data file", e);
         }
     }
 
@@ -147,7 +146,6 @@ public class SQLiteDatabase extends SQLiteClosable {
 
         String icuRootPath = systemICUFileExists ? "/system/usr" : workingDir.getAbsolutePath();
         setICURoot(icuRootPath);
-        
         if(!systemICUFileExists){
             loadICUData(context, workingDir);
         }
