@@ -19,7 +19,7 @@ sqlcipher/sqlite3.c:
 copy-libs-hack: build-local-hack
 	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
 
-project_ldflags:= -Llibs/armeabi/ -Landroid-libs/
+project_ldflags:= -Llibs/$(TARGET_ARCH_ABI)/ -Landroid-libs/$(TARGET_ARCH_ABI)/
 
 #------------------------------------------------------------------------------#
 # libsqlite3
@@ -75,7 +75,8 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS := false
 #LOCAL_REQUIRED_MODULES += libsqlcipher libicui18n libicuuc 
 LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc
 
-LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) -DOS_PATH_SEPARATOR="'/'"
+LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) \
+		-DOS_PATH_SEPARATOR="'/'" -DHAVE_SYS_UIO_H
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/includes \
@@ -85,7 +86,7 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/platform-system-core/include \
 	$(LOCAL_PATH)/platform-frameworks-base/include
 
-LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-libs/ -L$(LOCAL_PATH)/libs/armeabi/
+LOCAL_LDFLAGS += -L${LOCAL_PATH}/android-libs/$(TARGET_ARCH_ABI)/ -L$(LOCAL_PATH)/libs/$(TARGET_ARCH_ABI)/
 LOCAL_LDLIBS := -llog -lutils -lcutils -lcrypto
 LOCAL_MODULE := libsqlcipher_android
 LOCAL_MODULE_FILENAME := libsqlcipher_android

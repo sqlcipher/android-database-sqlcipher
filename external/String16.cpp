@@ -42,7 +42,7 @@
 #  define htons(x)    (x)
 # endif
 #else
-//# include <netinet/in.h>
+# include <netinet/in.h>
 # include <sys/endian.h>
 #endif
 
