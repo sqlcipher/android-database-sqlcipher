@@ -2,11 +2,7 @@ LOCAL_PATH:= $(call my-dir)
 
 EXTERNAL_PATH := ../external
 
-ifeq ($(TARGET_ARCH), arm)
-	LOCAL_CFLAGS += -DPACKED="__attribute__ ((packed))"
-else
-	LOCAL_CFLAGS += -DPACKED=""
-endif
+LOCAL_CFLAGS += -DPACKED="__attribute__ ((packed))"
 
 #TARGET_PLATFORM := android-8
 
@@ -49,7 +45,7 @@ LOCAL_SHARED_LIBRARIES := \
 	libsqlite3_android
 
 LOCAL_CFLAGS += -U__APPLE__
-LOCAL_LDFLAGS += -L../external/android-libs/ -L../external/libs/armeabi/
+LOCAL_LDFLAGS += -L../external/android-libs/$(TARGET_ARCH_ABI) -L../external/libs/$(TARGET_ARCH_ABI)/
 
 # libs from the NDK
 LOCAL_LDLIBS += -ldl -llog

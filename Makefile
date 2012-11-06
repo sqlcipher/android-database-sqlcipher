@@ -30,10 +30,14 @@ clean:
 	ant clean
 	cd ${EXTERNAL_DIR} && ndk-build clean
 	-cd ${SQLCIPHER_DIR} && make clean
-	cd ${JNI_DIR} && ndk-build clean 
+	cd ${JNI_DIR} && ndk-build clean
 	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
 	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
+	-rm ${LIBRARY_ROOT}/armeabi/libstlport_shared.so
 	-rm ${LIBRARY_ROOT}/sqlcipher.jar
+	-rm ${LIBRARY_ROOT}/x86/libsqlcipher_android.so
+	-rm ${LIBRARY_ROOT}/x86/libdatabase_sqlcipher.so
+	-rm ${LIBRARY_ROOT}/x86/libstlport_shared.so
 
 copy-libs:
 	mkdir -p ${LIBRARY_ROOT}/armeabi
@@ -44,6 +48,13 @@ copy-libs:
 	cp ${CURDIR}/bin/classes/sqlcipher.jar ${LIBRARY_ROOT} && \
 	cp ${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so \
 		 ${LIBRARY_ROOT}/armeabi
+	mkdir -p ${LIBRARY_ROOT}/x86
+	cp ${EXTERNAL_DIR}/libs/x86/libsqlcipher_android.so \
+		 ${LIBRARY_ROOT}/x86  && \
+	cp ${JNI_DIR}/libs/x86/libdatabase_sqlcipher.so \
+		${LIBRARY_ROOT}/x86 && \
+	cp ${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/x86/libstlport_shared.so \
+		 ${LIBRARY_ROOT}/x86
 
 copy-libs-dist:
 	cp ${LIBRARY_ROOT}/*.jar dist/SQLCipherForAndroid-SDK/libs/ && \
