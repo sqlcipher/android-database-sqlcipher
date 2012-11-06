@@ -4,7 +4,7 @@ Binary packages for developers, with the jar’s, .so’s and a quick sample can
 
 *** Compatibility
 
-    SQLCipher for Android runs on Android 2.1 - 4.1.
+    SQLCipher for Android runs on Android 2.1 - 4.1, both (x86 and ARM architectures).
 
 *** An Illustrative Terminal Listing
 
@@ -45,7 +45,7 @@ We’ve packaged up a very simple SDK for any Android developer to add SQLCipher
 3.  Init the database in =onCreate()= and pass a variable argument to the open database method with a password:
 
 :  SQLiteDatabase.loadLibs(this); //first init the db libraries with the context
-:  SQLiteOpenHelper.getWritableDatabase(“thisismysecret”):
+:  SQLiteOpenHelper.getWritableDatabase("thisismysecret"):
 
 An article covering both integration of SQLCipher into an Android application as well as building the source can be found [[http://sqlcipher.net/sqlcipher-for-android][here]].
 
