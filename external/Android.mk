@@ -20,6 +20,7 @@ copy-libs-hack: build-local-hack
 	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
 
 project_ldflags:= -Llibs/$(TARGET_ARCH_ABI)/ -Landroid-libs/$(TARGET_ARCH_ABI)/
+icu_project_cflags := -DHAVE_ANDROID_OS=1
 
 #------------------------------------------------------------------------------#
 # libsqlite3
@@ -76,6 +77,7 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS := false
 LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc
 
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) \
+		$(icu_project_cflags) \
 		-DOS_PATH_SEPARATOR="'/'" -DHAVE_SYS_UIO_H
 
 LOCAL_C_INCLUDES := \
@@ -206,7 +208,8 @@ icu_c_includes := \
 # device and sim builds can use the same codepath, and it's hard to break one
 # without noticing because the other still works.
 
-icu_local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3 -DHAVE_ANDROID_OS=1 -fvisibility=hidden
+icu_local_cflags += -D_REENTRANT -O3 -DU_COMMON_IMPLEMENTATION -fvisibility=hidden 
+icu_local_cflags += $(icu_project_cflags)
 icu_local_cflags += '-DICU_DATA_DIR_PREFIX_ENV_VAR="SQLCIPHER_ICU_PREFIX"'
 icu_local_cflags += '-DICU_DATA_DIR="/icu"'
 icu_local_ldlibs := -lc -lpthread -lm
@@ -312,6 +315,7 @@ LOCAL_C_INCLUDES := $(c_includes) \
 										abi/cpp/include
 LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC -fvisibility=hidden
 LOCAL_CFLAGS += -O3
+LOCAL_CFLAGS += $(icu_project_cflags)
 LOCAL_RTTI_FLAG := -frtti
 LOCAL_SHARED_LIBRARIES += libgabi++
 LOCAL_STATIC_LIBRARIES += libicuuc
