@@ -17,9 +17,17 @@
 package net.sqlcipher;
 
 import android.database.CharArrayBuffer;
+import android.database.Cursor;
+
+import android.content.res.Resources;
+import android.database.sqlite.SQLiteClosable;
+import android.os.Binder;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.Process;
+import android.util.Log;
+import android.util.SparseIntArray;
 
 /**
  * A buffer containing multiple cursor rows.
@@ -27,6 +35,10 @@ import android.os.Parcelable;
 public class CursorWindow extends android.database.CursorWindow implements Parcelable {
     /** The pointer to the native window class */
     @SuppressWarnings("unused")
+
+    /** The pointer to the native window class. set by the native methods in
+     * android_database_CursorWindow.cpp
+     */
     private int nWindow;
 
     private int mStartPos;
@@ -227,9 +239,9 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     private native boolean isNull_native(int row, int col);
-    
+
     /**
      * Returns a byte array for the given field.
      *
@@ -246,7 +258,42 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         }
     }
 
+    /**
+     * Returns the value at (<code>row</code>, <code>col</code>) as a <code>byte</code> array.
+     *
+     * <p>If the value is null, then <code>null</code> is returned. If the
+     * type of column <code>col</code> is a string type, then the result
+     * is the array of bytes that make up the internal representation of the
+     * string value. If the type of column <code>col</code> is integral or floating-point,
+     * then an {@link SQLiteException} is thrown.
+     */
     private native byte[] getBlob_native(int row, int col);
+
+    /**
+     * Returns data type of the given column's value.
+     *<p>
+     * Returned column types are
+     * <ul>
+     *   <li>{@link Cursor#FIELD_TYPE_NULL}</li>
+     *   <li>{@link Cursor#FIELD_TYPE_INTEGER}</li>
+     *   <li>{@link Cursor#FIELD_TYPE_FLOAT}</li>
+     *   <li>{@link Cursor#FIELD_TYPE_STRING}</li>
+     *   <li>{@link Cursor#FIELD_TYPE_BLOB}</li>
+     *</ul>
+     *</p>
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
+     * @param col the column to read from
+     * @return the value type
+     */
+    public int getType(int row, int col) {
+        acquireReference();
+        try {
+            return getType_native(row - mStartPos, col);
+        } finally {
+            releaseReference();
+        }
+    }
 
     /**
      * Checks if a field contains either a blob or is null.
@@ -254,6 +301,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return {@code true} if given field is {@code NULL} or a blob
+     * @deprecated use {@link #getType(int, int)} instead
      */
     public boolean isBlob(int row, int col) {
         acquireReference();
@@ -270,6 +318,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return {@code true} if given field is a long
+     * @deprecated use {@link #getType(int, int)} instead
      */
     public boolean isLong(int row, int col) {
         acquireReference();
@@ -286,6 +335,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return {@code true} if given field is a float
+     * @deprecated use {@link #getType(int, int)} instead
      */
     public boolean isFloat(int row, int col) {
         acquireReference();
@@ -302,6 +352,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return {@code true} if given field is {@code NULL} or a String
+     * @deprecated use {@link #getType(int, int)} instead
      */
     public boolean isString(int row, int col) {
         acquireReference();
@@ -316,6 +367,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     private native boolean isString_native(int row, int col);
     private native boolean isInteger_native(int row, int col);
     private native boolean isFloat_native(int row, int col);
+
+    private native int getType_native(int row, int col);
 
     /**
      * Returns a String for the given field.
@@ -333,6 +386,19 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         }
     }
     
+    /**
+     * Returns the value at (<code>row</code>, <code>col</code>) as a <code>String</code>.
+     *
+     * <p>If the value is null, then <code>null</code> is returned. If the
+     * type of column <code>col</code> is integral, then the result is the string
+     * that is obtained by formatting the integer value with the <code>printf</code>
+     * family of functions using format specifier <code>%lld</code>. If the
+     * type of column <code>col</code> is floating-point, then the result is the string
+     * that is obtained by formatting the floating-point value with the
+     * <code>printf</code> family of functions using format specifier <code>%g</code>.
+     * If the type of column <code>col</code> is a blob type, then an
+     * {@link SQLiteException} is thrown.
+     */
     private native String getString_native(int row, int col);
 
     /**
@@ -384,6 +450,17 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         }
     }
     
+    /**
+     * Returns the value at (<code>row</code>, <code>col</code>) as a <code>long</code>.
+     *
+     * <p>If the value is null, then <code>0L</code> is returned. If the
+     * type of column <code>col</code> is a string type, then the result
+     * is the <code>long</code> that is obtained by parsing the string value with
+     * <code>strtoll</code>. If the type of column <code>col</code> is
+     * floating-point, then the result is the floating-point value casted to a <code>long</code>.
+     * If the type of column <code>col</code> is a blob type, then an
+     * {@link SQLiteException} is thrown.
+     */
     private native long getLong_native(int row, int col);
 
     /**
@@ -403,6 +480,17 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         }
     }
     
+    /**
+     * Returns the value at (<code>row</code>, <code>col</code>) as a <code>double</code>.
+     *
+     * <p>If the value is null, then <code>0.0</code> is returned. If the
+     * type of column <code>col</code> is a string type, then the result
+     * is the <code>double</code> that is obtained by parsing the string value with
+     * <code>strtod</code>. If the type of column <code>col</code> is
+     * integral, then the result is the integer value casted to a <code>double</code>.
+     * If the type of column <code>col</code> is a blob type, then an
+     * {@link SQLiteException} is thrown.
+     */
     private native double getDouble_native(int row, int col);
 
     /**
@@ -485,6 +573,9 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     @Override
     protected void finalize() {
         // Just in case someone forgot to call close...
+        if (nWindow == 0) {
+            return;
+        }
         close_native();
     }
     
@@ -534,6 +625,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     @Override
     protected void onAllReferencesReleased() {
         close_native();
-		super.onAllReferencesReleased();
+
+        super.onAllReferencesReleased();
     }
 }

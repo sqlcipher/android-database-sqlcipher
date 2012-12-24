@@ -56,6 +56,10 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     abstract public double getDouble(int column);
     abstract public boolean isNull(int column);
 
+    public int getType(int column) {
+        throw new UnsupportedOperationException();
+    }
+
     // TODO implement getBlob in all cursor types
     public byte[] getBlob(int column) {
         throw new UnsupportedOperationException("getBlob is not supported");
@@ -151,6 +155,8 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
                 result.getChars(0, result.length(), data, 0);
             }
             buffer.sizeCopied = result.length();
+        } else {
+            buffer.sizeCopied = 0;
         }
     }
     
@@ -205,7 +211,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
      * @param window
      */
     public void fillWindow(int position, android.database.CursorWindow window) {
-        if (position < 0 || position > getCount()) {
+        if (position < 0 || position >= getCount()) {
             return;
         }
         window.acquireReference();
@@ -523,6 +529,10 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
         }
     }
 
+    public Uri getNotificationUri() {
+        return mNotifyUri;
+    }
+
     public boolean getWantsAllOnMoveCalls() {
         return false;
     }
@@ -630,6 +640,12 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     protected int mRowIdColumnIndex;
 
     protected int mPos;
+
+    /**
+     * If {@link #mRowIdColumnIndex} is not -1 this contains contains the value of
+     * the column at {@link #mRowIdColumnIndex} for the current row this cursor is
+     * pointing at.
+     */
     protected Long mCurrentRowID;
     protected ContentResolver mContentResolver;
     protected boolean mClosed = false;
