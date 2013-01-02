@@ -46,14 +46,14 @@ copy-libs:
 	cp ${JNI_DIR}/libs/armeabi/libdatabase_sqlcipher.so \
 		${LIBRARY_ROOT}/armeabi && \
 	cp ${CURDIR}/bin/classes/sqlcipher.jar ${LIBRARY_ROOT} && \
-	cp ${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so \
+	cp ${EXTERNAL_DIR}/libs/armeabi/libstlport_shared.so \
 		 ${LIBRARY_ROOT}/armeabi
 	mkdir -p ${LIBRARY_ROOT}/x86
 	cp ${EXTERNAL_DIR}/libs/x86/libsqlcipher_android.so \
 		 ${LIBRARY_ROOT}/x86  && \
 	cp ${JNI_DIR}/libs/x86/libdatabase_sqlcipher.so \
 		${LIBRARY_ROOT}/x86 && \
-	cp ${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/x86/libstlport_shared.so \
+	cp ${EXTERNAL_DIR}/libs/x86/libstlport_shared.so \
 		 ${LIBRARY_ROOT}/x86
 
 copy-libs-dist:
