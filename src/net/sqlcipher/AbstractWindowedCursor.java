@@ -211,6 +211,12 @@ public abstract class AbstractWindowedCursor extends AbstractCursor
     }
 
     @Override
+    public int getType(int columnIndex) {
+        checkPosition();
+        return mWindow.getType(mPos, columnIndex);
+    }
+
+    @Override
     protected void checkPosition()
     {
         super.checkPosition();
