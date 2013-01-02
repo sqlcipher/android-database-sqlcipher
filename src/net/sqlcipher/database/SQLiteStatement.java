@@ -90,6 +90,24 @@ public class SQLiteStatement extends SQLiteProgram
         }
     }
 
+    public long executeUpdateDelete() {
+        if (!mDatabase.isOpen()) {
+            throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
+        }
+        long timeStart = SystemClock.uptimeMillis();
+        mDatabase.lock();
+
+        acquireReference();
+        try {
+            native_execute();
+            mDatabase.logTimeStat(mSql, timeStart);
+            return mDatabase.lastChangeCount();
+        } finally {
+            releaseReference();
+            mDatabase.unlock();
+        }
+    }
+
     /**
      * Execute a statement that returns a 1 by 1 table with a numeric value.
      * For example, SELECT COUNT(*) FROM table;
