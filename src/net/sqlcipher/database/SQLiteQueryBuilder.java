@@ -15,6 +15,7 @@
  */
 
 package net.sqlcipher.database;
+
 import net.sqlcipher.*;
 
 import android.provider.BaseColumns;
@@ -273,7 +274,7 @@ public class SQLiteQueryBuilder
      * @see android.content.ContentResolver#query(android.net.Uri, String[],
      *      String, String[], String)
      */
-    public android.database.Cursor query(SQLiteDatabase db, String[] projectionIn,
+    public Cursor query(SQLiteDatabase db, String[] projectionIn,
             String selection, String[] selectionArgs, String groupBy,
             String having, String sortOrder) {
         return query(db, projectionIn, selection, selectionArgs, groupBy, having, sortOrder,
@@ -312,7 +313,7 @@ public class SQLiteQueryBuilder
      * @see android.content.ContentResolver#query(android.net.Uri, String[],
      *      String, String[], String)
      */
-    public android.database.Cursor query(SQLiteDatabase db, String[] projectionIn,
+    public Cursor query(SQLiteDatabase db, String[] projectionIn,
             String selection, String[] selectionArgs, String groupBy,
             String having, String sortOrder, String limit) {
         if (mTables == null) {

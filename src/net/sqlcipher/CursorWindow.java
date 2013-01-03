@@ -17,7 +17,6 @@
 package net.sqlcipher;
 
 import android.database.CharArrayBuffer;
-import android.database.Cursor;
 
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteClosable;
