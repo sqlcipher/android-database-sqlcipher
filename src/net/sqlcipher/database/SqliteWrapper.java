@@ -20,8 +20,9 @@ package net.sqlcipher.database;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
+
 import net.sqlcipher.*;
+
 import android.net.Uri;
 import android.util.Log;
 import android.widget.Toast;
@@ -64,7 +65,7 @@ public final class SqliteWrapper {
         }
     }
 
-    public static boolean requery(Context context, Cursor cursor) {
+    public static boolean requery(Context context, android.database.Cursor cursor) {
         try {
             return cursor.requery();
         } catch (SQLiteException e) {
