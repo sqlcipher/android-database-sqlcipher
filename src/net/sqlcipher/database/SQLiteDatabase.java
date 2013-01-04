@@ -16,6 +16,7 @@
 
 package net.sqlcipher.database;
 
+import net.sqlcipher.Cursor;
 import net.sqlcipher.CrossProcessCursorWrapper;
 import net.sqlcipher.DatabaseUtils;
 import net.sqlcipher.SQLException;
@@ -43,7 +44,7 @@ import java.util.zip.ZipInputStream;
 import android.content.ContentValues;
 
 import android.content.Context;
-import android.database.Cursor;
+
 import android.os.Debug;
 import android.os.SystemClock;
 import android.text.TextUtils;

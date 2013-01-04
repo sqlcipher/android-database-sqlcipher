@@ -1,9 +1,7 @@
 package net.sqlcipher;
 
-import android.database.Cursor;
 import android.database.CrossProcessCursor;
 import android.database.CursorWindow;
-import android.database.CursorWrapper;
 
 public class CrossProcessCursorWrapper extends CursorWrapper implements CrossProcessCursor {
 

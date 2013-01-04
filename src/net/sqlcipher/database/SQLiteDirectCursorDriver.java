@@ -16,8 +16,8 @@
 
 package net.sqlcipher.database;
 
+import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
-import android.database.Cursor;
 
 /**
  * A cursor driver that uses the given query directly.
@@ -27,7 +27,7 @@ import android.database.Cursor;
 public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
     private String mEditTable; 
     private SQLiteDatabase mDatabase;
-    private android.database.Cursor mCursor;
+    private Cursor mCursor;
     private String mSql;
     private SQLiteQuery mQuery;
 
@@ -37,7 +37,7 @@ public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
         mSql = sql;
     }
 
-    public android.database.Cursor query(CursorFactory factory, String[] selectionArgs) {
+    public Cursor query(CursorFactory factory, String[] selectionArgs) {
         // Compile the query
         SQLiteQuery query = new SQLiteQuery(mDatabase, mSql, 0, selectionArgs);
 
@@ -76,11 +76,13 @@ public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
         }
     }
 
+    @Override
     public void cursorDeactivated() {
         // Do nothing
     }
 
-    public void cursorRequeried(Cursor cursor) {
+    @Override
+    public void cursorRequeried(android.database.Cursor cursor) {
         // Do nothing
     }
 

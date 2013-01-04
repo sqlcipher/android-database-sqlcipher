@@ -36,7 +36,7 @@ import android.util.Log;
  * This is an abstract cursor class that handles a lot of the common code
  * that all cursors need to deal with and is provided for convenience reasons.
  */
-public abstract class AbstractCursor implements android.database.CrossProcessCursor {
+public abstract class AbstractCursor implements android.database.CrossProcessCursor, net.sqlcipher.Cursor {
     private static final String TAG = "Cursor";
 
     DataSetObservable mDataSetObservable = new DataSetObservable();
@@ -56,9 +56,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     abstract public double getDouble(int column);
     abstract public boolean isNull(int column);
 
-    public int getType(int column) {
-        throw new UnsupportedOperationException();
-    }
+    abstract public int getType(int column);
 
     // TODO implement getBlob in all cursor types
     public byte[] getBlob(int column) {
