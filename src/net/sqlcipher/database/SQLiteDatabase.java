@@ -895,6 +895,11 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws SQLiteException if the database cannot be opened
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
+        return openDatabase(path, password, factory, flags, databaseHook, new DefaultDatabaseErrorHandler());
+    }
+
+    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook,
+            DatabaseErrorHandler errorHandler) {
         SQLiteDatabase sqliteDatabase = null;
         try {
             // Open the database.
@@ -906,15 +911,8 @@ public class SQLiteDatabase extends SQLiteClosable {
                 sqliteDatabase.enableSqlProfiling(path);
             }
         } catch (SQLiteDatabaseCorruptException e) {
-            // Try to recover from this, if we can.
-            // TODO: should we do this for other open failures?
-            Log.e(TAG, "Deleting and re-creating corrupt database " + path, e);
-            // EventLog.writeEvent(EVENT_DB_CORRUPT, path);
-            if (!path.equalsIgnoreCase(":memory")) {
-                // delete is only for non-memory database files
-                new File(path).delete();
-            }
-            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, databaseHook);
+            errorHandler.onCorruption(sqliteDatabase);
+            sqliteDatabase = openDatabase(path, password, factory, flags, databaseHook, errorHandler);
         }
         ActiveDatabases.getInstance().mActiveDatabases.add(
                                                            new WeakReference<SQLiteDatabase>(sqliteDatabase));
@@ -927,6 +925,11 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
         return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
+    }
+
+    public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
+            DatabaseErrorHandler errorHandler) {
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
     }
     
     /**
