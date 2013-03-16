@@ -77,7 +77,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     public int status(int operation, boolean reset){
         return native_status(operation, reset);
     }
-    
+
     public static void upgradeDatabaseFormatFromVersion1To2(File databaseToMigrate, String password) throws Exception {
 
         File newDatabasePath = null;
@@ -90,7 +90,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             database.execSQL("PRAGMA cipher_default_use_hmac = on");
           }
         };
- 
+
         try {
             newDatabasePath = File.createTempFile("temp", "db", databaseToMigrate.getParentFile());
             SQLiteDatabase source = SQLiteDatabase.openOrCreateDatabase(databaseToMigrate, password, null, hook);
@@ -920,7 +920,7 @@ public class SQLiteDatabase extends SQLiteClosable {
                                                            new WeakReference<SQLiteDatabase>(sqliteDatabase));
         return sqliteDatabase;
     }
-    
+
     public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook){
         return openOrCreateDatabase(file.getPath(), password, factory, databaseHook);
     }
@@ -928,7 +928,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
         return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
     }
-    
+
     /**
      * Equivalent to openDatabase(file.getPath(), factory, CREATE_IF_NECESSARY).
      */
@@ -939,7 +939,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     /**
      * Equivalent to openDatabase(path, factory, CREATE_IF_NECESSARY).
      */
-    
+
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory) {
         return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
@@ -968,7 +968,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Close the database.
      */
     public void close() {
-        
+
         if (!isOpen()) {
             return; // already closed
         }
@@ -1496,7 +1496,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         SQLiteCursor c = (SQLiteCursor)rawQueryWithFactory(
                                                            null, sql, selectionArgs, null);
         c.setLoadStyle(initialRead, maxRead);
-        
+
         return c;
     }
 
@@ -1875,7 +1875,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             logTimeStat(sql, timeStart, null);
         }
     }
-    
+
     /**
      * Execute a single SQL statement that is not a query. For example, CREATE
      * TABLE, DELETE, INSERT, etc. Multiple statements separated by ;s are not
@@ -1929,7 +1929,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     public SQLiteDatabase(String path, String password, CursorFactory factory, int flags) {
         this(path, password, factory, flags, null);
     }
-    
+
     /**
      * Private constructor. See {@link #create} and {@link #openDatabase}.
      *
@@ -1949,12 +1949,12 @@ public class SQLiteDatabase extends SQLiteClosable {
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
         dbopen(mPath, mFlags);
-        
+
         if(databaseHook != null){
             databaseHook.preKey(this);
         }
-        
-        execSQL("PRAGMA key = '" + password + "'");
+
+        native_key(password.toCharArray());
 
         if(databaseHook != null){
             databaseHook.postKey(this);
@@ -2370,7 +2370,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Sets the root directory to search for the ICU data file
      */
     public static native void setICURoot(String path);
-    
+
     /**
      * Native call to open the database.
      *
@@ -2435,4 +2435,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     private native void native_rawExecSQL(String sql);
 
     private native int native_status(int operation, boolean reset);
+
+    private native void native_key(char[] key) throws SQLException;
+    private native void native_key(String key) throws SQLException;
 }
