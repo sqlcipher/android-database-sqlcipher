@@ -1,6 +1,6 @@
 *** Download Source and Binaries
 
-Binary packages for developers, with the jar’s, .so’s and a quick sample can be [[https://github.com/sqlcipher/android-database-sqlcipher/downloads][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
+The latest binary packages for developers, with the jar’s, .so’s and a quick sample can be [[http://sqlcipher.net/storage/android/downloads/SQLCipher%20for%20Android%202.1.1.zip][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
 
 *** Compatibility
 
