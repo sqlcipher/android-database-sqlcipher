@@ -31,7 +31,7 @@ import android.util.SparseIntArray;
 /**
  * A buffer containing multiple cursor rows.
  */
-public class CursorWindow extends android.database.CursorWindow implements Parcelable {
+public class CursorWindow extends net.sqlcipher.AbstractCursorWindow implements Parcelable {
     /** The pointer to the native window class */
     @SuppressWarnings("unused")
 
@@ -366,7 +366,6 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     private native boolean isString_native(int row, int col);
     private native boolean isInteger_native(int row, int col);
     private native boolean isFloat_native(int row, int col);
-
     private native int getType_native(int row, int col);
 
     /**
@@ -626,5 +625,10 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         close_native();
 
         super.onAllReferencesReleased();
+    }
+
+    @Override
+    public int getCursorWindowType() {
+        return BINDER_CURSOR_WINDOW;
     }
 }

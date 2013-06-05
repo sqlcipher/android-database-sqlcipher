@@ -17,6 +17,8 @@
 package net.sqlcipher.database;
 
 import net.sqlcipher.AbstractWindowedCursor;
+import net.sqlcipher.AbstractCursorWindow;
+import net.sqlcipher.AshmemCursorWindow;
 import net.sqlcipher.CursorWindow;
 import net.sqlcipher.SQLException;
 
@@ -127,7 +129,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         }
         public void run() {
              // use cached mWindow, to avoid get null mWindow
-            CursorWindow cw = mWindow;
+            AbstractCursorWindow cw = mWindow;
             Process.setThreadPriority(Process.myTid(), Process.THREAD_PRIORITY_BACKGROUND);
             // the cursor's state doesn't change
             while (true) {
@@ -275,8 +277,13 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 
     private void fillWindow (int startPos) {
         if (mWindow == null) {
-            // If there isn't a window set already it will only be accessed locally
-            mWindow = new CursorWindow(true /* the window is local only */);
+            // Use Ashmem Cursor Window for ICS or higher versions
+            if (android.os.Build.VERSION.SDK_INT >= 14 /*android.os.Build.VERSION_CODES.ICS*/) {
+                mWindow = new AshmemCursorWindow("SQLiteCursor");
+            } else {
+                // If there isn't a window set already it will only be accessed locally
+                mWindow = new CursorWindow(true /* the window is local only */);
+            }
         } else {
             mCursorState++;
                 queryThreadLock();
@@ -558,7 +565,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     }
 
     @Override
-    public void setWindow(CursorWindow window) {        
+    public void setWindow(AbstractCursorWindow window) {        
         if (mWindow != null) {
             mCursorState++;
             queryThreadLock();
@@ -621,8 +628,13 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         } */
         
         if (mWindow == null) {
-            // If there isn't a window set already it will only be accessed locally
-            mWindow = new CursorWindow(true /* the window is local only */);
+            // Use Ashmem Cursor Window for ICS or higher version
+            if (android.os.Build.VERSION.SDK_INT >= 14 /*android.os.Build.VERSION_CODES.ICS*/) {
+                mWindow = new AshmemCursorWindow("SQLiteCursor");
+            } else {
+                // If there isn't a window set already it will only be accessed locally
+                mWindow = new CursorWindow(true /* the window is local only */);
+            }
         } else {
             mCursorState++;
                 queryThreadLock();
