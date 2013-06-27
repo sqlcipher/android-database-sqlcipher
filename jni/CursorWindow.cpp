@@ -58,35 +58,23 @@ LOG_WINDOW("Created CursorWindow from existing IMemory: mFreeOffset = %d, numRow
 
 bool CursorWindow::initBuffer(bool localOnly)
 {
-    //TODO Use a non-memory dealer mmap region for localOnly
-
-    android::sp<android::MemoryHeapBase> heap;
-    heap = new android::MemoryHeapBase(mMaxSize, 0, "CursorWindow");
-    if (heap != NULL) {
-        mMemory = new android::MemoryBase(heap, 0, mMaxSize);
-        if (mMemory != NULL) {
-            mData = (uint8_t *) mMemory->pointer();
-            if (mData) {
-                mHeader = (window_header_t *) mData;
-                mSize = mMaxSize;
-
-                // Put the window into a clean state
-                clear();
-            LOG_WINDOW("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mMaxSize = %d, mData = %p", mFreeOffset, mSize, mMaxSize, mData);
-                return true;                
-            }
-        } 
-        LOGE("CursorWindow heap allocation failed");
-        return false;
-    } else {
-        LOGE("failed to create the CursorWindow heap");
-        return false;
-    }
+  void* data = malloc(mMaxSize);
+  if(data){
+    mData = (uint8_t *) data;
+    mHeader = (window_header_t *) mData;
+    mSize = mMaxSize;
+    clear();
+    LOG_WINDOW("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mMaxSize = %d, mData = %p", mFreeOffset, mSize, mMaxSize, mData);
+    return true;
+  }
+  return false;
 }
 
 CursorWindow::~CursorWindow()
 {
-    // Everything that matters is a smart pointer
+  if(mData){
+    free(mData);
+  }
 }
 
 void CursorWindow::clear()
