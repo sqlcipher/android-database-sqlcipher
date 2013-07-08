@@ -1,24 +1,24 @@
 [submodule "external/openssl"]
 	path = external/openssl
-	url = git://github.com/guardianproject/openssl-android.git
+	url = https://github.com/guardianproject/openssl-android.git
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
-	url = git://github.com/sqlcipher/sqlcipher.git
+	url = https://github.com/sqlcipher/sqlcipher.git
 [submodule "external/dalvik"]
 	path = external/dalvik
-	url = git://github.com/android/platform_dalvik.git
+	url = https://github.com/android/platform_dalvik.git
 [submodule "external/android-sqlite"]
 	path = external/android-sqlite
-	url = git://github.com/android/platform_external_sqlite.git
+	url = https://github.com/android/platform_external_sqlite.git
 [submodule "external/platform-system-core"]
 	path = external/platform-system-core
-	url = git://github.com/android/platform_system_core.git
+	url = https://github.com/android/platform_system_core.git
 [submodule "external/platform-frameworks-base"]
 	path = external/platform-frameworks-base
-	url = git://github.com/android/platform_frameworks_base.git
+	url = https://github.com/android/platform_frameworks_base.git
 [submodule "external/icu4c"]
 	path = external/icu4c
-	url = git://github.com/android/platform_external_icu4c.git
+	url = https://github.com/android/platform_external_icu4c.git
 [submodule "notepadbot"]
 	path = dist/SQLCipherForAndroid-SDK/samples/notepadbot
-	url = git://github.com/guardianproject/notepadbot.git
+	url = https://github.com/guardianproject/notepadbot.git
