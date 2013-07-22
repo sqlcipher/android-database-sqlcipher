@@ -19,7 +19,7 @@
             fi
             ;;
         *)
-            echo "Toolchain uknown for host system"
+            echo "Toolchain unknown for host system"
             exit 1
             ;;
     esac
