@@ -5,9 +5,28 @@
         exit 1
     fi
 
+    HOST_INFO=`uname -a`
+    case ${HOST_INFO} in
+        Darwin*)
+            TOOLCHAIN_SYSTEM=darwin-x86_64
+            ;;
+        Linux*)
+            if [[ "${HOST_INFO}" == *i686* ]]
+            then
+                TOOLCHAIN_SYSTEM=linux-x86
+            else
+                TOOLCHAIN_SYSTEM=linux-x86_64
+            fi
+            ;;
+        *)
+            echo "Toolchain uknown for host system"
+            exit 1
+            ;;
+    esac
+
     rm ../android-libs/armeabi/libcrypto.a \
-       ../android-libs/x86/libcrypto.a
-    
+        ../android-libs/x86/libcrypto.a
+
     git clean -dfx && git checkout -f
     ./Configure dist
 
@@ -24,14 +43,14 @@
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=darwin-x86_64 \
+        --system=${TOOLCHAIN_SYSTEM} \
         --arch=arm
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
 
     RANLIB=arm-linux-androideabi-ranlib \
-    AR=arm-linux-androideabi-ar \
-    CC=arm-linux-androideabi-gcc \
+        AR=arm-linux-androideabi-ar \
+        CC=arm-linux-androideabi-gcc \
         ./Configure android ${OPENSSL_EXCLUSION_LIST}
 
     make build_crypto
@@ -43,14 +62,14 @@
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=darwin-x86_64 \
+        --system=${TOOLCHAIN_SYSTEM} \
         --arch=x86
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
 
     RANLIB=i686-linux-android-ranlib \
-    AR=i686-linux-android-ar \
-    CC=i686-linux-android-gcc \
+        AR=i686-linux-android-ar \
+        CC=i686-linux-android-gcc \
         ./Configure android-x86 ${OPENSSL_EXCLUSION_LIST}
 
     make build_crypto
