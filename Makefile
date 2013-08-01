@@ -11,6 +11,7 @@ SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
 RELEASE_DIR := "SQLCipher for Android ${LATEST_TAG}"
 CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:"
 README := ${RELEASE_DIR}/README
+MAKE_JOBS ?= 16
 
 init:
 	git submodule update --init
@@ -20,13 +21,11 @@ all: build-external build-jni build-java copy-libs
 
 build-external:
 	cd ${EXTERNAL_DIR} && \
-	make -f Android.mk build-local-hack && \
-	ndk-build && \
-	make -f Android.mk copy-libs-hack
+	make -f Android.mk build-local-hack
 
 build-jni:
-	cd ${JNI_DIR} && \
-	ndk-build
+	cd ${CURDIR} && \
+	ndk-build -j${MAKE_JOBS}
 
 build-java:
 	ant release && \
@@ -48,33 +47,12 @@ release:
 clean:
 	-rm SQLCipher\ for\ Android\*.zip
 	ant clean
-	cd ${EXTERNAL_DIR} && ndk-build clean
+	cd ${CURDIR} && ndk-build clean
 	-cd ${SQLCIPHER_DIR} && make clean
-	cd ${JNI_DIR} && ndk-build clean
-	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
-	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
-	-rm ${LIBRARY_ROOT}/armeabi/libstlport_shared.so
 	-rm ${LIBRARY_ROOT}/sqlcipher.jar
-	-rm ${LIBRARY_ROOT}/x86/libsqlcipher_android.so
-	-rm ${LIBRARY_ROOT}/x86/libdatabase_sqlcipher.so
-	-rm ${LIBRARY_ROOT}/x86/libstlport_shared.so
 
 copy-libs:
-	mkdir -p ${LIBRARY_ROOT}/armeabi
-	cp ${EXTERNAL_DIR}/libs/armeabi/libsqlcipher_android.so \
-		 ${LIBRARY_ROOT}/armeabi  && \
-	cp ${JNI_DIR}/libs/armeabi/libdatabase_sqlcipher.so \
-		${LIBRARY_ROOT}/armeabi && \
-	cp ${CURDIR}/bin/classes/sqlcipher.jar ${LIBRARY_ROOT} && \
-	cp ${EXTERNAL_DIR}/libs/armeabi/libstlport_shared.so \
-		 ${LIBRARY_ROOT}/armeabi
-	mkdir -p ${LIBRARY_ROOT}/x86
-	cp ${EXTERNAL_DIR}/libs/x86/libsqlcipher_android.so \
-		 ${LIBRARY_ROOT}/x86  && \
-	cp ${JNI_DIR}/libs/x86/libdatabase_sqlcipher.so \
-		${LIBRARY_ROOT}/x86 && \
-	cp ${EXTERNAL_DIR}/libs/x86/libstlport_shared.so \
-		 ${LIBRARY_ROOT}/x86
+	cp ${CURDIR}/bin/classes/sqlcipher.jar ${LIBRARY_ROOT}
 
 copy-libs-dist:
 	cp ${LIBRARY_ROOT}/*.jar dist/SQLCipherForAndroid-SDK/libs/ && \

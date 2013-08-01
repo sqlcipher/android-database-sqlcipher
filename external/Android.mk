@@ -2,8 +2,6 @@
 # Before building using this do:
 #	make -f Android.mk build-local-hack
 #   ndk-build
-#   ndk-build
-#	make -f Android.mk copy-libs-hack
 
 PROJECT_ROOT_PATH := $(call my-dir)
 LOCAL_PATH := $(PROJECT_ROOT_PATH)
@@ -16,10 +14,8 @@ sqlcipher/sqlite3.c:
 	cd ${CURDIR}/sqlcipher && ./configure
 	make -C sqlcipher sqlite3.c
 
-copy-libs-hack: build-local-hack
-	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
-
-project_ldflags:= -Llibs/$(TARGET_ARCH_ABI)/ -Landroid-libs/$(TARGET_ARCH_ABI)/
+project_ldflags:= -L$(PROJECT_ROOT_PATH)/libs/$(TARGET_ARCH_ABI) \
+    -L$(PROJECT_ROOT_PATH)/android-libs/$(TARGET_ARCH_ABI)
 
 #------------------------------------------------------------------------------#
 # libsqlite3
@@ -41,8 +37,11 @@ sqlcipher_cflags := -DSQLITE_HAS_CODEC -DHAVE_FDATASYNC=0 -Dfdatasync=fsync
 
 include $(CLEAR_VARS)
 
-LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlcipher_cflags)
-LOCAL_C_INCLUDES := includes openssl/include sqlcipher
+LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlcipher_cflags) -fvisibility=hidden
+LOCAL_C_INCLUDES := \
+    $(LOCAL_PATH)/includes \
+    $(LOCAL_PATH)/openssl/include \
+    $(LOCAL_PATH)/sqlcipher
 LOCAL_LDFLAGS += $(project_ldflags)
 LOCAL_LDLIBS += -lcrypto
 LOCAL_MODULE    := libsqlcipher
@@ -75,7 +74,7 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS := false
 #LOCAL_REQUIRED_MODULES += libsqlcipher libicui18n libicuuc 
 LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc
 
-LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) \
+LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) -fvisibility=hidden \
 		-DOS_PATH_SEPARATOR="'/'" -DHAVE_SYS_UIO_H
 
 LOCAL_C_INCLUDES := \
@@ -86,13 +85,13 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/platform-system-core/include \
 	$(LOCAL_PATH)/platform-frameworks-base/include
 
-LOCAL_LDFLAGS += -L${LOCAL_PATH}/android-libs/$(TARGET_ARCH_ABI)/ -L$(LOCAL_PATH)/libs/$(TARGET_ARCH_ABI)/
+LOCAL_LDFLAGS += $(project_ldflags)
 LOCAL_LDLIBS := -llog -lutils -lcutils -lcrypto
 LOCAL_MODULE := libsqlcipher_android
 LOCAL_MODULE_FILENAME := libsqlcipher_android
 LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files)
 
-include $(BUILD_SHARED_LIBRARY)
+include $(BUILD_STATIC_LIBRARY)
 
 #-------------------------
 # start icu project import
@@ -105,7 +104,7 @@ include $(BUILD_SHARED_LIBRARY)
 
 #include $(CLEAR_VARS)
 
-ICU_COMMON_PATH := icu4c/common
+ICU_COMMON_PATH := $(LOCAL_PATH)/icu4c/common
 
 # new icu common build begin
 
@@ -209,6 +208,7 @@ icu_c_includes := \
 icu_local_cflags += -D_REENTRANT -DU_COMMON_IMPLEMENTATION -O3 -DHAVE_ANDROID_OS=1 -fvisibility=hidden
 icu_local_cflags += '-DICU_DATA_DIR_PREFIX_ENV_VAR="SQLCIPHER_ICU_PREFIX"'
 icu_local_cflags += '-DICU_DATA_DIR="/icu"'
+icu_local_cflags += -include $(LOCAL_PATH)/VisibilityIcu.h
 icu_local_ldlibs := -lc -lpthread -lm
 
 #
@@ -219,8 +219,8 @@ include $(CLEAR_VARS)
 LOCAL_SRC_FILES := $(icu_src_files)
 LOCAL_C_INCLUDES := $(icu_c_includes)
 LOCAL_CFLAGS := $(icu_local_cflags) -DPIC -fPIC
+LOCAL_EXPORT_CFLAGS := -include $(LOCAL_PATH)/VisibilityIcu.h
 LOCAL_RTTI_FLAG := -frtti
-LOCAL_SHARED_LIBRARIES += libgabi++
 LOCAL_LDLIBS += $(icu_local_ldlibs)
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libicuuc
@@ -235,8 +235,8 @@ include $(BUILD_STATIC_LIBRARY)
 #--------------
 include $(CLEAR_VARS)
 LOCAL_PATH := $(PROJECT_ROOT_PATH)
-#ICU_I18N_PATH := $(LOCAL_PATH)/icu4c/i18n
-ICU_I18N_PATH := icu4c/i18n
+ICU_I18N_PATH := $(LOCAL_PATH)/icu4c/i18n
+#ICU_I18N_PATH := icu4c/i18n
 
 # start new icu18n
 
@@ -313,7 +313,6 @@ LOCAL_C_INCLUDES := $(c_includes) \
 LOCAL_CFLAGS += -D_REENTRANT -DPIC -DU_I18N_IMPLEMENTATION -fPIC -fvisibility=hidden
 LOCAL_CFLAGS += -O3
 LOCAL_RTTI_FLAG := -frtti
-LOCAL_SHARED_LIBRARIES += libgabi++
 LOCAL_STATIC_LIBRARIES += libicuuc
 LOCAL_LDLIBS += -lc -lpthread -lm
 LOCAL_MODULE_TAGS := optional

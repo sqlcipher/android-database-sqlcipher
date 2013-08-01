@@ -140,7 +140,6 @@ public class SQLiteDatabase extends SQLiteClosable {
     public static void loadLibs (Context context, File workingDir)
     {
         System.loadLibrary("stlport_shared");
-        System.loadLibrary("sqlcipher_android");
         System.loadLibrary("database_sqlcipher");
 
         boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();

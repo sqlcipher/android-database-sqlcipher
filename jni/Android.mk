@@ -1,6 +1,6 @@
 LOCAL_PATH:= $(call my-dir)
 
-EXTERNAL_PATH := ../external
+EXTERNAL_PATH := $(LOCAL_PATH)/../external
 
 LOCAL_CFLAGS += -DPACKED="__attribute__ ((packed))"
 
@@ -42,24 +42,18 @@ LOCAL_C_INCLUDES += \
 	$(EXTERNAL_PATH)/platform-frameworks-base/include \
 	$(EXTERNAL_PATH)/icu4c/common \
 
-LOCAL_SHARED_LIBRARIES := \
-	libcrypto \
-	libssl \
-	libsqlcipher \
-	libsqlite3_android
+#LOCAL_SHARED_LIBRARIES := libsqlcipher_android
+LOCAL_STATIC_LIBRARIES := libsqlcipher_android libicuuc
 
 LOCAL_CFLAGS += -U__APPLE__
-LOCAL_LDFLAGS += -L../external/android-libs/$(TARGET_ARCH_ABI) -L../external/libs/$(TARGET_ARCH_ABI)/
+LOCAL_LDFLAGS += -L$(EXTERNAL_PATH)/android-libs/$(TARGET_ARCH_ABI) -L$(EXTERNAL_PATH)/libs/$(TARGET_ARCH_ABI)/
 
 # libs from the NDK
 LOCAL_LDLIBS += -ldl -llog
 # libnativehelper and libandroid_runtime are included with Android but not the NDK
-LOCAL_LDLIBS += -lnativehelper -landroid_runtime -lutils -lbinder
-# these are build in the ../external section
+LOCAL_LDLIBS += -lnativehelper -landroid_runtime -lutils -lbinder -lcrypto
 
-LOCAL_LDLIBS  += -lsqlcipher_android
-LOCAL_LDFLAGS += -L../obj/local/$(TARGET_ARCH_ABI)
-LOCAL_LDLIBS  += -licui18n -licuuc
+# these are build in the ../external section
 
 ifeq ($(WITH_MALLOC_LEAK_CHECK),true)
 	LOCAL_CFLAGS += -DMALLOC_LEAK_CHECK
@@ -69,4 +63,5 @@ LOCAL_MODULE:= libdatabase_sqlcipher
 
 include $(BUILD_SHARED_LIBRARY)
 
-include $(call all-makefiles-under,$(LOCAL_PATH))
+$(call import-module,external)
+
