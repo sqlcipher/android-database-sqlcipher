@@ -1,6 +1,6 @@
 [submodule "external/openssl"]
 	path = external/openssl
-	url = https://github.com/guardianproject/openssl-android.git
+	url = git://git.openssl.org/openssl.git
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
 	url = https://github.com/sqlcipher/sqlcipher.git

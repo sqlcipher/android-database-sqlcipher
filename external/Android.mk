@@ -41,14 +41,20 @@ sqlcipher_cflags := -DSQLITE_HAS_CODEC -DHAVE_FDATASYNC=0 -Dfdatasync=fsync
 
 include $(CLEAR_VARS)
 
+LOCAL_STATIC_LIBRARIES += static-libcrypto
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlcipher_cflags)
-LOCAL_C_INCLUDES := includes openssl/include sqlcipher
+LOCAL_C_INCLUDES := includes sqlcipher
 LOCAL_LDFLAGS += $(project_ldflags)
-LOCAL_LDLIBS += -lcrypto
 LOCAL_MODULE    := libsqlcipher
 LOCAL_SRC_FILES := $(sqlcipher_files)
 
 include $(BUILD_STATIC_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := static-libcrypto
+LOCAL_EXPORT_C_INCLUDES := openssl/include
+LOCAL_SRC_FILES := android-libs/$(TARGET_ARCH_ABI)/libcrypto.a
+include $(PREBUILT_STATIC_LIBRARY)
 
 #------------------------------------------------------------------------------#
 # libsqlcipher_android (our version of Android's libsqlite_android)
@@ -73,7 +79,7 @@ LOCAL_ALLOW_UNDEFINED_SYMBOLS := false
 
 # TODO this needs to depend on libsqlcipher being built, how to do that?
 #LOCAL_REQUIRED_MODULES += libsqlcipher libicui18n libicuuc 
-LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc
+LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc static-libcrypto
 
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) \
 		-DOS_PATH_SEPARATOR="'/'" -DHAVE_SYS_UIO_H
@@ -87,7 +93,7 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/platform-frameworks-base/include
 
 LOCAL_LDFLAGS += -L${LOCAL_PATH}/android-libs/$(TARGET_ARCH_ABI)/ -L$(LOCAL_PATH)/libs/$(TARGET_ARCH_ABI)/
-LOCAL_LDLIBS := -llog -lutils -lcutils -lcrypto
+LOCAL_LDLIBS := -llog -lutils -lcutils
 LOCAL_MODULE := libsqlcipher_android
 LOCAL_MODULE_FILENAME := libsqlcipher_android
 LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files)

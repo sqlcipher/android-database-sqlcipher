@@ -47,10 +47,10 @@ release:
 
 clean:
 	-rm SQLCipher\ for\ Android\*.zip
-	ant clean
-	cd ${EXTERNAL_DIR} && ndk-build clean
+	-ant clean
+	-cd ${EXTERNAL_DIR} && ndk-build clean
 	-cd ${SQLCIPHER_DIR} && make clean
-	cd ${JNI_DIR} && ndk-build clean
+	-cd ${JNI_DIR} && ndk-build clean
 	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
 	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
 	-rm ${LIBRARY_ROOT}/armeabi/libstlport_shared.so
@@ -79,3 +79,6 @@ copy-libs:
 copy-libs-dist:
 	cp ${LIBRARY_ROOT}/*.jar dist/SQLCipherForAndroid-SDK/libs/ && \
 	cp ${LIBRARY_ROOT}/armeabi/*.so dist/SQLCipherForAndroid-SDK/libs/armeabi/
+
+build-openssl-libraries:
+	./build-openssl-libraries.sh
