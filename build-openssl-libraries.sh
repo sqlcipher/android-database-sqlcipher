@@ -8,7 +8,7 @@
     HOST_INFO=`uname -a`
     case ${HOST_INFO} in
         Darwin*)
-            TOOLCHAIN_SYSTEM=darwin-x86_64
+            TOOLCHAIN_SYSTEM=darwin-x86
             ;;
         Linux*)
             if [[ "${HOST_INFO}" == *i686* ]]
