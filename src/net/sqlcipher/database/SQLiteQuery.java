@@ -58,7 +58,7 @@ public class SQLiteQuery extends SQLiteProgram {
      * @param window The window to fill into
      * @return number of total rows in the query
      */
-    /* package */ int fillWindow(CursorWindow window,
+    /* package */ int fillWindow(AbstractCursorWindow window,
             int maxRead, int lastPos) {
         long timeStart = SystemClock.uptimeMillis();
         mDatabase.lock();
@@ -70,8 +70,14 @@ public class SQLiteQuery extends SQLiteProgram {
                 // if the start pos is not equal to 0, then most likely window is
                 // too small for the data set, loading by another thread
                 // is not safe in this situation. the native code will ignore maxRead
-                int numRows = native_fill_window(window, window.getStartPosition(), mOffsetIndex,
+                int numRows;
+                if (window.getCursorWindowType() == AbstractCursorWindow.ASHMEM_CURSOR_WINDOW) {
+                    numRows = native_fill_ashmem_window(((AshmemCursorWindow) window).mWindowPtr, window.getStartPosition(), mOffsetIndex,
+                            maxRead, lastPos);
+                } else {
+                    numRows = native_fill_window((CursorWindow)window, window.getStartPosition(), mOffsetIndex,
                         maxRead, lastPos);
+                }
 
                 // Logging
                 if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
@@ -186,6 +192,9 @@ public class SQLiteQuery extends SQLiteProgram {
     }
 
     private final native int native_fill_window(CursorWindow window, 
+            int startPos, int offsetParam, int maxRead, int lastPos);
+
+    private final native int native_fill_ashmem_window(int windowPtr, 
             int startPos, int offsetParam, int maxRead, int lastPos);
 
     private final native int native_column_count();

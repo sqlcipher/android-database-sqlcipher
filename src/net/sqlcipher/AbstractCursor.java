@@ -68,7 +68,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     /**
      * returns a pre-filled window, return NULL if no such window
      */
-    public CursorWindow getWindow() {
+    public AbstractCursorWindow getWindow() {
         return null;
     }
 

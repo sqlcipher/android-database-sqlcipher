@@ -30,6 +30,7 @@
 #include <unistd.h>
 
 #include "CursorWindow.h"
+#include "AshmemCursorWindow.h"
 #include "sqlite3_exception.h"
 
 
@@ -314,6 +315,237 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
     }
 }
 
+enum CopyRowResult {
+    CPR_OK,
+    CPR_FULL,
+    CPR_ERROR,
+};
+
+static CopyRowResult copyRow(JNIEnv* env, AshmemCursorWindow* window,
+        sqlite3_stmt* statement, int numColumns, int startPos, int addedRows) {
+    // Allocate a new field directory for the row.
+    status_t status = window->allocRow();
+    if (status) {
+        LOG_WINDOW("Failed allocating fieldDir at startPos %d row %d, error=%d",
+                startPos, addedRows, status);
+        return CPR_FULL;
+    }
+
+    // Pack the row into the window.
+    CopyRowResult result = CPR_OK;
+    for (int i = 0; i < numColumns; i++) {
+        int type = sqlite3_column_type(statement, i);
+        if (type == SQLITE_TEXT) {
+            // TEXT data
+            const char* text = reinterpret_cast<const char*>(
+                    sqlite3_column_text(statement, i));
+
+            // SQLite does not include the NULL terminator in size, but does
+            // ensure all strings are NULL terminated, so increase size by
+            // one to make sure we store the terminator.
+            size_t sizeIncludingNull = sqlite3_column_bytes(statement, i) + 1;
+            status = window->putString(addedRows, i, text, sizeIncludingNull);
+            if (status) {
+                LOG_WINDOW("Failed allocating %u bytes for text at %d,%d, error=%d",
+                        sizeIncludingNull, startPos + addedRows, i, status);
+                result = CPR_FULL;
+                break;
+            }
+            LOG_WINDOW("%d,%d is TEXT with %u bytes",
+                    startPos + addedRows, i, sizeIncludingNull);
+        } else if (type == SQLITE_INTEGER) {
+            // INTEGER data
+            int64_t value = sqlite3_column_int64(statement, i);
+            status = window->putLong(addedRows, i, value);
+            if (status) {
+                LOG_WINDOW("Failed allocating space for a long in column %d, error=%d",
+                        i, status);
+                result = CPR_FULL;
+                break;
+            }
+            LOG_WINDOW("%d,%d is INTEGER 0x%016llx", startPos + addedRows, i, value);
+        } else if (type == SQLITE_FLOAT) {
+            // FLOAT data
+            double value = sqlite3_column_double(statement, i);
+            status = window->putDouble(addedRows, i, value);
+            if (status) {
+                LOG_WINDOW("Failed allocating space for a double in column %d, error=%d",
+                        i, status);
+                result = CPR_FULL;
+                break;
+            }
+            LOG_WINDOW("%d,%d is FLOAT %lf", startPos + addedRows, i, value);
+        } else if (type == SQLITE_BLOB) {
+            // BLOB data
+            const void* blob = sqlite3_column_blob(statement, i);
+            size_t size = sqlite3_column_bytes(statement, i);
+            status = window->putBlob(addedRows, i, blob, size);
+            if (status) {
+                LOG_WINDOW("Failed allocating %u bytes for blob at %d,%d, error=%d",
+                        size, startPos + addedRows, i, status);
+                result = CPR_FULL;
+                break;
+            }
+            LOG_WINDOW("%d,%d is Blob with %u bytes",
+                    startPos + addedRows, i, size);
+        } else if (type == SQLITE_NULL) {
+            // NULL field
+            status = window->putNull(addedRows, i);
+            if (status) {
+                LOG_WINDOW("Failed allocating space for a null in column %d, error=%d",
+                        i, status);
+                result = CPR_FULL;
+                break;
+            }
+            LOG_WINDOW("%d,%d is NULL", startPos + addedRows, i);
+        } else {
+            // Unknown data
+            LOGE("Unknown column type when filling database window");
+            throw_sqlite3_exception(env, "Unknown column type when filling window");
+            result = CPR_ERROR;
+            break;
+        }
+    }
+    // Free the last row if if was not successfully copied.
+    if (result != CPR_OK) {
+        window->freeLastRow();
+    }
+
+    return result;
+}
+
+static jint native_fill_ashmem_window(JNIEnv* env, jobject object, jint windowPtr,
+                               jint startPos, jint offsetParam, jint maxRead, jint lastPos)
+{
+    sqlite3_stmt * statement = GET_STATEMENT(env, object);
+    int numRows = lastPos;
+    maxRead += lastPos;
+    int numColumns;
+    int boundParams;
+    int retryCount = 0;
+    int totalRows = 0;
+    int addedRows = 0;
+    bool windowFull = false;
+    bool gotException = false;
+    AshmemCursorWindow *window;
+
+    if (statement == NULL) {
+        LOGE("Invalid statement in fillWindow()");
+        jniThrowException(env, "java/lang/IllegalStateException",
+                "Attempting to access a deactivated, closed, or empty cursor");
+        return 0;
+    }
+
+    // Only do the binding if there is a valid offsetParam. If no binding needs to be done
+    // offsetParam will be set to 0, an invliad value.
+    if(offsetParam > 0) {
+        // Bind the offset parameter, telling the program which row to start with
+        int err = sqlite3_bind_int(statement, offsetParam, startPos);
+        if (err != SQLITE_OK) {
+            LOGE("Unable to bind offset position, offsetParam = %d", offsetParam);
+            jniThrowException(env, "java/lang/IllegalArgumentException",
+                    sqlite3_errmsg(GET_HANDLE(env, object)));
+            return 0;
+        }
+        LOG_WINDOW("Bound to startPos %d", startPos);
+    } else {
+        LOG_WINDOW("Not binding to startPos %d", startPos);
+    }
+
+    // Get the native window
+    window = reinterpret_cast<AshmemCursorWindow*>(windowPtr);
+    if (!window) {
+        LOGE("Invalid CursorWindow");
+        jniThrowException(env, "java/lang/IllegalArgumentException",
+                "Bad CursorWindow");
+        return 0;
+    }
+    LOG_WINDOW("Window: numRows = %d, size = %d, freeSpace = %d", window->getNumRows(), window->size(), window->freeSpace());
+
+    status_t status = window->clear();
+    if (status) {
+        LOGE("Failed to clear the cursor window, status=%d", status);
+        throw_sqlite3_exception(env, GET_HANDLE(env, object), "window->clear() failed");
+        return 0;
+    }
+
+    numColumns = sqlite3_column_count(statement);
+    status = window->setNumColumns(numColumns);
+    if (status) {
+        LOGE("Failed to change column count from %d to %d", window->getNumColumns(), numColumns);
+        throw_sqlite3_exception(env, GET_HANDLE(env, object), "numColumns mismatch");
+        return 0;
+    }
+
+    retryCount = 0;
+    if (startPos > 0) {
+        int num = skip_rows(statement, startPos);
+        if (num < 0) {
+            throw_sqlite3_exception(env, GET_HANDLE(env, object));
+            return 0;
+        } else if (num < startPos) {
+            LOGE("startPos %d > actual rows %d", startPos, num);
+            return num;
+        }
+    }
+
+    while (!gotException && (!windowFull)) {
+        int err = sqlite3_step(statement);
+        if (err == SQLITE_ROW) {
+            LOG_WINDOW("Stepped statement %p to row %d", statement, totalRows);
+            retryCount = 0;
+            totalRows += 1;
+
+            // Skip the row if the window is full or we haven't reached the start position yet.
+            if (startPos >= totalRows || windowFull) {
+                continue;
+            }
+
+            CopyRowResult cpr = copyRow(env, window, statement, numColumns, startPos, addedRows);
+            if (cpr == CPR_OK) {
+                addedRows += 1;
+            } else if (cpr == CPR_FULL) {
+                windowFull = true;
+            } else {
+                gotException = true;
+            }
+        } else if (err == SQLITE_DONE) {
+            // All rows processed, bail
+            LOG_WINDOW("Processed all rows");
+            break;
+        } else if (err == SQLITE_LOCKED || err == SQLITE_BUSY) {
+            // The table is locked, retry
+            LOG_WINDOW("Database locked, retrying");
+            if (retryCount > 50) {
+                LOGE("Bailing on database busy rety");
+                break;
+            }
+
+            // Sleep to give the thread holding the lock a chance to finish
+            usleep(1000);
+
+            retryCount++;
+            continue;
+        } else {
+            throw_sqlite3_exception(env, GET_HANDLE(env, object));
+            break;
+        }
+    }
+
+    LOG_WINDOW("Resetting statement %p after fetching %d rows and adding %d rows"
+            "to the window in %d bytes",
+            statement, totalRows, addedRows, window->size() - window->freeSpace());
+    sqlite3_reset(statement);
+
+    // Report the total number of rows on request.
+    if (startPos > totalRows) {
+        LOGE("startPos %d > actual rows %d", startPos, totalRows);
+    }
+
+    jlong result = jlong(startPos) << 32 | jlong(totalRows);
+    return result;
+}
+
 static jint native_column_count(JNIEnv* env, jobject object)
 {
     sqlite3_stmt * statement = GET_STATEMENT(env, object);
@@ -336,6 +568,7 @@ static JNINativeMethod sMethods[] =
 {
      /* name, signature, funcPtr */
     {"native_fill_window", "(Lnet/sqlcipher/CursorWindow;IIII)I", (void *)native_fill_window},
+    {"native_fill_ashmem_window", "(IIIII)I", (void *)native_fill_ashmem_window},
     {"native_column_count", "()I", (void*)native_column_count},
     {"native_column_name", "(I)Ljava/lang/String;", (void *)native_column_name},
 };

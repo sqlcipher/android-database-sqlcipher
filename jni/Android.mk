@@ -26,7 +26,10 @@ LOCAL_SRC_FILES:= \
 	net_sqlcipher_database_SQLiteQuery.cpp \
 	net_sqlcipher_database_SQLiteStatement.cpp \
 	net_sqlcipher_CursorWindow.cpp \
-	CursorWindow.cpp
+	CursorWindow.cpp \
+	Unicode.cpp \
+	net_sqlcipher_AshmemCursorWindow.cpp \
+	AshmemCursorWindow.cpp
 #	net_sqlcipher_database_sqlcipher_SQLiteDebug.cpp
 
 LOCAL_C_INCLUDES += \
@@ -52,7 +55,7 @@ LOCAL_CFLAGS += -U__APPLE__
 LOCAL_LDFLAGS += -L../external/android-libs/$(TARGET_ARCH_ABI) -L../external/libs/$(TARGET_ARCH_ABI)/
 
 # libs from the NDK
-LOCAL_LDLIBS += -ldl -llog
+LOCAL_LDLIBS += -ldl -llog -lcutils
 # libnativehelper and libandroid_runtime are included with Android but not the NDK
 LOCAL_LDLIBS += -lnativehelper -landroid_runtime -lutils -lbinder
 # these are build in the ../external section

@@ -227,7 +227,7 @@ public abstract class AbstractWindowedCursor extends AbstractCursor
     }
 
     @Override
-    public CursorWindow getWindow() {
+    public AbstractCursorWindow getWindow() {
         return mWindow;
     }
     
@@ -235,7 +235,7 @@ public abstract class AbstractWindowedCursor extends AbstractCursor
      * Set a new cursor window to cursor, usually set a remote cursor window
      * @param window cursor window
      */
-    public void setWindow(CursorWindow window) {
+    public void setWindow(AbstractCursorWindow window) {
         if (mWindow != null) {
             mWindow.close();
         }
@@ -250,5 +250,5 @@ public abstract class AbstractWindowedCursor extends AbstractCursor
      * This needs be updated in {@link #onMove} by subclasses, and
      * needs to be set to NULL when the contents of the cursor change.
      */
-    protected CursorWindow mWindow;
+    protected AbstractCursorWindow mWindow;
 }
