@@ -16,8 +16,6 @@
 
 package net.sqlcipher;
 
-import android.database.Cursor;
-
 import net.sqlcipher.database.SQLiteAbortException;
 import net.sqlcipher.database.SQLiteConstraintException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -1136,6 +1134,64 @@ public class DatabaseUtils {
             mColumns = null;
         }
     }
+
+    public static void cursorFillWindow(final Cursor cursor,
+            int position, final android.database.CursorWindow window) {
+        if (position < 0 || position >= cursor.getCount()) {
+            return;
+        }
+        final int oldPos = cursor.getPosition();
+        final int numColumns = cursor.getColumnCount();
+        window.clear();
+        window.setStartPosition(position);
+        window.setNumColumns(numColumns);
+        if (cursor.moveToPosition(position)) {
+            do {
+                if (!window.allocRow()) {
+                    break;
+                }
+                for (int i = 0; i < numColumns; i++) {
+                    final int type = cursor.getType(i);
+                    final boolean success;
+                    switch (type) {
+                        case Cursor.FIELD_TYPE_NULL:
+                            success = window.putNull(position, i);
+                            break;
+
+                        case Cursor.FIELD_TYPE_INTEGER:
+                            success = window.putLong(cursor.getLong(i), position, i);
+                            break;
+
+                        case Cursor.FIELD_TYPE_FLOAT:
+                            success = window.putDouble(cursor.getDouble(i), position, i);
+                            break;
+
+                        case Cursor.FIELD_TYPE_BLOB: {
+                            final byte[] value = cursor.getBlob(i);
+                            success = value != null ? window.putBlob(value, position, i)
+                                    : window.putNull(position, i);
+                            break;
+                        }
+
+                        default: // assume value is convertible to String
+                        case Cursor.FIELD_TYPE_STRING: {
+                            final String value = cursor.getString(i);
+                            success = value != null ? window.putString(value, position, i)
+                                    : window.putNull(position, i);
+                            break;
+                        }
+                    }
+                    if (!success) {
+                        window.freeLastRow();
+                        break;
+                    }
+                }
+                position += 1;
+            } while (cursor.moveToNext());
+        }
+        cursor.moveToPosition(oldPos);
+    }
+
 
     /**
      * Creates a db and populates it with the sql statements in sqlStatements.
