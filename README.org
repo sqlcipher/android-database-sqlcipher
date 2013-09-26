@@ -4,7 +4,7 @@ The latest binary packages for developers, with the jar’s, .so’s and a quick
 
 *** Compatibility
 
-    SQLCipher for Android runs on Android 2.1 - 4.2, both x86 and ARM architectures.
+    SQLCipher for Android runs on Android 2.1 - 4.3, both x86 and ARM architectures.
 
 *** An Illustrative Terminal Listing
 
