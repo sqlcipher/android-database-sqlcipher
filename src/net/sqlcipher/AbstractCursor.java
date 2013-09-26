@@ -209,40 +209,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
      * @param window
      */
     public void fillWindow(int position, android.database.CursorWindow window) {
-        if (position < 0 || position >= getCount()) {
-            return;
-        }
-        window.acquireReference();
-        try {
-            int oldpos = mPos;
-            mPos = position - 1;
-            window.clear();
-            window.setStartPosition(position);
-            int columnNum = getColumnCount();
-            window.setNumColumns(columnNum);
-            while (moveToNext() && window.allocRow()) {            
-                for (int i = 0; i < columnNum; i++) {
-                    String field = getString(i);
-                    if (field != null) {
-                        if (!window.putString(field, mPos, i)) {
-                            window.freeLastRow();
-                            break;
-                        }
-                    } else {
-                        if (!window.putNull(mPos, i)) {
-                            window.freeLastRow();
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            mPos = oldpos;
-        } catch (IllegalStateException e){
-            // simply ignore it
-        } finally {
-            window.releaseReference();
-        }
+        DatabaseUtils.cursorFillWindow(this, position, window);
     }
 
     public final boolean move(int offset) {

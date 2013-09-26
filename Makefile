@@ -6,6 +6,7 @@ EXTERNAL_DIR := ${CURDIR}/external
 SQLCIPHER_DIR := ${EXTERNAL_DIR}/sqlcipher
 LICENSE := SQLCIPHER_LICENSE
 ASSETS_DIR := assets
+OPENSSL_DIR := ${EXTERNAL_DIR}/openssl
 LATEST_TAG := $(shell git tag | sort -r | head -1)
 SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
 RELEASE_DIR := "SQLCipher for Android ${LATEST_TAG}"
@@ -15,6 +16,8 @@ README := ${RELEASE_DIR}/README
 init:
 	git submodule update --init
 	android update project -p .
+	cd ${OPENSSL_DIR} && git clean -dfx && \
+	git checkout -f && ./Configure dist
 
 all: build-external build-jni build-java copy-libs
 
