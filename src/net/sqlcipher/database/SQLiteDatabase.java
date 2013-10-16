@@ -77,37 +77,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     public int status(int operation, boolean reset){
         return native_status(operation, reset);
     }
-
-    public static void upgradeDatabaseFormatFromVersion1To2(File databaseToMigrate, String password) throws Exception {
-
-        File newDatabasePath = null;
-        boolean renameDatabase = false;
-        SQLiteDatabaseHook hook = new SQLiteDatabaseHook(){
-          public void preKey(SQLiteDatabase database){
-            database.execSQL("PRAGMA cipher_default_use_hmac = off");
-          }
-          public void postKey(SQLiteDatabase database){
-            database.execSQL("PRAGMA cipher_default_use_hmac = on");
-          }
-        };
-
-        try {
-            newDatabasePath = File.createTempFile("temp", "db", databaseToMigrate.getParentFile());
-            SQLiteDatabase source = SQLiteDatabase.openOrCreateDatabase(databaseToMigrate, password, null, hook);
-            source.rawExecSQL(String.format("ATTACH DATABASE '%s' as newdb", newDatabasePath.getAbsolutePath()));
-            source.rawExecSQL("SELECT sqlcipher_export('newdb')");
-            source.rawExecSQL("DETACH DATABASE newdb");
-            source.close();
-            renameDatabase = true;
-        } catch(Exception e){
-            throw e;
-        }
-        if(renameDatabase){
-            databaseToMigrate.delete();
-            newDatabasePath.renameTo(databaseToMigrate);
-        }
-    }
-
+    
     private static void loadICUData(Context context, File workingDir) {
 
         try {
