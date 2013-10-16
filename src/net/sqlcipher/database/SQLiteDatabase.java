@@ -1948,6 +1948,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         mSlowQueryThreshold = -1;//SystemProperties.getInt(LOG_SLOW_QUERIES_PROPERTY, -1);
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
+        mPrograms = new WeakHashMap<SQLiteClosable,Object>();
         dbopen(mPath, mFlags);
 
         if(databaseHook != null){
@@ -1963,7 +1964,6 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (SQLiteDebug.DEBUG_SQL_CACHE) {
             mTimeOpened = getTime();
         }
-        mPrograms = new WeakHashMap<SQLiteClosable,Object>();
         try {
             setLocale(Locale.getDefault());
         } catch (RuntimeException e) {
