@@ -19,6 +19,7 @@ package net.sqlcipher.database;
 import java.io.File;
 
 import android.content.Context;
+import net.sqlcipher.database.SQLiteDatabaseHook;
 import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
@@ -38,10 +39,11 @@ public abstract class SQLiteOpenHelper {
     private final String mName;
     private final CursorFactory mFactory;
     private final int mNewVersion;
+    private final SQLiteDatabaseHook mHook;
 
     private SQLiteDatabase mDatabase = null;
     private boolean mIsInitializing = false;
-
+    
     /**
      * Create a helper object to create, open, and/or manage a database.
      * The database is not actually created or opened until one of
@@ -54,12 +56,30 @@ public abstract class SQLiteOpenHelper {
      *     {@link #onUpgrade} will be used to upgrade the database
      */
     public SQLiteOpenHelper(Context context, String name, CursorFactory factory, int version) {
+        this(context, name, factory, version, null);
+    }
+    
+    /**
+     * Create a helper object to create, open, and/or manage a database.
+     * The database is not actually created or opened until one of
+     * {@link #getWritableDatabase} or {@link #getReadableDatabase} is called.
+     *
+     * @param context to use to open or create the database
+     * @param name of the database file, or null for an in-memory database
+     * @param factory to use for creating cursor objects, or null for the default
+     * @param version number of the database (starting at 1); if the database is older,
+     *     {@link #onUpgrade} will be used to upgrade the database
+     * @param hook to run on pre/post key events
+     */
+    public SQLiteOpenHelper(Context context, String name, CursorFactory factory,
+                            int version, SQLiteDatabaseHook hook) {
         if (version < 1) throw new IllegalArgumentException("Version must be >= 1, was " + version);
 
         mContext = context;
         mName = name;
         mFactory = factory;
         mNewVersion = version;
+        mHook = hook;
     }
 
     /**
@@ -104,12 +124,7 @@ public abstract class SQLiteOpenHelper {
                 if (!dbPathFile.exists())
                 	dbPathFile.getParentFile().mkdirs();
                 
-                db = SQLiteDatabase.openOrCreateDatabase(path, password, mFactory);
-                
-             //   db = SQLiteDatabase.openDatabase(path,mFactory , SQLiteDatabase.OPEN_READWRITE);
-
-                //db = mContext.openOrCreateDatabase(mName, 0, mFactory);
-            	
+                db = SQLiteDatabase.openOrCreateDatabase(path, password, mFactory, mHook);
             }
             
 
