@@ -1,6 +1,6 @@
 [submodule "external/openssl"]
 	path = external/openssl
-	url = git://git.openssl.org/openssl.git
+	url = https://github.com/openssl/openssl.git
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
 	url = https://github.com/sqlcipher/sqlcipher.git
