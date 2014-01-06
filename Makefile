@@ -24,12 +24,12 @@ all: build-external build-jni build-java copy-libs
 build-external:
 	cd ${EXTERNAL_DIR} && \
 	make -f Android.mk build-local-hack && \
-	ndk-build && \
+	ndk-build NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs && \
 	make -f Android.mk copy-libs-hack
 
 build-jni:
 	cd ${JNI_DIR} && \
-	ndk-build
+	ndk-build NDK_LIBS_OUT=$(JNI_DIR)/libs
 
 build-java:
 	ant release && \
@@ -51,9 +51,9 @@ release:
 clean:
 	-rm SQLCipher\ for\ Android\*.zip
 	-ant clean
-	-cd ${EXTERNAL_DIR} && ndk-build clean
+	-cd ${EXTERNAL_DIR} && ndk-build clean NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs
 	-cd ${SQLCIPHER_DIR} && make clean
-	-cd ${JNI_DIR} && ndk-build clean
+	-cd ${JNI_DIR} && ndk-build clean NDK_LIBS_OUT=$(JNI_DIR)/libs
 	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
 	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
 	-rm ${LIBRARY_ROOT}/armeabi/libstlport_shared.so
