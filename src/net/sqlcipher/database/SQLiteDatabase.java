@@ -1484,7 +1484,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         try {
             return insertWithOnConflict(table, nullColumnHack, values, CONFLICT_NONE);
         } catch (SQLException e) {
-            Log.e(TAG, "Error inserting <redacted values> into" + table, e);
+            Log.e(TAG, "Error inserting <redacted values> into " + table, e);
             return -1;
         }
     }
@@ -1523,7 +1523,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             return insertWithOnConflict(table, nullColumnHack, initialValues,
                                         CONFLICT_REPLACE);
         } catch (SQLException e) {
-            Log.e(TAG, "Error inserting <redacted values> into" + table, e);
+            Log.e(TAG, "Error inserting <redacted values> into " + table, e);
             return -1;
         }
     }
