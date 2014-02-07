@@ -1433,10 +1433,8 @@ public class SQLiteDatabase extends SQLiteClosable {
 
                 if (Config.LOGV || duration >= mSlowQueryThreshold) {
                     Log.v(TAG,
-                          "query (" + duration + " ms): " + driver.toString() + ", args are "
-                          + (selectionArgs != null
-                             ? TextUtils.join(",", selectionArgs)
-                             : "<null>")  + ", count is " + count);
+                          "query (" + duration + " ms): " + driver.toString() +
+                          ", args are <redacted>, count is " + count);
                 }
             }
         }
@@ -1486,7 +1484,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         try {
             return insertWithOnConflict(table, nullColumnHack, values, CONFLICT_NONE);
         } catch (SQLException e) {
-            Log.e(TAG, "Error inserting " + values, e);
+            Log.e(TAG, "Error inserting <redacted values> into " + table, e);
             return -1;
         }
     }
@@ -1525,7 +1523,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             return insertWithOnConflict(table, nullColumnHack, initialValues,
                                         CONFLICT_REPLACE);
         } catch (SQLException e) {
-            Log.e(TAG, "Error inserting " + initialValues, e);
+            Log.e(TAG, "Error inserting <redacted values> into " + table, e);
             return -1;
         }
     }
@@ -1628,11 +1626,11 @@ public class SQLiteDatabase extends SQLiteClosable {
 
             long insertedRowId = lastInsertRow();
             if (insertedRowId == -1) {
-                Log.e(TAG, "Error inserting " + initialValues + " using " + sql);
+                Log.e(TAG, "Error inserting <redacted values> using <redacted sql> into " + table);
             } else {
                 if (Config.LOGD && Log.isLoggable(TAG, Log.VERBOSE)) {
-                    Log.v(TAG, "Inserting row " + insertedRowId + " from "
-                          + initialValues + " using " + sql);
+                    Log.v(TAG, "Inserting row " + insertedRowId +
+                        " from <redacted values> using <redacted sql> into " + table);
                 }
             }
             return insertedRowId;
@@ -1770,14 +1768,15 @@ public class SQLiteDatabase extends SQLiteClosable {
             statement.execute();
             int numChangedRows = lastChangeCount();
             if (Config.LOGD && Log.isLoggable(TAG, Log.VERBOSE)) {
-                Log.v(TAG, "Updated " + numChangedRows + " using " + values + " and " + sql);
+                Log.v(TAG, "Updated " + numChangedRows +
+                    " rows using <redacted values> and <redacted sql> for " + table);
             }
             return numChangedRows;
         } catch (SQLiteDatabaseCorruptException e) {
             onCorruption();
             throw e;
         } catch (SQLException e) {
-            Log.e(TAG, "Error updating " + values + " using " + sql);
+            Log.e(TAG, "Error updating <redacted values> using <redacted sql> for " + table);
             throw e;
         } finally {
             if (statement != null) {
