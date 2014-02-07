@@ -94,7 +94,12 @@ public abstract class SQLiteOpenHelper {
      * @throws SQLiteException if the database cannot be opened for writing
      * @return a read/write database object valid until {@link #close} is called
      */
+
     public synchronized SQLiteDatabase getWritableDatabase(String password) {
+      return getWritableDatabase(password.toCharArray());
+    }
+  
+    public synchronized SQLiteDatabase getWritableDatabase(char[] password) {
         if (mDatabase != null && mDatabase.isOpen() && !mDatabase.isReadOnly()) {
             return mDatabase;  // The database is already open for business
         }
@@ -176,6 +181,10 @@ public abstract class SQLiteOpenHelper {
      *     or {@link #close} is called.
      */
     public synchronized SQLiteDatabase getReadableDatabase(String password) {
+      return getReadableDatabase(password.toCharArray());
+    }
+  
+    public synchronized SQLiteDatabase getReadableDatabase(char[] password) {
         if (mDatabase != null && mDatabase.isOpen()) {
             return mDatabase;  // The database is already open for business
         }

@@ -865,6 +865,10 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws SQLiteException if the database cannot be opened
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
+      return openDatabase(path, password.toCharArray(), factory, flags, databaseHook);
+    }
+
+    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
         SQLiteDatabase sqliteDatabase = null;
         try {
             // Open the database.
@@ -899,6 +903,10 @@ public class SQLiteDatabase extends SQLiteClosable {
         return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
     }
 
+    public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
+      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
+    }
+
     /**
      * Equivalent to openDatabase(file.getPath(), factory, CREATE_IF_NECESSARY).
      */
@@ -911,11 +919,19 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
 
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory) {
-        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
+      return openDatabase(path, password.toCharArray(), factory, CREATE_IF_NECESSARY, null);
+    }
+
+    public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory) {
+      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
 
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
-        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
+      return openDatabase(path, password.toCharArray(), factory, CREATE_IF_NECESSARY, null);
+    }
+
+    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags) {
+      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
 
     /**
@@ -931,8 +947,13 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public static SQLiteDatabase create(CursorFactory factory, String password) {
         // This is a magic string with special meaning for SQLite.
+      return openDatabase(":memory:", password.toCharArray(), factory, CREATE_IF_NECESSARY);
+    }
+
+    public static SQLiteDatabase create(CursorFactory factory, char[] password) {
         return openDatabase(":memory:", password, factory, CREATE_IF_NECESSARY);
     }
+
 
     /**
      * Close the database.
@@ -1895,7 +1916,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
     }
 
-    public SQLiteDatabase(String path, String password, CursorFactory factory, int flags) {
+    public SQLiteDatabase(String path, char[] password, CursorFactory factory, int flags) {
         this(path, password, factory, flags, null);
     }
 
@@ -1907,7 +1928,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param flags 0 or {@link #NO_LOCALIZED_COLLATORS}.  If the database file already
      *              exists, mFlags will be updated appropriately.
      */
-    public SQLiteDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
+    public SQLiteDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
 
         if (path == null) {
             throw new IllegalArgumentException("path should not be null");
@@ -1924,7 +1945,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             databaseHook.preKey(this);
         }
 
-        native_key(password.toCharArray());
+        native_key(password);
 
         if(databaseHook != null){
             databaseHook.postKey(this);
