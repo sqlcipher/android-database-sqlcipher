@@ -8,7 +8,7 @@
     HOST_INFO=`uname -a`
     case ${HOST_INFO} in
         Darwin*)
-            TOOLCHAIN_SYSTEM=darwin-x86
+            TOOLCHAIN_SYSTEM=darwin-x86_64
             ;;
         Linux*)
             if [[ "${HOST_INFO}" == *i686* ]]
@@ -30,7 +30,7 @@
     git clean -dfx && git checkout -f
     ./Configure dist
 
-    ANDROID_PLATFORM_VERSION=android-14
+    ANDROID_PLATFORM_VERSION=android-19
     ANDROID_TOOLCHAIN_DIR=/tmp/sqlcipher-android-toolchain
     OPENSSL_EXCLUSION_LIST=no-krb5 no-gost no-idea no-camellia \
         no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 \
