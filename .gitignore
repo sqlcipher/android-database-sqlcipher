@@ -10,3 +10,4 @@ bin/
 gen/
 external/openssl
 external/sqlcipher
+libs/
