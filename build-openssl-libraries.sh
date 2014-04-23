@@ -40,6 +40,7 @@
         no-ocsp no-x509v3 no-ui no-srp no-ssltrace no-tlsext \
         no-mdc2 no-ecdh no-engine no-tls2 no-srtp
 
+    # arm build
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
@@ -59,6 +60,27 @@
 
     rm -rf ${ANDROID_TOOLCHAIN_DIR}
 
+    #armv7 build
+    ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
+        --platform=${ANDROID_PLATFORM_VERSION} \
+        --install-dir=${ANDROID_TOOLCHAIN_DIR} \
+        --system=${TOOLCHAIN_SYSTEM} \
+        --arch=arm
+
+    export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
+
+    RANLIB=arm-linux-androideabi-ranlib \
+        AR=arm-linux-androideabi-ar \
+        CC=arm-linux-androideabi-gcc \
+        ./Configure android-armv7 ${OPENSSL_EXCLUSION_LIST}
+
+    make build_crypto
+
+    mv libcrypto.a ../android-libs/armeabi-v7a/
+
+    rm -rf ${ANDROID_TOOLCHAIN_DIR}    
+
+    # x86 build
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
