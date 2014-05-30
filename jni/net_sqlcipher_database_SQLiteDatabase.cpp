@@ -171,6 +171,68 @@ void native_key_str(JNIEnv* env, jobject object, jstring jKey)
   env->ReleaseStringUTFChars(jKey, key);
 }
 
+void native_rekey_char(JNIEnv* env, jobject object, jcharArray jKey)
+{
+  char *keyUtf8        = 0;
+  int lenUtf8          = 0;
+  jchar* keyUtf16      = 0;
+  jsize lenUtf16       = 0;
+  UErrorCode status    = U_ZERO_ERROR;
+  UConverter *encoding = 0;
+
+  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+
+  keyUtf16 = env->GetCharArrayElements(jKey, 0);
+  lenUtf16 = env->GetArrayLength(jKey);
+
+  if ( lenUtf16 == 0 ) goto done;
+
+  encoding = ucnv_open("UTF-8", &status);
+  if( U_FAILURE(status) ) {
+    throw_sqlite3_exception(env, "native_key_char: opening encoding converter failed");
+    goto done;
+  }
+
+  lenUtf8 = ucnv_fromUChars(encoding, NULL, 0, keyUtf16, lenUtf16, &status);
+  status = (status == U_BUFFER_OVERFLOW_ERROR) ? U_ZERO_ERROR : status;
+  if( U_FAILURE(status) ) {
+    throw_sqlite3_exception(env, "native_key_char: utf8 length unknown");
+    goto done;
+  }
+
+  keyUtf8 = (char*) malloc(lenUtf8 * sizeof(char));
+  ucnv_fromUChars(encoding, keyUtf8, lenUtf8, keyUtf16, lenUtf16, &status);
+  if( U_FAILURE(status) ) {
+    throw_sqlite3_exception(env, "native_key_char: utf8 conversion failed");
+    goto done;
+  }
+
+  if ( sqlite3_rekey(handle, keyUtf8, lenUtf8) != SQLITE_OK ) {
+    throw_sqlite3_exception(env, handle);
+  }
+
+done:
+  env->ReleaseCharArrayElements(jKey, keyUtf16, 0);
+  if(encoding != 0) ucnv_close(encoding);
+  if(keyUtf8 != 0)  free(keyUtf8);
+}
+
+void native_rekey_str(JNIEnv* env, jobject object, jstring jKey)
+{
+  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+
+  char const * key = env->GetStringUTFChars(jKey, NULL);
+  jsize keyLen = env->GetStringUTFLength(jKey);
+
+  if ( keyLen > 0 ) {
+    int status = sqlite3_rekey(handle, key, keyLen);
+    if ( status != SQLITE_OK ) {
+        throw_sqlite3_exception(env, handle);
+    }
+  }
+  env->ReleaseStringUTFChars(jKey, key);
+}  
+
 void native_rawExecSQL(JNIEnv* env, jobject object, jstring sql)
 {
     sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
@@ -561,6 +623,8 @@ static JNINativeMethod sMethods[] =
     {"native_status", "(IZ)I", (void *)native_status},
     {"native_key", "([C)V", (void *)native_key_char},
     {"native_key", "(Ljava/lang/String;)V", (void *)native_key_str},
+    {"native_rekey", "([C)V", (void *)native_rekey_char},
+    {"native_rekey", "(Ljava/lang/String;)V", (void *)native_rekey_str},
 };
 
 int register_android_database_SQLiteDatabase(JNIEnv *env)

@@ -77,7 +77,15 @@ public class SQLiteDatabase extends SQLiteClosable {
     public int status(int operation, boolean reset){
         return native_status(operation, reset);
     }
-    
+
+    public void changePassword(String password) throws SQLiteException {
+      native_rekey(password);
+    }
+
+    public void changePassword(char[] password) throws SQLiteException {
+      native_rekey(password);
+    }
+  
     private static void loadICUData(Context context, File workingDir) {
 
         try {
@@ -2428,4 +2436,7 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     private native void native_key(char[] key) throws SQLException;
     private native void native_key(String key) throws SQLException;
+  
+    private native void native_rekey(String key) throws SQLException;
+    private native void native_rekey(char[] key) throws SQLException;
 }
