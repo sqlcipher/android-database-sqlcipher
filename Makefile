@@ -9,7 +9,7 @@ ASSETS_DIR := assets
 OPENSSL_DIR := ${EXTERNAL_DIR}/openssl
 LATEST_TAG := $(shell git tag | sort -r | head -1)
 SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
-RELEASE_DIR := "SQLCipher for Android ${LATEST_TAG}"
+RELEASE_DIR := sqlipher-for-android-${LATEST_TAG}
 CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:"
 README := ${RELEASE_DIR}/README
 
