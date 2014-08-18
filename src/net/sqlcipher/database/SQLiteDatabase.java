@@ -52,8 +52,6 @@ import android.util.Config;
 import android.util.Log;
 import android.util.Pair;
 
-import com.google.common.collect.Maps;
-
 /**
  * Exposes methods to manage a SQLite database.
  * <p>SQLiteDatabase has methods to create, delete, execute SQL commands, and
@@ -328,7 +326,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * (@link setMaxCacheSize(int)}). its default is 0 - i.e., no caching by default because
      * most of the apps don't use "?" syntax in their sql, caching is not useful for them.
      */
-    /* package */ Map<String, SQLiteCompiledSql> mCompiledQueries = Maps.newHashMap();
+    /* package */ Map<String, SQLiteCompiledSql> mCompiledQueries = new HashMap<String, SQLiteCompiledSql>();
     /**
      * @hide
      */
