@@ -37,13 +37,13 @@ android_sqlite_cflags :=  -DHAVE_USLEEP=1 \
 sqlcipher_files := \
 	sqlcipher/sqlite3.c
 
-sqlcipher_cflags := -DSQLITE_HAS_CODEC -DHAVE_FDATASYNC=0 -Dfdatasync=fsync
+sqlcipher_cflags := -DSQLITE_HAS_CODEC -DHAVE_FDATASYNC=0 -Dfdatasync=fsync -DSQLITE_ENABLE_ICU
 
 include $(CLEAR_VARS)
 
 LOCAL_STATIC_LIBRARIES += static-libcrypto
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlcipher_cflags)
-LOCAL_C_INCLUDES := includes sqlcipher
+LOCAL_C_INCLUDES := includes sqlcipher icu4c/common icu4c/i18n
 LOCAL_LDFLAGS += $(project_ldflags)
 LOCAL_MODULE    := libsqlcipher
 LOCAL_SRC_FILES := $(sqlcipher_files)
