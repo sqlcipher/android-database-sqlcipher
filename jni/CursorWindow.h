@@ -92,7 +92,7 @@ typedef struct
 #define FIELD_TYPE_FLOAT 2
 #define FIELD_TYPE_STRING 3
 #define FIELD_TYPE_BLOB 4
-#define FIELD_TYPE_NULL 5
+#define FIELD_TYPE_NULL 0
 
 /**
  * This class stores a set of rows from a database in a buffer. The begining of the
