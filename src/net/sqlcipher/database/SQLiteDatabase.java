@@ -21,11 +21,9 @@ import net.sqlcipher.CrossProcessCursorWrapper;
 import net.sqlcipher.DatabaseUtils;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDebug.DbStats;
-import net.sqlcipher.database.SQLiteDatabaseHook;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +50,12 @@ import android.util.Config;
 import android.util.Log;
 import android.util.Pair;
 
+import java.io.Closeable;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+
 /**
  * Exposes methods to manage a SQLite database.
  * <p>SQLiteDatabase has methods to create, delete, execute SQL commands, and
@@ -71,7 +75,17 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final String TAG = "Database";
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
+    private static FileLock icuFileLock = null;
 
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                icuLockRelease();
+            }
+        });
+    }
+    
     public int status(int operation, boolean reset){
         return native_status(operation, reset);
     }
@@ -83,29 +97,126 @@ public class SQLiteDatabase extends SQLiteClosable {
     public void changePassword(char[] password) throws SQLiteException {
       native_rekey(password);
     }
-  
-    private static void loadICUData(Context context, File workingDir) {
+    
+    private static boolean icuLockAcquire(final File lockDir, final long waitMS) {
+        if (icuFileLock != null || waitMS <= 0) {
+            return icuFileLock != null;
+        } 
+        
+        try {
+            final long deadline = System.currentTimeMillis() + waitMS;
+            final File file = new File(lockDir, "icu.lock");
+            final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+            final FileChannel fileChannel = randomAccessFile.getChannel();
+            while (System.currentTimeMillis() < deadline) {
+                try {
+                    icuFileLock = fileChannel.tryLock();
+                    if (icuFileLock != null) {
+                        break;
+                    }
+                } catch(Exception ex){
+                    icuFileLock = null;
+                }
+                Thread.sleep(250);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "Exception during lock acquire", e);
+        }
+        
+        return icuFileLock != null;
+    }
+    
+    private static void icuLockRelease() {
+        if (icuFileLock == null) {
+            return;
+        }
+        
+        try {
+            icuFileLock.release();
+            icuFileLock = null;
+        } catch (Exception e) {
+            Log.e(TAG, "Exception during lock release", e);
+        }
+    }
+    
+    private static void closeSilently(Closeable cl){
+        if (cl==null){
+            return;
+        }
+        try {
+            cl.close();
+        } catch(Exception ex){
+            
+        }
+    }
 
+    private static void loadICUData(Context context, File workingDir) {
         try {
             File icuDir = new File(workingDir, "icu");
             if(!icuDir.exists()) icuDir.mkdirs();
-            File icuDataFile = new File(icuDir, "icudt46l.dat");
-            if(!icuDataFile.exists()) {
-                ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
+            
+            File icuDataFile = new File(icuDir, "icudt46l.dat");            
+            if (!icuLockAcquire(icuDir, 7000)){
+                Log.w(TAG, "Could not acquire ICU extraction lock");
+                return;
+            }
+            
+            if (icuDataFile.exists()){
+                return;
+            }
+            
+            File tmpIcuFile = null;
+            ZipInputStream in = null;
+            FileOutputStream out = null;
+            FileChannel c = null;
+            try {
+                tmpIcuFile = File.createTempFile("icudt46l.dat", ".tmp", icuDir);
+                in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
                 in.getNextEntry();
-                OutputStream out =  new FileOutputStream(icuDataFile);
+
+                out =  new FileOutputStream(tmpIcuFile);
+                c = out.getChannel();
+
                 byte[] buf = new byte[1024];
+                ByteBuffer bbuf = ByteBuffer.allocate(1024);
+
                 int len;
                 while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
+                    bbuf.put(buf, 0, len);
+                    bbuf.flip();
+                    c.write(bbuf);
+                    bbuf.clear();
                 }
-                in.close();
-                out.flush();
+
+                closeSilently(in);
+                c.force(true);
+                out.getFD().sync();
+                
+                c.close();
+                c = null;
+                
                 out.close();
+                out = null;
+
+                // Already exists?
+                // Another process might create it in the background.
+                if (!icuDataFile.exists()){
+                    // Move to final destination.
+                    tmpIcuFile.renameTo(icuDataFile);
+                    //Log.v(TAG, String.format("Extraction complete; file=%s, exists=%s", icuDataFile.getAbsoluteFile(), icuDataFile.exists()));
+                } else {
+                    tmpIcuFile.delete();
+                }
+            } catch(Exception ex){
+                Log.e(TAG, "Exception during ICU extraction", ex);
+            } finally {
+                closeSilently(c);
+                closeSilently(out);
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Log.e(TAG, "Error copying icu data file", e);
+        } finally {
+            icuLockRelease();
         }
     }
 
@@ -115,17 +226,16 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     public static void loadLibs (Context context, File workingDir)
     {
-        System.loadLibrary("stlport_shared");
-        System.loadLibrary("sqlcipher_android");
-        System.loadLibrary("database_sqlcipher");
-
         boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
-
         String icuRootPath = systemICUFileExists ? "/system/usr" : workingDir.getAbsolutePath();
-        setICURoot(icuRootPath);
         if(!systemICUFileExists){
             loadICUData(context, workingDir);
         }
+
+	System.loadLibrary("stlport_shared");
+        System.loadLibrary("sqlcipher_android");
+        System.loadLibrary("database_sqlcipher");
+        setICURoot(icuRootPath);
     }
 
     /**
