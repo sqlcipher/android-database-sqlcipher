@@ -158,7 +158,8 @@ public class SQLiteDatabase extends SQLiteClosable {
             File icuDataFile = new File(icuDir, "icudt46l.dat");            
             if (!icuLockAcquire(icuDir, 7000)){
                 Log.w(TAG, "Could not acquire ICU extraction lock");
-                return;
+                // Continue anyway, there may be a problem with file locking.
+                // 7 seconds is long enough.
             }
             
             if (icuDataFile.exists()){
