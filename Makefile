@@ -24,6 +24,8 @@ ifeq ($(shell if which faketime > /dev/null; then echo faketime; fi),faketime)
   export TZ=UTC
   TIMESTAMP := $(shell faketime -f "`git log -n1 --format=format:%ai`" \
                    date -u '+%Y-%m-%d %H:%M:%S')
+  TOUCH := touch -t $(shell faketime -f "`git log -n1 --format=format:%ai`" \
+                        date -u '+%Y%m%d%H%M.%S')
 # frozen time
   FAKETIME := faketime -f "$(TIMESTAMP)"
 # time moving at 5% of normal speed
@@ -60,7 +62,10 @@ release:
 	cp ${LICENSE} ${RELEASE_DIR}
 	printf "%s\n\n" ${CHANGE_LOG_HEADER} > ${README}
 	git log --pretty=format:' * %s' ${SECOND_LATEST_TAG}..${LATEST_TAG} >> ${README}
-	find ${RELEASE_DIR} | sort -u | zip -@9 ${RELEASE_DIR}.zip
+# fix the timestamp on the files to include in the zipball
+	find ${RELEASE_DIR} | xargs $(TOUCH)
+	ls -lR ${RELEASE_DIR}
+	find ${RELEASE_DIR} | sort -u | $(FAKETIME) zip -@9 ${RELEASE_DIR}.zip
 	rm -rf ${RELEASE_DIR}
 
 clean:
