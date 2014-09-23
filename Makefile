@@ -60,7 +60,7 @@ release:
 	cp ${LICENSE} ${RELEASE_DIR}
 	printf "%s\n\n" ${CHANGE_LOG_HEADER} > ${README}
 	git log --pretty=format:' * %s' ${SECOND_LATEST_TAG}..${LATEST_TAG} >> ${README}
-	zip -r ${RELEASE_DIR}.zip ${RELEASE_DIR}
+	find ${RELEASE_DIR} | sort -u | zip -@9 ${RELEASE_DIR}.zip
 	rm -rf ${RELEASE_DIR}
 
 clean:
