@@ -32,9 +32,7 @@ build-jni:
 	ndk-build NDK_LIBS_OUT=$(JNI_DIR)/libs
 
 build-java:
-	ant release && \
-	cd ${CURDIR}/bin/classes && \
-	jar -cvf sqlcipher.jar .
+	ant release
 
 release:
 	-rm -rf ${RELEASE_DIR}
@@ -71,7 +69,6 @@ copy-libs:
 		 ${LIBRARY_ROOT}/armeabi  && \
 	cp ${JNI_DIR}/libs/armeabi/libdatabase_sqlcipher.so \
 		${LIBRARY_ROOT}/armeabi && \
-	cp ${CURDIR}/bin/classes/sqlcipher.jar ${LIBRARY_ROOT} && \
 	cp ${EXTERNAL_DIR}/libs/armeabi/libstlport_shared.so \
 		 ${LIBRARY_ROOT}/armeabi
 	mkdir -p ${LIBRARY_ROOT}/x86
