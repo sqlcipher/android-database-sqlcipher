@@ -13,6 +13,22 @@ RELEASE_DIR := sqlipher-for-android-${LATEST_TAG}
 CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:"
 README := ${RELEASE_DIR}/README
 
+# Use faketime to freeze time to make for reproducible builds.
+# faketime needs to have a very specific timestamp format in order to freeze
+# time.  The time needs to be frozen so that the timestamps don't depend on
+# the speed of the machine that the build process is running on.  See `man
+# faketime` for more info on the "advanced timestamp format".  Also, force
+# time to UTC so its always the same on all machines.
+ifeq ($(shell if which faketime > /dev/null; then echo faketime; fi),faketime)
+  export TZ=UTC
+  TIMESTAMP := $(shell faketime "`git log -n1 --format=format:%ai`" \
+                   date --utc '+%Y-%m-%d %H:%M:%S')
+# frozen time
+  FAKETIME := faketime -f "$(TIMESTAMP)"
+# time moving at 5% of normal speed
+  FAKETIME_5 := faketime -f "@$(TIMESTAMP) x0.05"
+endif
+
 init:
 	git submodule update --init
 	android update project -p .
@@ -23,16 +39,16 @@ all: build-external build-jni build-java copy-libs
 
 build-external:
 	cd ${EXTERNAL_DIR} && \
-	make -f Android.mk build-local-hack && \
-	ndk-build NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs && \
-	make -f Android.mk copy-libs-hack
+	$(FAKETIME) make -f Android.mk build-local-hack && \
+	$(FAKETIME) ndk-build NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs && \
+	$(FAKETIME) make -f Android.mk copy-libs-hack
 
 build-jni:
 	cd ${JNI_DIR} && \
-	ndk-build NDK_LIBS_OUT=$(JNI_DIR)/libs
+	$(FAKETIME) ndk-build NDK_LIBS_OUT=$(JNI_DIR)/libs
 
 build-java:
-	ant release
+	$(FAKETIME_5) ant release
 
 release:
 	-rm -rf ${RELEASE_DIR}
