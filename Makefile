@@ -7,10 +7,11 @@ SQLCIPHER_DIR := ${EXTERNAL_DIR}/sqlcipher
 LICENSE := SQLCIPHER_LICENSE
 ASSETS_DIR := assets
 OPENSSL_DIR := ${EXTERNAL_DIR}/openssl
+GIT_DESCRIBE := $(shell git describe)
 LATEST_TAG := $(shell git tag | sort -r | head -1)
 SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
-RELEASE_DIR := sqlipher-for-android-${LATEST_TAG}
-CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:"
+RELEASE_DIR := sqlcipher-for-android-${GIT_DESCRIBE}
+CHANGE_LOG_HEADER := "Changes included in the ${GIT_DESCRIBE} release of SQLCipher for Android:"
 README := ${RELEASE_DIR}/README
 
 # Use faketime to freeze time to make for reproducible builds.
@@ -21,8 +22,10 @@ README := ${RELEASE_DIR}/README
 # time to UTC so its always the same on all machines.
 ifeq ($(shell if which faketime > /dev/null; then echo faketime; fi),faketime)
   export TZ=UTC
-  TIMESTAMP := $(shell faketime "`git log -n1 --format=format:%ai`" \
-                   date --utc '+%Y-%m-%d %H:%M:%S')
+  TIMESTAMP := $(shell faketime -f "`git log -n1 --format=format:%ai`" \
+                   date -u '+%Y-%m-%d %H:%M:%S')
+  TOUCH := touch -t $(shell faketime -f "`git log -n1 --format=format:%ai`" \
+                        date -u '+%Y%m%d%H%M.%S')
 # frozen time
   FAKETIME := faketime -f "$(TIMESTAMP)"
 # time moving at 5% of normal speed
@@ -59,7 +62,10 @@ release:
 	cp ${LICENSE} ${RELEASE_DIR}
 	printf "%s\n\n" ${CHANGE_LOG_HEADER} > ${README}
 	git log --pretty=format:' * %s' ${SECOND_LATEST_TAG}..${LATEST_TAG} >> ${README}
-	zip -r ${RELEASE_DIR}.zip ${RELEASE_DIR}
+# fix the timestamp on the files to include in the zipball
+	find ${RELEASE_DIR} | xargs $(TOUCH)
+	ls -lR ${RELEASE_DIR}
+	find ${RELEASE_DIR} | sort -u | $(FAKETIME) zip -@9 ${RELEASE_DIR}.zip
 	rm -rf ${RELEASE_DIR}
 
 clean:
