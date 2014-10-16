@@ -100,7 +100,7 @@ int native_status(JNIEnv* env, jobject object, jint operation, jboolean reset)
 {
   int value;
   int highWater;
-  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+  sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
   int status = sqlite3_status(operation, &value, &highWater, reset);
   if(status != SQLITE_OK){
     throw_sqlite3_exception(env, handle);
@@ -117,7 +117,7 @@ void native_key_char(JNIEnv* env, jobject object, jcharArray jKey)
   UErrorCode status    = U_ZERO_ERROR;
   UConverter *encoding = 0;
 
-  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+  sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
 
   keyUtf16 = env->GetCharArrayElements(jKey, 0);
   lenUtf16 = env->GetArrayLength(jKey);
@@ -157,7 +157,7 @@ done:
 
 void native_key_str(JNIEnv* env, jobject object, jstring jKey)
 {
-  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+  sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
 
   char const * key = env->GetStringUTFChars(jKey, NULL);
   jsize keyLen = env->GetStringUTFLength(jKey);
@@ -180,7 +180,7 @@ void native_rekey_char(JNIEnv* env, jobject object, jcharArray jKey)
   UErrorCode status    = U_ZERO_ERROR;
   UConverter *encoding = 0;
 
-  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+  sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
 
   keyUtf16 = env->GetCharArrayElements(jKey, 0);
   lenUtf16 = env->GetArrayLength(jKey);
@@ -219,7 +219,7 @@ done:
 
 void native_rekey_str(JNIEnv* env, jobject object, jstring jKey)
 {
-  sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+  sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
 
   char const * key = env->GetStringUTFChars(jKey, NULL);
   jsize keyLen = env->GetStringUTFLength(jKey);
@@ -235,7 +235,7 @@ void native_rekey_str(JNIEnv* env, jobject object, jstring jKey)
 
 void native_rawExecSQL(JNIEnv* env, jobject object, jstring sql)
 {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
     char const * sqlCommand = env->GetStringUTFChars(sql, NULL);
     int status = sqlite3_exec(handle, sqlCommand, NULL, NULL, NULL);
     env->ReleaseStringUTFChars(sql, sqlCommand);
@@ -328,7 +328,7 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
     sqlite3_enable_load_extension(handle, 1);
     
     LOGV("Opened '%s' - %p\n", path8, handle);
-    env->SetIntField(object, offset_db_handle, (int) handle);
+    env->SetLongField(object, offset_db_handle, (long long int) handle);
     handle = NULL;  // The caller owns the handle now.
 
 done:
@@ -356,7 +356,7 @@ static void sqlTrace(void *databaseName, const char *sql) {
 /* public native void enableSqlTracing(); */
 static void enableSqlTracing(JNIEnv* env, jobject object, jstring databaseName)
 {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
     sqlite3_trace(handle, &sqlTrace, (void *)getDatabaseName(env, handle, databaseName));
 }
 
@@ -368,7 +368,7 @@ static void sqlProfile(void *databaseName, const char *sql, sqlite3_uint64 tm) {
 /* public native void enableSqlProfiling(); */
 static void enableSqlProfiling(JNIEnv* env, jobject object, jstring databaseName)
 {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
     sqlite3_profile(handle, &sqlProfile, (void *)getDatabaseName(env, handle, databaseName));
 }
 
@@ -376,7 +376,7 @@ static void enableSqlProfiling(JNIEnv* env, jobject object, jstring databaseName
 /* public native void close(); */
 static void dbclose(JNIEnv* env, jobject object)
 {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
 
     if (handle != NULL) {
         // release the memory associated with the traceFuncArg in enableSqlTracing function
@@ -393,7 +393,7 @@ static void dbclose(JNIEnv* env, jobject object)
         int result = sqlite3_close(handle);
         if (result == SQLITE_OK) {
             LOGV("Closed %p\n", handle);
-            env->SetIntField(object, offset_db_handle, 0);
+            env->SetLongField(object, offset_db_handle, 0);
         } else {
             // This can happen if sub-objects aren't closed first.  Make sure the caller knows.
             throw_sqlite3_exception(env, handle);
@@ -408,7 +408,7 @@ static void native_execSQL(JNIEnv* env, jobject object, jstring sqlString)
     int err;
     int stepErr;
     sqlite3_stmt * statement = NULL;
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
     jchar const * sql = env->GetStringChars(sqlString, NULL);
     jsize sqlLen = env->GetStringLength(sqlString);
 
@@ -456,7 +456,7 @@ static void native_execSQL(JNIEnv* env, jobject object, jstring sqlString)
 /* native long lastInsertRow(); */
 static jlong lastInsertRow(JNIEnv* env, jobject object)
 {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
 
     return sqlite3_last_insert_rowid(handle);
 }
@@ -464,7 +464,7 @@ static jlong lastInsertRow(JNIEnv* env, jobject object)
 /* native int lastChangeCount(); */
 static jint lastChangeCount(JNIEnv* env, jobject object)
 {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
 
     return sqlite3_changes(handle);
 }
@@ -472,7 +472,7 @@ static jint lastChangeCount(JNIEnv* env, jobject object)
 /* native int native_getDbLookaside(); */
 static jint native_getDbLookaside(JNIEnv* env, jobject object)
 {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
     int pCur = -1;
     int unused;
     sqlite3_db_status(handle, SQLITE_DBSTATUS_LOOKASIDE_USED, &pCur, &unused, 0);
@@ -486,7 +486,7 @@ static void native_setLocale(JNIEnv* env, jobject object, jstring localeString, 
 
     int err;
     char const* locale8 = env->GetStringUTFChars(localeString, NULL);
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);
     sqlite3_stmt* stmt = NULL;
     char** meta = NULL;
     int rowCount, colCount;
@@ -637,7 +637,7 @@ int register_android_database_SQLiteDatabase(JNIEnv *env)
         return -1;
     }
 
-    offset_db_handle = env->GetFieldID(clazz, "mNativeHandle", "I");
+    offset_db_handle = env->GetFieldID(clazz, "mNativeHandle", "J");
     if (offset_db_handle == NULL) {
         LOGE("Can't find SQLiteDatabase.mNativeHandle\n");
         return -1;
