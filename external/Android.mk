@@ -17,7 +17,7 @@ sqlcipher/sqlite3.c:
 	make -C sqlcipher sqlite3.c
 
 copy-libs-hack: build-local-hack
-	install -p -m644 libs/armeabi/*.so ../obj/local/armeabi/
+	install -p -m644 libs/x86_64/*.so ../obj/local/x86_64/
 
 project_ldflags:= -Llibs/$(TARGET_ARCH_ABI)/ -Landroid-libs/$(TARGET_ARCH_ABI)/
 

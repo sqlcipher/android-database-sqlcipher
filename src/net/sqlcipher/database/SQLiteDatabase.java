@@ -285,7 +285,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     /* package */ static final String GET_LOCK_LOG_PREFIX = "GETLOCK:";
 
     /** Used by native code, do not rename */
-    /* package */ int mNativeHandle = 0;
+    /* package */ long mNativeHandle = 0;
 
     /** Used to make temp table names unique */
     /* package */ int mTempTableSequence = 0;
