@@ -60,16 +60,28 @@ include $(PREBUILT_STATIC_LIBRARY)
 # libsqlcipher_android (our version of Android's libsqlite_android)
 
 # these are all files from various external git repos
-libsqlite3_android_local_src_files := \
+libsqlite3_android_local_src_files_arm := \
 	android-sqlite/android/sqlite3_android.cpp \
 	android-sqlite/android/PhonebookIndex.cpp \
 	android-sqlite/android/PhoneNumberUtils.cpp \
 	android-sqlite/android/OldPhoneNumberUtils.cpp \
 	android-sqlite/android/PhoneticStringUtils.cpp \
-	String16.cpp \
-	String8.cpp 
+	String16_32.cpp \
+	String8_32.cpp 
 #	android-sqlite/android/PhoneNumberUtilsTest.cpp \
 #	android-sqlite/android/PhoneticStringUtilsTest.cpp \
+
+libsqlite3_android_local_src_files_x86 := $(libsqlite3_android_local_src_files_arm)
+
+libsqlite3_android_local_src_files_x86_64 :=  \
+	android-sqlite/android/sqlite3_android.cpp \
+	android-sqlite/android/PhonebookIndex.cpp \
+	android-sqlite/android/PhoneNumberUtils.cpp \
+	android-sqlite/android/OldPhoneNumberUtils.cpp \
+	android-sqlite/android/PhoneticStringUtils.cpp \
+	String16_64.cpp \
+	String8_64.cpp 
+libsqlite3_android_local_src_files_arm64 := $(libsqlite3_android_local_src_files_x86_64)
 
 include $(CLEAR_VARS)
 
