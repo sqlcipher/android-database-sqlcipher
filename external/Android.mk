@@ -75,7 +75,6 @@ libsqlite3_android_local_src_files_64 :=  \
 	android-sqlite_lollipop/android/sqlite3_android.cpp \
 	android-sqlite_lollipop/android/PhoneNumberUtils.cpp \
 	android-sqlite_lollipop/android/OldPhoneNumberUtils.cpp \
-	android-sqlite_lollipop/android/PhoneticStringUtils.cpp \
 	String16_64.cpp \
 	String8_64.cpp 
 
