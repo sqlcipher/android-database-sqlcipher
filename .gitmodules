@@ -19,6 +19,15 @@
 [submodule "external/icu4c"]
 	path = external/icu4c
 	url = https://github.com/android/platform_external_icu4c.git
+[submodule "external/libnativehelper"]
+	path = external/libnativehelper
+	url = https://android.googlesource.com/platform/libnativehelper
 [submodule "notepadbot"]
 	path = dist/SQLCipherForAndroid-SDK/samples/notepadbot
 	url = https://github.com/guardianproject/notepadbot.git
+[submodule "external/android-sqlite_lollipop"]
+	path = external/android-sqlite_lollipop
+	url = https://android.googlesource.com/platform/external/sqlite
+[submodule "external/platform-system-core-lollipop"]
+	path = external/platform-system-core-lollipop
+	url = https://android.googlesource.com/platform/system/core
