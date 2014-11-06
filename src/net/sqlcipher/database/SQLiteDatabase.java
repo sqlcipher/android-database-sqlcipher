@@ -1488,11 +1488,9 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public Cursor rawQuery(String sql, String[] selectionArgs,
                            int initialRead, int maxRead) {
-        SQLiteCursor c = (SQLiteCursor)rawQueryWithFactory(
-                                                           null, sql, selectionArgs, null);
-        c.setLoadStyle(initialRead, maxRead);
-
-        return c;
+      net.sqlcipher.CursorWrapper cursorWrapper = (net.sqlcipher.CursorWrapper)rawQueryWithFactory(null, sql, selectionArgs, null);
+      ((SQLiteCursor)cursorWrapper.getWrappedCursor()).setLoadStyle(initialRead, maxRead);
+      return cursorWrapper;
     }
 
     /**

@@ -31,5 +31,9 @@ public class CursorWrapper extends android.database.CursorWrapper implements Cur
     public int getType(int columnIndex) {
         return mCursor.getType(columnIndex);
     }
+
+    public Cursor getWrappedCursor() {
+      return mCursor;
+    }
 }
 
