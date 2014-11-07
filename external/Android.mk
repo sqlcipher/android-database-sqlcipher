@@ -96,26 +96,16 @@ LOCAL_LDLIBS := -llog -lutils -lcutils
 LOCAL_MODULE := libsqlcipher_android
 LOCAL_MODULE_FILENAME := libsqlcipher_android
 
-ifeq ($(TARGET_ARCH_ABI),x86)
+ifeq ($(TARGET_ARCH_ABI), $(filter $(TARGET_ARCH_ABI), armeabi  armeabi-v7a x86))
     LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files_32)
     LOCAL_C_INCLUDES := $(LOCAL_PATH)/includes/arch32 \
       	$(LOCAL_PATH)/platform-system-core/include
 
-else ifeq ($(TARGET_ARCH_ABI),armeabi)
-    LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files_32)
-    LOCAL_C_INCLUDES := $(LOCAL_PATH)/includes/arch32 \
-    	$(LOCAL_PATH)/platform-system-core/include
-    	
-else ifeq ($(TARGET_ARCH_ABI),x86_64)
+else ifeq ($(TARGET_ARCH_ABI), $(filter $(TARGET_ARCH_ABI), x86_64 arm64-v8a))
     LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files_64)
     LOCAL_C_INCLUDES := $(LOCAL_PATH)/includes/arch64 \
     	$(LOCAL_PATH)/platform-system-core-lollipop/include
-    	
-else ifeq ($(TARGET_ARCH_ABI),arm64-v8a)
-    LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files_64)
-    LOCAL_C_INCLUDES := $(LOCAL_PATH)/includes/arch64 \
-    	$(LOCAL_PATH)/platform-system-core-lollipop/include
-    	
+
 endif
 
 LOCAL_C_INCLUDES += \
