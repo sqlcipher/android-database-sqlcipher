@@ -63,16 +63,23 @@ include $(PREBUILT_STATIC_LIBRARY)
 # libsqlcipher_android (our version of Android's libsqlite_android)
 
 # these are all files from various external git repos
-libsqlite3_android_local_src_files := \
+libsqlite3_android_local_src_files_32 := \
 	android-sqlite/android/sqlite3_android.cpp \
 	android-sqlite/android/PhonebookIndex.cpp \
 	android-sqlite/android/PhoneNumberUtils.cpp \
 	android-sqlite/android/OldPhoneNumberUtils.cpp \
 	android-sqlite/android/PhoneticStringUtils.cpp \
-	String16.cpp \
-	String8.cpp 
+	String16_32.cpp \
+	String8_32.cpp 
 #	android-sqlite/android/PhoneNumberUtilsTest.cpp \
 #	android-sqlite/android/PhoneticStringUtilsTest.cpp \
+
+libsqlite3_android_local_src_files_64 :=  \
+	android-sqlite_lollipop/android/sqlite3_android.cpp \
+	android-sqlite_lollipop/android/PhoneNumberUtils.cpp \
+	android-sqlite_lollipop/android/OldPhoneNumberUtils.cpp \
+	String16_64.cpp \
+	String8_64.cpp 
 
 include $(CLEAR_VARS)
 
@@ -87,19 +94,28 @@ LOCAL_STATIC_LIBRARIES := libsqlcipher libicui18n libicuuc static-libcrypto
 LOCAL_CFLAGS += $(android_sqlite_cflags) $(sqlite_cflags) \
 		-DOS_PATH_SEPARATOR="'/'" -DHAVE_SYS_UIO_H
 
-LOCAL_C_INCLUDES := \
-	$(LOCAL_PATH)/includes \
-	$(LOCAL_PATH)/sqlcipher \
-	$(LOCAL_PATH)/icu4c/i18n \
-	$(LOCAL_PATH)/icu4c/common \
-	$(LOCAL_PATH)/platform-system-core/include \
-	$(LOCAL_PATH)/platform-frameworks-base/include
-
 LOCAL_LDFLAGS += -L${LOCAL_PATH}/android-libs/$(TARGET_ARCH_ABI)/ -L$(LOCAL_PATH)/libs/$(TARGET_ARCH_ABI)/
 LOCAL_LDLIBS := -llog -lutils -lcutils
 LOCAL_MODULE := libsqlcipher_android
 LOCAL_MODULE_FILENAME := libsqlcipher_android
-LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files)
+
+ifeq ($(TARGET_ARCH_ABI), $(filter $(TARGET_ARCH_ABI), armeabi  armeabi-v7a x86))
+    LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files_32)
+    LOCAL_C_INCLUDES := $(LOCAL_PATH)/includes/arch32 \
+      	$(LOCAL_PATH)/platform-system-core/include
+
+else ifeq ($(TARGET_ARCH_ABI), $(filter $(TARGET_ARCH_ABI), x86_64 arm64-v8a))
+    LOCAL_SRC_FILES := $(libsqlite3_android_local_src_files_64)
+    LOCAL_C_INCLUDES := $(LOCAL_PATH)/includes/arch64 \
+    	$(LOCAL_PATH)/platform-system-core-lollipop/include
+
+endif
+
+LOCAL_C_INCLUDES += \
+	$(LOCAL_PATH)/sqlcipher \
+	$(LOCAL_PATH)/icu4c/i18n \
+	$(LOCAL_PATH)/icu4c/common \
+	$(LOCAL_PATH)/platform-frameworks-base/include
 
 include $(BUILD_SHARED_LIBRARY)
 
