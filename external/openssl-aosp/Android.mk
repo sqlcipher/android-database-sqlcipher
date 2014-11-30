@@ -52,6 +52,8 @@ LOCAL_CFLAGS += $(LOCAL_CFLAGS_x86_64)
 LOCAL_SRC_FILES :=  $(filter-out $(x86_64_exclude_files),$(LOCAL_SRC_FILES)) $(x86_64_src_files)
 endif
 
+LOCAL_CFLAGS += -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -O3 -fomit-frame-pointer -Wall -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -DRMD160_ASM -DAES_ASM -DVPAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DOPENSSL_NO_EC_NISTP_64_GCC_128 -DOPENSSL_NO_GMP -DOPENSSL_NO_JPAKE -DOPENSSL_NO_MD2 -DOPENSSL_NO_RC5 -DOPENSSL_NO_RFC3779 -DOPENSSL_NO_SCTP -DOPENSSL_NO_STORE
+
 include $(BUILD_STATIC_LIBRARY)
 
 #######################################
@@ -76,33 +78,8 @@ LOCAL_LDFLAGS += -ldl
 
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libcrypto
-LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/android-config.mk 
-include $(LOCAL_PATH)/Crypto-config-target.mk
-include $(LOCAL_PATH)/android-config.mk
+LOCAL_STATIC_LIBRARIES := libcrypto_static
 
-LOCAL_CFLAGS := -DNO_WINDOWS_BRAINDEATH
-LOCAL_SRC_FILES := $(common_src_files)
-ifeq ($(TARGET_ARCH_ABI), armeabi)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_32) 
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_arm)
-LOCAL_SRC_FILES :=  $(filter-out $(arm_exclude_files),$(LOCAL_SRC_FILES)) $(arm_src_files)
-else ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_32) 
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_arm)
-LOCAL_SRC_FILES :=  $(filter-out $(arm_exclude_files),$(LOCAL_SRC_FILES)) $(arm_src_files)
-else ifeq  ($(TARGET_ARCH_ABI), x86)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_32)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_x86)
-LOCAL_SRC_FILES :=  $(filter-out $(x86_exclude_files),$(LOCAL_SRC_FILES)) $(x86_src_files)
-else ifeq  ($(TARGET_ARCH_ABI), arm64-v8a)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_64)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_arm64)
-LOCAL_SRC_FILES :=  $(filter-out $(arm64_exclude_files),$(LOCAL_SRC_FILES)) $(arm64_src_files)
-else ifeq  ($(TARGET_ARCH_ABI), x86_64)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_64)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_x86_64)
-LOCAL_SRC_FILES :=  $(filter-out $(x86_64_exclude_files),$(LOCAL_SRC_FILES)) $(x86_64_src_files)
-endif
 include $(BUILD_SHARED_LIBRARY)
 
 
@@ -149,7 +126,7 @@ LOCAL_SRC_FILES +=  $(x86_64_src_files)
 endif
 
 LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) $(LOCAL_PATH)/include $(LOCAL_PATH)/crypto 
-
+LOCAL_CFLAGS += -DOPENSSL_THREADS -D_REENTRANT -DDSO_DLFCN -DHAVE_DLFCN_H -O3 -fomit-frame-pointer -Wall -DSHA1_ASM -DSHA256_ASM -DSHA512_ASM -DMD5_ASM -DRMD160_ASM -DAES_ASM -DVPAES_ASM -DWHIRLPOOL_ASM -DGHASH_ASM -DOPENSSL_NO_EC_NISTP_64_GCC_128 -DOPENSSL_NO_GMP -DOPENSSL_NO_JPAKE -DOPENSSL_NO_MD2 -DOPENSSL_NO_RC5 -DOPENSSL_NO_RFC3779 -DOPENSSL_NO_SCTP -DOPENSSL_NO_STORE
 
 include $(BUILD_STATIC_LIBRARY)
 
@@ -171,35 +148,7 @@ endif
 LOCAL_SHARED_LIBRARIES += libcrypto
 LOCAL_MODULE_TAGS := optional
 LOCAL_MODULE := libssl
-LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/android-config.mk $(LOCAL_PATH)/Ssl.mk
-include $(LOCAL_PATH)/Ssl-config-target.mk
-include $(LOCAL_PATH)/android-config.mk
-
-
-LOCAL_SRC_FILES := $(common_src_files)
-ifeq ($(TARGET_ARCH_ABI), armeabi)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_32) 
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_arm)
-LOCAL_SRC_FILES +=  $(arm_src_files)
-else ifeq ($(TARGET_ARCH_ABI), armeabi-v7a)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_32) 
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_arm)
-LOCAL_SRC_FILES +=  $(arm_src_files)
-else ifeq  ($(TARGET_ARCH_ABI), x86)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_32)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_x86)
-LOCAL_SRC_FILES +=  $(x86_src_files)
-else ifeq ($(TARGET_ARCH_ABI), arm64-v8a)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_64) 
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_arm)
-LOCAL_SRC_FILES +=  $(arm64_src_files)
-else ifeq  ($(TARGET_ARCH_ABI), x86_64)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_64)
-LOCAL_CFLAGS += $(LOCAL_CFLAGS_x86_64)
-LOCAL_SRC_FILES +=  $(x86_64_src_files)
-endif
-
-LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) $(LOCAL_PATH)/include $(LOCAL_PATH)/crypto 
+LOCAL_STATIC_LIBRARIES := libssl_static
 
 include $(BUILD_SHARED_LIBRARY)
 
