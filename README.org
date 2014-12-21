@@ -25,7 +25,7 @@ A typical SQLite database in unencrypted, and visually parseable even as encoded
 :  sqlite> INSERT INTO t1(a,b) VALUES (‘one for the money’, ‘two for the show’);
 :  sqlite> .quit
 :  
-:  ~ $ hexdump -C sqlite.db
+:  ~ $ hexdump -C sqlcipher.db
 :  00000000 84 d1 36 18 eb b5 82 90 c4 70 0d ee 43 cb 61 87 |.?6.?..?p.?C?a.|
 :  00000010 91 42 3c cd 55 24 ab c6 c4 1d c6 67 b4 e3 96 bb |.B?..?|
 :  00000bf0 8e 99 ee 28 23 43 ab a4 97 cd 63 42 8a 8e 7c c6 |..?(#C??.?cB..|?|
