@@ -90,9 +90,6 @@ clean:
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libsqlcipher_android.so
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libdatabase_sqlcipher.so
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libstlport_shared.so
-	#-rm ${LIBRARY_ROOT}/mips64/libsqlcipher_android.so
-	#-rm ${LIBRARY_ROOT}/mips64/libdatabase_sqlcipher.so
-	#-rm ${LIBRARY_ROOT}/mips64/libstlport_shared.so
 
 
 copy-libs:
@@ -131,13 +128,6 @@ copy-libs:
 		${LIBRARY_ROOT}/armeabi-v7a && \
 	cp ${EXTERNAL_DIR}/libs/armeabi-v7a/libstlport_shared.so \
 		 ${LIBRARY_ROOT}/armeabi-v7a
-#	mkdir -p ${LIBRARY_ROOT}/mips64
-#	cp ${EXTERNAL_DIR}/libs/mips64/libsqlcipher_android.so \
-#		 ${LIBRARY_ROOT}/mips64  && \
-#	cp ${JNI_DIR}/libs/mips64/libdatabase_sqlcipher.so \
-#		${LIBRARY_ROOT}/mips64 && \
-#	cp ${EXTERNAL_DIR}/libs/mips64/libstlport_shared.so \
-#		 ${LIBRARY_ROOT}/mips64
 
 copy-libs-dist:
 	cp ${LIBRARY_ROOT}/*.jar dist/SQLCipherForAndroid-SDK/libs/ && \
