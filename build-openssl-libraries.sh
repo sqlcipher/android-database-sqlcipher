@@ -105,7 +105,7 @@
 
     # Patch openssl to support building for arm64-v8a && x86_64
     # Note, we only patch the Configure script
-    cd external/openssl && patch -p1 < ../../openssl_android_64_bit_support.patch && cd ../..
+    patch -p1 < ../../openssl_android_64_bit_support.patch
 
     # arm64-v8a build
     ANDROID_PLATFORM_VERSION=android-21
