@@ -102,6 +102,9 @@
     mv libcrypto.a ../android-libs/x86/
     
     rm -rf ${ANDROID_TOOLCHAIN_DIR}
+    
+    make clean
+    git clean -dfx && git checkout -f
 
     # Patch openssl to support building for arm64-v8a && x86_64
     # Note, we only patch the Configure script
@@ -127,7 +130,12 @@
     mv libcrypto.a ../android-libs/arm64-v8a/
     
     rm -rf ${ANDROID_TOOLCHAIN_DIR}    
+
+    make clean
+    git clean -dfx && git checkout -f
     
+    patch -p1 < ../../openssl_android_64_bit_support.patch
+
     # x86_64 build
     ANDROID_PLATFORM_VERSION=android-21
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
