@@ -6,6 +6,10 @@
 
     SQLCipher for Android runs on Android 2.1 - 5.0.1, both x86 and ARM architectures.
 
+*** Contributions
+
+We welcome contributions, to contribute to SQLCipher for Android, a [[https://www.zetetic.net/contributions/][contributor agreement]] needs to be submitted.  All submissions should be based on the =master= branch.
+
 *** An Illustrative Terminal Listing
 
 A typical SQLite database in unencrypted, and visually parseable even as encoded text. The following example shows the difference between hexdumps of a standard SQLite db and one implementing SQLCipher.
