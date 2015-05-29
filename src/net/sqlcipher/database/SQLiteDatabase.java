@@ -25,6 +25,7 @@ import net.sqlcipher.database.SQLiteDatabaseHook;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
@@ -85,36 +86,51 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
   
     private static void loadICUData(Context context, File workingDir) {
-
+      OutputStream out = null;
+      ZipInputStream in = null;
+      File icuDir = new File(workingDir, "icu");
+      File icuDataFile = new File(icuDir, "icudt46l.dat");
+      try {
+        if(!icuDir.exists()) icuDir.mkdirs();
+        if(!icuDataFile.exists()) {
+          in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
+          in.getNextEntry();
+          out =  new FileOutputStream(icuDataFile);
+          byte[] buf = new byte[1024];
+          int len;
+          while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+          }
+        }
+      }
+      catch (Exception ex) {
+          Log.e(TAG, "Error copying icu dat file", ex);
+          if(icuDataFile.exists()){
+            icuDataFile.delete();
+          }
+          throw new RuntimeException(ex);
+      }
+      finally {
         try {
-            File icuDir = new File(workingDir, "icu");
-            if(!icuDir.exists()) icuDir.mkdirs();
-            File icuDataFile = new File(icuDir, "icudt46l.dat");
-            if(!icuDataFile.exists()) {
-                ZipInputStream in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
-                in.getNextEntry();
-                OutputStream out =  new FileOutputStream(icuDataFile);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                in.close();
-                out.flush();
-                out.close();
-            }
+          if(in != null){
+            in.close();
+          }
+          if(out != null){
+            out.flush();
+            out.close();
+          }
+        } catch (IOException ioe){
+          Log.e(TAG, "Error in closing streams IO streams after expanding ICU dat file", ioe);
+          throw new RuntimeException(ioe);
         }
-        catch (Exception e) {
-            Log.e(TAG, "Error copying icu data file", e);
-        }
+      }
     }
 
-    public static void loadLibs (Context context) {
+    public static synchronized void loadLibs (Context context) {
         loadLibs(context, context.getFilesDir());
     }
 
-    public static void loadLibs (Context context, File workingDir)
-    {
+    public static synchronized void loadLibs (Context context, File workingDir) {
         System.loadLibrary("stlport_shared");
         System.loadLibrary("sqlcipher_android");
         System.loadLibrary("database_sqlcipher");
