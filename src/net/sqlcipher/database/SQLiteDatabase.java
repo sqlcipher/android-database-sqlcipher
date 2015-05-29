@@ -880,21 +880,87 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Call {@link #setLocale} if you would like something else.</p>
      *
      * @param path to database file to open and/or create
+     * @param password to use to open and/or create database file
      * @param factory an optional factory class that is called to instantiate a
      *            cursor when query is called, or null for default
-     * @param flags to control database access mode
+     * @param flags to control database access mode and other options
+     *
      * @return the newly opened database
+     *
      * @throws SQLiteException if the database cannot be opened
      */
-    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
-      return openDatabase(path, password.toCharArray(), factory, flags, databaseHook);
+    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
+      return openDatabase(path, password.toCharArray(), factory, flags, null);
     }
 
-    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
+    /**
+     * Open the database according to the flags {@link #OPEN_READWRITE}
+     * {@link #OPEN_READONLY} {@link #CREATE_IF_NECESSARY} and/or {@link #NO_LOCALIZED_COLLATORS}.
+     *
+     * <p>Sets the locale of the database to the  the system's current locale.
+     * Call {@link #setLocale} if you would like something else.</p>
+     *
+     * @param path to database file to open and/or create
+     * @param password to use to open and/or create database file (char array)
+     * @param factory an optional factory class that is called to instantiate a
+     *            cursor when query is called, or null for default
+     * @param flags to control database access mode and other options
+     *
+     * @return the newly opened database
+     *
+     * @throws SQLiteException if the database cannot be opened
+     */
+    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags) {
+      return openDatabase(path, password, factory, flags, null);
+    }
+
+    /**
+     * Open the database according to the flags {@link #OPEN_READWRITE}
+     * {@link #OPEN_READONLY} {@link #CREATE_IF_NECESSARY} and/or {@link #NO_LOCALIZED_COLLATORS}
+     * with optional hook to run on pre/post key events.
+     *
+     * <p>Sets the locale of the database to the  the system's current locale.
+     * Call {@link #setLocale} if you would like something else.</p>
+     *
+     * @param path to database file to open and/or create
+     * @param password to use to open and/or create database file
+     * @param factory an optional factory class that is called to instantiate a
+     *            cursor when query is called, or null for default
+     * @param flags to control database access mode and other options
+     * @param hook to run on pre/post key events
+     *
+     * @return the newly opened database
+     *
+     * @throws SQLiteException if the database cannot be opened
+     */
+    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
+      return openDatabase(path, password.toCharArray(), factory, flags, hook);
+    }
+
+    /**
+     * Open the database according to the flags {@link #OPEN_READWRITE}
+     * {@link #OPEN_READONLY} {@link #CREATE_IF_NECESSARY} and/or {@link #NO_LOCALIZED_COLLATORS}
+     * with optional hook to run on pre/post key events.
+     *
+     * <p>Sets the locale of the database to the  the system's current locale.
+     * Call {@link #setLocale} if you would like something else.</p>
+     *
+     * @param path to database file to open and/or create
+     * @param password to use to open and/or create database file (char array)
+     * @param factory an optional factory class that is called to instantiate a
+     *            cursor when query is called, or null for default
+     * @param flags to control database access mode and other options
+     * @param hook to run on pre/post key events
+     *
+     * @return the newly opened database
+     *
+     * @throws SQLiteException if the database cannot be opened
+     */
+    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
         SQLiteDatabase sqliteDatabase = null;
         try {
             // Open the database.
-            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, databaseHook);
+            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, hook);
             if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
                 sqliteDatabase.enableSqlTracing(path);
             }
@@ -910,10 +976,9 @@ public class SQLiteDatabase extends SQLiteClosable {
                 // delete is only for non-memory database files
                 new File(path).delete();
             }
-            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, databaseHook);
+            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, hook);
         }
-        ActiveDatabases.getInstance().mActiveDatabases.add(
-                                                           new WeakReference<SQLiteDatabase>(sqliteDatabase));
+        ActiveDatabases.getInstance().mActiveDatabases.add(new WeakReference<SQLiteDatabase>(sqliteDatabase));
         return sqliteDatabase;
     }
 
@@ -945,14 +1010,6 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory) {
-      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
-    }
-
-    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
-      return openDatabase(path, password.toCharArray(), factory, CREATE_IF_NECESSARY, null);
-    }
-
-    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags) {
       return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
 
