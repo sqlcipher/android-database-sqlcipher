@@ -277,7 +277,13 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
     err = sqlite3_open_v2(path8, &handle, sqliteFlags, NULL);
     if (err != SQLITE_OK) {
         LOGE("sqlite3_open_v2(\"%s\", &handle, %d, NULL) failed\n", path8, sqliteFlags);
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception_errcode(env, err, "Could not open database");
+        goto done;
+    }
+
+    // Check that the database is really read/write when that is what we asked for.
+    if ((sqliteFlags & SQLITE_OPEN_READWRITE) && sqlite3_db_readonly(handle, NULL)) {
+        throw_sqlite3_exception(env, handle, "Could not open the database in read/write mode.");
         goto done;
     }
 
@@ -290,7 +296,7 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
     err = sqlite3_busy_timeout(handle, 1000 /* ms */);
     if (err != SQLITE_OK) {
         LOGE("sqlite3_busy_timeout(handle, 1000) failed for \"%s\"\n", path8);
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, db, "Could not set busy timeout");
         goto done;
     }
 
@@ -321,7 +327,7 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
 
     err = register_android_functions(handle, UTF16_STORAGE);
     if (err) {
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, db, "Could not register Android SQL functions."));
         goto done;
     }
 
