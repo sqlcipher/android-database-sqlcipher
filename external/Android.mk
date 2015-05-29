@@ -95,6 +95,7 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/platform-system-core/include \
 	$(LOCAL_PATH)/platform-frameworks-base/include
 
+LOCAL_LDFLAGS += -fuse-ld=bfd
 LOCAL_LDFLAGS += -L${LOCAL_PATH}/android-libs/$(TARGET_ARCH_ABI)/ -L$(LOCAL_PATH)/libs/$(TARGET_ARCH_ABI)/
 LOCAL_LDLIBS := -llog -lutils -lcutils
 LOCAL_MODULE := libsqlcipher_android
