@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,6 +71,12 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final String TAG = "Database";
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
+
+    // Stores reference to all databases opened in the current process.
+    // (The referent Object is not used at this time.)
+    // INVARIANT: Guarded by sActiveDatabases.
+    private static WeakHashMap<SQLiteDatabase, Object> sActiveDatabases =
+            new WeakHashMap<SQLiteDatabase, Object>();
 
     public int status(int operation, boolean reset){
         return native_status(operation, reset);
@@ -394,6 +399,10 @@ public class SQLiteDatabase extends SQLiteClosable {
                 mTimeClosed = getTime();
             }
             dbclose();
+
+            synchronized (sActiveDatabases) {
+                sActiveDatabases.remove(this);
+            }
         }
     }
 
@@ -958,6 +967,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
         SQLiteDatabase sqliteDatabase = null;
+
         try {
             // Open the database.
             sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, hook);
@@ -978,7 +988,10 @@ public class SQLiteDatabase extends SQLiteClosable {
             }
             sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, hook);
         }
-        ActiveDatabases.getInstance().mActiveDatabases.add(new WeakReference<SQLiteDatabase>(sqliteDatabase));
+
+        synchronized (sActiveDatabases) {
+            sActiveDatabases.put(sqliteDatabase, null);
+        }
         return sqliteDatabase;
     }
 
@@ -2335,25 +2348,18 @@ public class SQLiteDatabase extends SQLiteClosable {
         mMaxSqlCacheSize = cacheSize;
     }
 
-    static class ActiveDatabases {
-        private static final ActiveDatabases activeDatabases = new ActiveDatabases();
-        private HashSet<WeakReference<SQLiteDatabase>> mActiveDatabases =
-            new HashSet<WeakReference<SQLiteDatabase>>();
-        private ActiveDatabases() {} // disable instantiation of this class
-        static ActiveDatabases getInstance() {return activeDatabases;}
-    }
-
     /**
      * this method is used to collect data about ALL open databases in the current process.
      * bugreport is a user of this data.
      */
     /* package */ static ArrayList<DbStats> getDbStats() {
         ArrayList<DbStats> dbStatsList = new ArrayList<DbStats>();
-        for (WeakReference<SQLiteDatabase> w : ActiveDatabases.getInstance().mActiveDatabases) {
-            SQLiteDatabase db = w.get();
+
+        for (SQLiteDatabase db : getActiveDatabases()) {
             if (db == null || !db.isOpen()) {
                 continue;
             }
+
             // get SQLITE_DBSTATUS_LOOKASIDE_USED for the db
             int lookasideUsed = db.native_getDbLookaside();
 
@@ -2393,6 +2399,14 @@ public class SQLiteDatabase extends SQLiteClosable {
             }
         }
         return dbStatsList;
+    }
+
+    private static ArrayList<SQLiteDatabase> getActiveDatabases() {
+        ArrayList<SQLiteDatabase> databases = new ArrayList<SQLiteDatabase>();
+        synchronized (sActiveDatabases) {
+            databases.addAll(sActiveDatabases.keySet());
+        }
+        return databases;
     }
 
     /**
