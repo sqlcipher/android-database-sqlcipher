@@ -1025,7 +1025,9 @@ public class SQLiteDatabase extends SQLiteClosable {
 
         try {
             // Open the database.
-            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, hook);
+            sqliteDatabase = new SQLiteDatabase(path, factory, flags);
+            sqliteDatabase.openDatabaseInternal(password, hook);
+
             if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
                 sqliteDatabase.enableSqlTracing(path);
             }
@@ -1037,11 +1039,16 @@ public class SQLiteDatabase extends SQLiteClosable {
             // TODO: should we do this for other open failures?
             Log.e(TAG, "Deleting and re-creating corrupt database " + path, e);
             // EventLog.writeEvent(EVENT_DB_CORRUPT, path);
+
             if (!path.equalsIgnoreCase(":memory")) {
                 // delete is only for non-memory database files
                 new File(path).delete();
             }
-            sqliteDatabase = new SQLiteDatabase(path, password, factory, flags, hook);
+
+            sqliteDatabase = new SQLiteDatabase(path, factory, flags);
+
+            // NOTE: this may throw an exception, which is sent directly to the caller:
+            sqliteDatabase.openDatabaseInternal(password, hook);
         }
 
         synchronized (sActiveDatabases) {
@@ -2160,7 +2167,8 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public SQLiteDatabase(String path, char[] password, CursorFactory factory, int flags) {
-        this(path, password, factory, flags, null);
+        this(path, factory, flags);
+        this.openDatabaseInternal(password, null);
     }
 
     /**
@@ -2180,19 +2188,37 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public SQLiteDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
+        this(path, factory, flags);
+        this.openDatabaseInternal(password, databaseHook);
+    }
 
+    /**
+     * Private constructor (without database password) which DOES NOT attempt to open the database.
+     *
+     * @param path The full path to the database
+     * @param factory The factory to use when creating cursors, may be NULL.
+     * @param flags to control database access mode and other options
+     *
+     * @throws IllegalArgumentException if the database path is null
+     */
+    private SQLiteDatabase(String path, CursorFactory factory, int flags) {
         if (path == null) {
             throw new IllegalArgumentException("path should not be null");
         }
+
         mFlags = flags;
         mPath = path;
+
         mSlowQueryThreshold = -1;//SystemProperties.getInt(LOG_SLOW_QUERIES_PROPERTY, -1);
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
         mPrograms = new WeakHashMap<SQLiteClosable,Object>();
+    }
+
+    private void openDatabaseInternal(char[] password, SQLiteDatabaseHook databaseHook) {
         dbopen(mPath, mFlags);
 
-        if(databaseHook != null){
+        if(databaseHook != null) {
             databaseHook.preKey(this);
         }
 
