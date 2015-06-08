@@ -56,7 +56,3 @@
 -keep public class net.sqlcipher.** {
     *;
 }
-
--keep public class net.sqlcipher.database.** {
-    *;
-}
