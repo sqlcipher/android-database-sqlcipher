@@ -53,6 +53,6 @@
     public static <fields>;
 }
 
--keep public class net.sqlcipher.** {
+-keep class net.sqlcipher.** {
     *;
 }
