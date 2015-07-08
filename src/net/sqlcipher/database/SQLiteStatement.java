@@ -90,7 +90,7 @@ public class SQLiteStatement extends SQLiteProgram
         }
     }
 
-    public long executeUpdateDelete() {
+    public int executeUpdateDelete() {
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
