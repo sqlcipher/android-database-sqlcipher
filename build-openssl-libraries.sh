@@ -1,3 +1,4 @@
+#! /usr/bin/env sh
 (cd external/openssl;
 
     if [ ! ${ANDROID_NDK_ROOT} ]; then
