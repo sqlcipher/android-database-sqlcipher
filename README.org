@@ -1,10 +1,14 @@
 *** Download Source and Binaries
 
-The latest binary packages for developers, with the jar’s, .so’s and a quick sample can be [[https://s3.amazonaws.com/sqlcipher/SQLCipher%20for%20Android%202.1.1.zip][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
+    The latest binary packages for developers, with the jar’s, .so’s and a quick sample can be [[https://www.zetetic.net/sqlcipher/open-source][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
 
 *** Compatibility
 
-    SQLCipher for Android runs on Android 2.1 - 4.4, both x86 and ARM architectures.
+    SQLCipher for Android runs on Android 2.1 - 5.0.1, both x86 and ARM architectures.
+
+*** Contributions
+
+We welcome contributions, to contribute to SQLCipher for Android, a [[https://www.zetetic.net/contributions/][contributor agreement]] needs to be submitted.  All submissions should be based on the =master= branch.
 
 *** An Illustrative Terminal Listing
 

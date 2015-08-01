@@ -25,16 +25,16 @@
 
 #include <sqlite3.h>
 #include <sqlite3_android.h>
-#include <string.h>
+
 #include <utils/Log.h>
 #include <utils/threads.h>
 #include <utils/List.h>
 #include <utils/Errors.h>
+
 #include <ctype.h>
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <string.h>
 #include <sys/ioctl.h>
 
 #include <unicode/utypes.h>
@@ -277,7 +277,13 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
     err = sqlite3_open_v2(path8, &handle, sqliteFlags, NULL);
     if (err != SQLITE_OK) {
         LOGE("sqlite3_open_v2(\"%s\", &handle, %d, NULL) failed\n", path8, sqliteFlags);
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception_errcode(env, err, "Could not open database");
+        goto done;
+    }
+
+    // Check that the database is really read/write when that is what we asked for.
+    if ((sqliteFlags & SQLITE_OPEN_READWRITE) && sqlite3_db_readonly(handle, NULL)) {
+        throw_sqlite3_exception(env, handle, "Could not open the database in read/write mode.");
         goto done;
     }
 
@@ -290,7 +296,7 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
     err = sqlite3_busy_timeout(handle, 1000 /* ms */);
     if (err != SQLITE_OK) {
         LOGE("sqlite3_busy_timeout(handle, 1000) failed for \"%s\"\n", path8);
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "Could not set busy timeout");
         goto done;
     }
 
@@ -299,7 +305,7 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
     err = sqlite3_prepare_v2(handle, integritySql, -1, &statement, NULL);
     if (err != SQLITE_OK) {
         LOGE("sqlite_prepare_v2(handle, \"%s\") failed for \"%s\"\n", integritySql, path8);
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "sqlite_prepare_v2(handle, \"pragma integrity_check(1);\") failed");
         goto done;
     }
 
@@ -321,7 +327,7 @@ void dbopen(JNIEnv* env, jobject object, jstring pathString, jint flags)
 
     err = register_android_functions(handle, UTF16_STORAGE);
     if (err) {
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "Could not register Android SQL functions.");
         goto done;
     }
 
@@ -396,8 +402,8 @@ static void dbclose(JNIEnv* env, jobject object)
             env->SetLongField(object, offset_db_handle, 0);
         } else {
             // This can happen if sub-objects aren't closed first.  Make sure the caller knows.
-            throw_sqlite3_exception(env, handle);
             LOGE("sqlite3_close(%p) failed: %d\n", handle, result);
+            throw_sqlite3_exception(env, handle, "sqlite3_close() failed");
         }
     }
 }
@@ -498,7 +504,7 @@ static void native_setLocale(JNIEnv* env, jobject object, jstring localeString, 
         err = sqlite3_exec(handle, createSql, NULL, NULL, NULL);
         if (err != SQLITE_OK) {
             LOGE("CREATE TABLE " ANDROID_TABLE " failed\n");
-            throw_sqlite3_exception(env, handle);
+            throw_sqlite3_exception(env, handle, "create locale table failed");
             goto done;
         }
     }
@@ -508,7 +514,7 @@ static void native_setLocale(JNIEnv* env, jobject object, jstring localeString, 
     err = sqlite3_get_table(handle, selectSql, &meta, &rowCount, &colCount, NULL);
     if (err != SQLITE_OK) {
         LOGE("SELECT locale FROM " ANDROID_TABLE " failed\n");
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "select locale failed");
         goto done;
     }
 
@@ -525,7 +531,7 @@ static void native_setLocale(JNIEnv* env, jobject object, jstring localeString, 
         // read-only database, so we're going to have to put up with whatever we got
         // For registering new index. Not for modifing the read-only database.
         err = register_localized_collators(handle, locale8, UTF16_STORAGE);
-        if (err != SQLITE_OK) throw_sqlite3_exception(env, handle);
+        if (err != SQLITE_OK) throw_sqlite3_exception(env, handle, "register localized collators failed");
         goto done;
     }
 
@@ -533,21 +539,21 @@ static void native_setLocale(JNIEnv* env, jobject object, jstring localeString, 
     err = sqlite3_exec(handle, "BEGIN TRANSACTION", NULL, NULL, NULL);
     if (err != SQLITE_OK) {
         LOGE("BEGIN TRANSACTION failed setting locale\n");
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "BEGIN TRANSACTION failed setting locale");
         goto done;
     }
 
     err = register_localized_collators(handle, locale8, UTF16_STORAGE);
     if (err != SQLITE_OK) {
         LOGE("register_localized_collators() failed setting locale\n");
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "register_localized_collators() failed setting locale");
         goto rollback;
     }
 
     err = sqlite3_exec(handle, "DELETE FROM " ANDROID_TABLE, NULL, NULL, NULL);
     if (err != SQLITE_OK) {
         LOGE("DELETE failed setting locale\n");
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "DELETE failed setting locale");
         goto rollback;
     }
 
@@ -555,28 +561,28 @@ static void native_setLocale(JNIEnv* env, jobject object, jstring localeString, 
     err = sqlite3_prepare_v2(handle, sql, -1, &stmt, NULL);
     if (err != SQLITE_OK) {
         LOGE("sqlite3_prepare_v2(\"%s\") failed\n", sql);
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "sqlite3_prepare_v2() failed setting locale");
         goto rollback;
     }
 
     err = sqlite3_bind_text(stmt, 1, locale8, -1, SQLITE_TRANSIENT);
     if (err != SQLITE_OK) {
         LOGE("sqlite3_bind_text() failed setting locale\n");
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "sqlite3_bind_text() failed setting locale");
         goto rollback;
     }
 
     err = sqlite3_step(stmt);
     if (err != SQLITE_OK && err != SQLITE_DONE) {
         LOGE("sqlite3_step(\"%s\") failed setting locale\n", sql);
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "sqlite3_step() failed setting locale");
         goto rollback;
     }
 
     err = sqlite3_exec(handle, "REINDEX LOCALIZED", NULL, NULL, NULL);
     if (err != SQLITE_OK) {
         LOGE("REINDEX LOCALIZED failed\n");
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "REINDEX LOCALIZED failed");
         goto rollback;
     }
 
@@ -584,7 +590,7 @@ static void native_setLocale(JNIEnv* env, jobject object, jstring localeString, 
     err = sqlite3_exec(handle, "COMMIT TRANSACTION", NULL, NULL, NULL);
     if (err != SQLITE_OK) {
         LOGE("COMMIT TRANSACTION failed setting locale\n");
-        throw_sqlite3_exception(env, handle);
+        throw_sqlite3_exception(env, handle, "COMMIT TRANSACTION failed setting locale");
         goto done;
     }
 
