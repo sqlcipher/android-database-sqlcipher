@@ -42,14 +42,17 @@ public final class DefaultDatabaseErrorHandler implements DatabaseErrorHandler {
      * is detected.
      */
     public void onCorruption(SQLiteDatabase dbObj) {
-        Log.e(TAG, "Corruption reported by sqlite on database, deleting and re-creating: " + dbObj.getPath());
+        // NOTE: Unlike the AOSP, this version does NOT attempt to delete any attached databases.
+        // TBD: Are we really certain that the attached databases would really be corrupt?
+        Log.e(TAG, "Corruption reported by sqlite on database, deleting: " + dbObj.getPath());
 
         if (dbObj.isOpen()) {
-            Log.e(TAG, "Database object for corrupted database is open, not expected for this implementation");
+            Log.e(TAG, "Database object for corrupted database is already open, closing");
+
             try {
                 dbObj.close();
             } catch (Exception e) {
-                /* ignore */
+                /* ignored */
                 Log.e(TAG, "Exception closing Database object for corrupted database, ignored", e);
             }
         }
