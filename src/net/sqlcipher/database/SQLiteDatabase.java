@@ -19,6 +19,8 @@ package net.sqlcipher.database;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.CrossProcessCursorWrapper;
 import net.sqlcipher.DatabaseUtils;
+import net.sqlcipher.DatabaseErrorHandler;
+import net.sqlcipher.DefaultDatabaseErrorHandler;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDebug.DbStats;
 import net.sqlcipher.database.SQLiteDatabaseHook;
@@ -94,6 +96,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      *              update the test suite
      */
     public void changePassword(String password) throws SQLiteException {
+        /* safeguard: */
         if (!isOpen()) {
             throw new SQLiteException("database not open");
         }
@@ -112,6 +115,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      *              update the test suite
      */
     public void changePassword(char[] password) throws SQLiteException {
+        /* safeguard: */
         if (!isOpen()) {
             throw new SQLiteException("database not open");
         }
@@ -384,6 +388,11 @@ public class SQLiteDatabase extends SQLiteClosable {
     private int mCacheFullWarnings;
     private static final int MAX_WARNINGS_ON_CACHESIZE_CONDITION = 1;
 
+    /** {@link DatabaseErrorHandler} to be used when SQLite returns any of the following errors
+     *    Corruption
+     * */
+    private final DatabaseErrorHandler mErrorHandler;
+
     /** maintain stats about number of cache hits and misses */
     private int mNumCacheHits;
     private int mNumCacheMisses;
@@ -460,19 +469,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     private boolean mLockingEnabled = true;
 
     /* package */ void onCorruption() {
-        Log.e(TAG, "Removing corrupt database: " + mPath);
-        //    EventLog.writeEvent(EVENT_DB_CORRUPT, mPath);
-        try {
-            // Close the database (if we can), which will cause subsequent operations to fail.
-            close();
-        } finally {
-            // Delete the corrupt file.  Don't re-create it now -- that would just confuse people
-            // -- but the next time someone tries to open it, they can set it up from scratch.
-            if (!mPath.equalsIgnoreCase(":memory")) {
-                // delete is only for non-memory database files
-                new File(mPath).delete();
-            }
-        }
+        Log.e(TAG, "Calling error handler for corrupt database (detected) " + mPath);
+
+        // NOTE: DefaultDatabaseErrorHandler deletes the corrupt file, EXCEPT for memory database
+        mErrorHandler.onCorruption(this);
     }
 
     /**
@@ -1013,54 +1013,109 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param factory an optional factory class that is called to instantiate a
      *            cursor when query is called, or null for default
      * @param flags to control database access mode and other options
-     * @param hook to run on pre/post key events
+     * @param hook to run on pre/post key events (may be null)
+     * @param errorHandler The {@link DatabaseErrorHandler} to be used when sqlite reports database
+     * corruption (or null for default).
      *
      * @return the newly opened database
      *
      * @throws SQLiteException if the database cannot be opened
      * @throws IllegalArgumentException if the database path is null
      */
-    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
+    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
+        return openDatabase(path, password, factory, flags, databaseHook, new DefaultDatabaseErrorHandler());
+    }
+
+    /**
+     * Open the database according to the flags {@link #OPEN_READWRITE}
+     * {@link #OPEN_READONLY} {@link #CREATE_IF_NECESSARY} and/or {@link #NO_LOCALIZED_COLLATORS}
+     * with optional hook to run on pre/post key events.
+     *
+     * <p>Sets the locale of the database to the  the system's current locale.
+     * Call {@link #setLocale} if you would like something else.</p>
+     *
+     * @param path to database file to open and/or create
+     * @param password to use to open and/or create database file
+     * @param factory an optional factory class that is called to instantiate a
+     *            cursor when query is called, or null for default
+     * @param flags to control database access mode and other options
+     * @param hook to run on pre/post key events
+     * @param errorHandler The {@link DatabaseErrorHandler} to be used when sqlite reports database
+     * corruption (or null for default).
+     *
+     * @return the newly opened database
+     *
+     * @throws SQLiteException if the database cannot be opened
+     * @throws IllegalArgumentException if the database path is null
+     */
+    public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags,
+                                              SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
+      return openDatabase(path, password.toCharArray(), factory, flags, hook, errorHandler);
+    }
+
+    /**
+     * Open the database according to the flags {@link #OPEN_READWRITE}
+     * {@link #OPEN_READONLY} {@link #CREATE_IF_NECESSARY} and/or {@link #NO_LOCALIZED_COLLATORS}
+     * with optional hook to run on pre/post key events.
+     *
+     * <p>Sets the locale of the database to the  the system's current locale.
+     * Call {@link #setLocale} if you would like something else.</p>
+     *
+     * @param path to database file to open and/or create
+     * @param password to use to open and/or create database file (char array)
+     * @param factory an optional factory class that is called to instantiate a
+     *            cursor when query is called, or null for default
+     * @param flags to control database access mode and other options
+     * @param hook to run on pre/post key events (may be null)
+     * @param errorHandler The {@link DatabaseErrorHandler} to be used when sqlite reports database
+     * corruption (or null for default).
+     *
+     * @return the newly opened database
+     *
+     * @throws SQLiteException if the database cannot be opened
+     * @throws IllegalArgumentException if the database path is null
+     */
+    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags,
+                                              SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
         SQLiteDatabase sqliteDatabase = null;
 
         try {
             // Open the database.
-            sqliteDatabase = new SQLiteDatabase(path, factory, flags);
+            sqliteDatabase = new SQLiteDatabase(path, factory, flags, errorHandler);
             sqliteDatabase.openDatabaseInternal(password, hook);
-
-            if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
-                sqliteDatabase.enableSqlTracing(path);
-            }
-            if (SQLiteDebug.DEBUG_SQL_TIME) {
-                sqliteDatabase.enableSqlProfiling(path);
-            }
         } catch (SQLiteDatabaseCorruptException e) {
-            // Try to recover from this, if we can.
-            // TODO: should we do this for other open failures?
-            Log.e(TAG, "Deleting and re-creating corrupt database " + path, e);
-            // EventLog.writeEvent(EVENT_DB_CORRUPT, path);
+            // Try to recover from this, if possible.
+            // FUTURE TBD: should we consider this for other open failures?
+            Log.e(TAG, "Calling error handler for corrupt database " + path, e);
 
-            if (!path.equalsIgnoreCase(":memory")) {
-                // delete is only for non-memory database files
-                new File(path).delete();
-            }
+            // NOTE: if this errorHandler.onCorruption() throws the exception _should_
+            // bubble back to the original caller.
+            // DefaultDatabaseErrorHandler deletes the corrupt file, EXCEPT for memory database
+            errorHandler.onCorruption(sqliteDatabase);
 
-            sqliteDatabase = new SQLiteDatabase(path, factory, flags);
-
-            // NOTE: this may throw an exception, which is sent directly to the caller:
+            // try *once* again:
+            sqliteDatabase = new SQLiteDatabase(path, factory, flags, errorHandler);
             sqliteDatabase.openDatabaseInternal(password, hook);
+        }
+
+        if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
+            sqliteDatabase.enableSqlTracing(path);
+        }
+        if (SQLiteDebug.DEBUG_SQL_TIME) {
+            sqliteDatabase.enableSqlProfiling(path);
         }
 
         synchronized (sActiveDatabases) {
             sActiveDatabases.put(sqliteDatabase, null);
         }
+
         return sqliteDatabase;
     }
 
     /**
      * Equivalent to openDatabase(file.getPath(), password, factory, CREATE_IF_NECESSARY, databaseHook).
      */
-    public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook){
+    public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
         return openOrCreateDatabase(file.getPath(), password, factory, databaseHook);
     }
 
@@ -1074,8 +1129,23 @@ public class SQLiteDatabase extends SQLiteClosable {
     /**
      * Equivalent to openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook).
      */
+    public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
+                                                      DatabaseErrorHandler errorHandler) {
+        return openDatabase(file.getPath(), password.toCharArray(), factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
+    }
+
+    public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
+                                                      DatabaseErrorHandler errorHandler) {
+        return openDatabase(path, password.toCharArray(), factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
+    }
+
     public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
       return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
+    }
+
+    public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
+                                                      DatabaseErrorHandler errorHandler) {
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
     }
 
     /**
@@ -1309,8 +1379,21 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param table the table to mark as syncable
      * @param deletedTable The deleted table that corresponds to the
      *          syncable table
+     *
+     * @throws SQLiteException if there is an issue executing the sql to mark the table as syncable
+     *                         OR if the database is not open
+     *
+     * FUTURE @todo throw IllegalStateException if the database is not open and
+     *              update the test suite
+     *
+     * NOTE: This method was deprecated by the AOSP in Android API 11.
      */
     public void markTableSyncable(String table, String deletedTable) {
+        /* safeguard: */
+        if (!isOpen()) {
+            throw new SQLiteException("database not open");
+        }
+
         markTableSyncable(table, "_id", table, deletedTable);
     }
 
@@ -1324,9 +1407,21 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param foreignKey this is the column in table whose value is an _id in
      *          updateTable
      * @param updateTable this is the table that will have its _sync_dirty
+     *
+     * @throws SQLiteException if there is an issue executing the sql to mark the table as syncable
+     *
+     * FUTURE @todo throw IllegalStateException if the database is not open and
+     *              update the test suite
+     *
+     * NOTE: This method was deprecated by the AOSP in Android API 11.
      */
     public void markTableSyncable(String table, String foreignKey,
                                   String updateTable) {
+        /* safeguard: */
+        if (!isOpen()) {
+            throw new SQLiteException("database not open");
+        }
+
         markTableSyncable(table, foreignKey, updateTable, null);
     }
 
@@ -1342,6 +1437,8 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param updateTable this is the table that will have its _sync_dirty
      * @param deletedTable The deleted table that corresponds to the
      *          updateTable
+     *
+     * @throws SQLiteException if there is an issue executing the sql
      */
     private void markTableSyncable(String table, String foreignKey,
                                    String updateTable, String deletedTable) {
@@ -2167,7 +2264,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public SQLiteDatabase(String path, char[] password, CursorFactory factory, int flags) {
-        this(path, factory, flags);
+        this(path, factory, flags, null);
         this.openDatabaseInternal(password, null);
     }
 
@@ -2188,7 +2285,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public SQLiteDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
-        this(path, factory, flags);
+        this(path, factory, flags, null);
         this.openDatabaseInternal(password, databaseHook);
     }
 
@@ -2198,10 +2295,12 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @param path The full path to the database
      * @param factory The factory to use when creating cursors, may be NULL.
      * @param flags to control database access mode and other options
+     * @param errorHandler The {@link DatabaseErrorHandler} to be used when sqlite reports database
+     * corruption (or null for default).
      *
      * @throws IllegalArgumentException if the database path is null
      */
-    private SQLiteDatabase(String path, CursorFactory factory, int flags) {
+    private SQLiteDatabase(String path, CursorFactory factory, int flags, DatabaseErrorHandler errorHandler) {
         if (path == null) {
             throw new IllegalArgumentException("path should not be null");
         }
@@ -2213,6 +2312,8 @@ public class SQLiteDatabase extends SQLiteClosable {
         mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         mFactory = factory;
         mPrograms = new WeakHashMap<SQLiteClosable,Object>();
+
+        mErrorHandler = errorHandler;
     }
 
     private void openDatabaseInternal(char[] password, SQLiteDatabaseHook databaseHook) {
@@ -2263,6 +2364,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     public boolean needUpgrade(int newVersion) {
+        /* NOTE: getVersion() will throw if database is not open. */
         return newVersion > getVersion();
     }
 
