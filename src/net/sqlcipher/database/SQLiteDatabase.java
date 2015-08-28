@@ -82,12 +82,40 @@ public class SQLiteDatabase extends SQLiteClosable {
         return native_status(operation, reset);
     }
 
+    /**
+     * Change the password of the open database using sqlite3_rekey().
+     *
+     * @param password new database password
+     *
+     * @throws SQLiteException if there is an issue changing the password internally
+     *                         OR if the database is not open
+     *
+     * FUTURE @todo throw IllegalStateException if the database is not open and
+     *              update the test suite
+     */
     public void changePassword(String password) throws SQLiteException {
-      native_rekey(password);
+        if (!isOpen()) {
+            throw new SQLiteException("database not open");
+        }
+        native_rekey(password);
     }
 
+    /**
+     * Change the password of the open database using sqlite3_rekey().
+     *
+     * @param password new database password (char array)
+     *
+     * @throws SQLiteException if there is an issue changing the password internally
+     *                         OR if the database is not open
+     *
+     * FUTURE @todo throw IllegalStateException if the database is not open and
+     *              update the test suite
+     */
     public void changePassword(char[] password) throws SQLiteException {
-      native_rekey(password);
+        if (!isOpen()) {
+            throw new SQLiteException("database not open");
+        }
+        native_rekey(password);
     }
   
     private static void loadICUData(Context context, File workingDir) {
@@ -2655,7 +2683,7 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     private native void native_key(char[] key) throws SQLException;
     private native void native_key(String key) throws SQLException;
-  
+
     private native void native_rekey(String key) throws SQLException;
     private native void native_rekey(char[] key) throws SQLException;
 }
