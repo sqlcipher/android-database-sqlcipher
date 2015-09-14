@@ -1,10 +1,14 @@
 *** Download Source and Binaries
 
-The latest binary packages for developers, with the jar’s, .so’s and a quick sample can be [[https://s3.amazonaws.com/sqlcipher/SQLCipher%20for%20Android%202.1.1.zip][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
+    The latest binary packages for developers, with the jar’s, .so’s and a quick sample can be [[https://www.zetetic.net/sqlcipher/open-source][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
 
 *** Compatibility
 
-    SQLCipher for Android runs on Android 2.1 - 4.4, both x86 and ARM architectures.
+    SQLCipher for Android runs on Android 2.1 - 5.0.1, both x86 and ARM architectures.
+
+*** Contributions
+
+We welcome contributions, to contribute to SQLCipher for Android, a [[https://www.zetetic.net/contributions/][contributor agreement]] needs to be submitted.  All submissions should be based on the =master= branch.
 
 *** An Illustrative Terminal Listing
 
@@ -25,7 +29,7 @@ A typical SQLite database in unencrypted, and visually parseable even as encoded
 :  sqlite> INSERT INTO t1(a,b) VALUES (‘one for the money’, ‘two for the show’);
 :  sqlite> .quit
 :  
-:  ~ $ hexdump -C sqlite.db
+:  ~ $ hexdump -C sqlcipher.db
 :  00000000 84 d1 36 18 eb b5 82 90 c4 70 0d ee 43 cb 61 87 |.?6.?..?p.?C?a.|
 :  00000010 91 42 3c cd 55 24 ab c6 c4 1d c6 67 b4 e3 96 bb |.B?..?|
 :  00000bf0 8e 99 ee 28 23 43 ab a4 97 cd 63 42 8a 8e 7c c6 |..?(#C??.?cB..|?|
@@ -55,7 +59,7 @@ Notepadbot is a sample application pulled from the standard Android samples code
 
 *** Building
 
-In order to build android-database-sqlcipher from source you will need both the Android SDK as well as Android NDK.  To complete the =make init= command, you will need the =android-7= platform installed from the SDK.  Once you have cloned the repo, change directory into the root of the repository and run the following commands:
+In order to build android-database-sqlcipher from source you will need both the Android SDK as well as Android NDK.  To complete the =make init= command, you will need the =android-19= platform installed from the SDK.  Once you have cloned the repo, change directory into the root of the repository and run the following commands:
 
 :  # this only needs to be done once
 :  make init

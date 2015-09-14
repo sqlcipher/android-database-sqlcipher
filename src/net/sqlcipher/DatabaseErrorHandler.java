@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006 The Android Open Source Project
+ * Copyright (C) 2010 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,18 @@
 
 package net.sqlcipher;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 /**
- * Extension of android.database.CursorWrapper to support getType() for API < 11.
+ * An interface to let the apps define the actions to take when the following errors are detected
+ *   database corruption
  */
-public class CursorWrapper extends android.database.CursorWrapper implements Cursor {
+public interface DatabaseErrorHandler {
 
-    private final Cursor mCursor;
-
-    public CursorWrapper(Cursor cursor) {
-        super(cursor);
-        mCursor = cursor;
-    }
-
-    public int getType(int columnIndex) {
-        return mCursor.getType(columnIndex);
-    }
-
-    public Cursor getWrappedCursor() {
-      return mCursor;
-    }
+    /**
+     * defines the method to be invoked when database corruption is detected.
+     * @param dbObj the {@link SQLiteDatabase} object representing the database on which corruption
+     * is detected.
+     */
+    void onCorruption(SQLiteDatabase dbObj);
 }
-

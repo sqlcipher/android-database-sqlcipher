@@ -19,6 +19,3 @@
 [submodule "external/icu4c"]
 	path = external/icu4c
 	url = https://github.com/android/platform_external_icu4c.git
-[submodule "notepadbot"]
-	path = dist/SQLCipherForAndroid-SDK/samples/notepadbot
-	url = https://github.com/guardianproject/notepadbot.git
