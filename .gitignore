@@ -11,3 +11,8 @@ gen/
 external/openssl
 external/sqlcipher
 libs/
+
+# AAR cruft
+R.txt
+sqlcipher-*.aar
+sqlcipher-*.pom
