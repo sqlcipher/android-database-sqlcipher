@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>net.sqlcipher</groupId>
+  <artifactId>sqlcipher</artifactId>
+  <version>VERSION</version>
+  <packaging>aar</packaging>
+  <name>SQLCipher</name>
+  <url>https://www.zetetic.net/sqlcipher</url>
+  <description></description>
+  <licenses>
+   <license>
+     <name>Apache-2.0</name>
+     <url>https://github.com/sqlcipher/android-database-sqlcipher/blob/master/LICENSE</url>
+   </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>zetetic</id>
+      <name>Zetetic</name>
+      <email>support@zetetic.net</email>
+    </developer>
+    <developer>
+      <id>guardianproject</id>
+      <name>Guardian Project</name>
+      <email>support@guardianproject.info</email>
+    </developer>
+  </developers>
+  <issueManagement>
+    <url>https://github.com/sqlcipher/android-database-sqlcipher/issues</url>
+    <system>GitHub</system>
+  </issueManagement>
+  <scm>
+    <connection>scm:https://github.com/sqlcipher/android-database-sqlcipher.git</connection>
+    <developerConnection>scm:git@github.com:sqlcipher/android-database-sqlcipher.git</developerConnection>
+    <url>scm:https://github.com/sqlcipher/android-database-sqlcipher</url>
+  </scm>
+</project>

@@ -5,10 +5,29 @@
     <isset property="env.ANDROID_NDK" />
   </condition>
 
+  <target name="-pre-clean">
+    <delete>
+      <fileset dir=".">
+        <include name="sqlcipher*-*.aar" />
+        <include name="sqlcipher*-*.pom" />
+      </fileset>
+    </delete>
+  </target>
+
   <target name="-getgitdetails" >
     <exec executable="git" outputproperty="git.describe">
       <arg value="describe"/>
     </exec>
+    <echo message="${git.describe}" file=".version"/>
+    <loadfile property="git.tag.version" srcFile=".version">
+        <filterchain>
+            <tokenfilter>
+                <replaceregex pattern="v" replace=""/>
+            </tokenfilter>
+        </filterchain>
+    </loadfile>
+    <delete file=".version"/>
+    <echo message="Version: ${git.tag.version}"/>
     <exec executable="git" outputproperty="git.revision">
       <arg value="rev-parse"/>
       <arg value="HEAD"/>
@@ -31,7 +50,7 @@
         <attribute name="Implementation-Vendor" value="Zetetic"/>
         <attribute name="Implementation-Title" value="SQLCipher for Android"/>
         <attribute name="Implementation-URL" value="https://www.zetetic.net/sqlcipher/open-source"/>
-        <attribute name="Implementation-Version" value="${git.describe}"/>
+        <attribute name="Implementation-Version" value="${git.tag.version}"/>
         <attribute name="Git-Revision" value="${git.revision}"/>
       </manifest>
     </jar>
@@ -40,6 +59,19 @@
   <target name="-post-build" depends="-getgitdetails,-javadoc">
     <property name="jar.dir" value="libs" />
     <property name="jar.name" value="${jar.dir}/sqlcipher.jar" />
+    <condition property="build.is.debug" value="true" else="false">
+      <equals arg1="${build.target}" arg2="debug" />
+    </condition>
+    <if condition="${build.is.debug}">
+      <then>
+        <property name="aar.name" value="sqlcipher-${git.tag.version}-debug.aar" />
+        <property name="pom.name" value="sqlcipher-${git.tag.version}-debug.pom" />
+      </then>
+      <else>
+        <property name="aar.name" value="sqlcipher-${git.tag.version}.aar" />
+        <property name="pom.name" value="sqlcipher-${git.tag.version}.pom" />
+      </else>
+    </if>
     <property file="${sdk.dir}/tools/source.properties" />
     <exec executable="cat" outputproperty="ndk.release">
       <arg value="${ndk.dir}/RELEASE.TXT"/>
@@ -53,7 +85,7 @@
         <attribute name="Implementation-Vendor" value="Zetetic"/>
         <attribute name="Implementation-Title" value="SQLCipher for Android"/>
         <attribute name="Implementation-URL" value="https://www.zetetic.net/sqlcipher/open-source"/>
-        <attribute name="Implementation-Version" value="${git.describe}"/>
+        <attribute name="Implementation-Version" value="${git.tag.version}"/>
         <attribute name="Git-Revision" value="${git.revision}"/>
         <attribute name="Android-SDK-Release" value="${Pkg.Revision}"/>
         <attribute name="Android-SDK-Host-OS" value="${Archive.HostOs}"/>
@@ -61,6 +93,40 @@
       </manifest>
     </jar>
     <copy file="${out.dir}/sqlcipher-javadoc.jar" todir="${jar.dir}" preservelastmodified="true" overwrite="true"/>
+    <replaceregexp file="AndroidManifest.xml"
+                   match="versionName=&quot;.*&quot;"
+                   replace="versionName=&quot;${git.tag.version}&quot;"
+                   flags="m"/>
+    <replaceregexp file="AndroidManifest.xml"
+                   match="&lt;application.*/application&gt;"
+                   replace=""
+                   flags="s"/>
+    <!-- AARs require R.txt and res/ even if they are empty -->
+    <delete file="R.txt"/>
+    <touch file="R.txt"/>
+    <!-- reset timestamp for reproducibility -->
+    <touch>
+      <fileset file="AndroidManifest.xml"/>
+      <fileset dir="res"/>
+      <fileset dir="assets"/>
+      <fileset dir="libs"/>
+    </touch>
+    <!-- AAR that includes the SQLCipher shared libraries -->
+    <zip destfile="${aar.name}" level="9">
+      <zipfileset dir="." includes="AndroidManifest.xml"/>
+      <zipfileset dir="." includes="${jar.name}" fullpath="classes.jar"/>
+      <zipfileset dir="." includes="R.txt"/>
+      <zipfileset dir="res" excludes="**/*.*" prefix="res"/>
+      <zipfileset dir="assets" prefix="assets"/>
+      <zipfileset dir="libs" includes="**/*.so" prefix="jni"/>
+    </zip>
+    <delete file="R.txt"/>
+    <!-- generate .pom for maven repos -->
+    <copy file="sqlcipher.pom" tofile="${pom.name}" overwrite="true" force="true"/>
+    <replaceregexp file="${pom.name}"
+                   match="VERSION"
+                   replace="${git.tag.version}"
+                   flags="m"/>
   </target>
 
 </project>
