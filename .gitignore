@@ -11,3 +11,4 @@ gen/
 external/openssl
 external/sqlcipher
 libs/
+*.zip

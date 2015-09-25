@@ -7,11 +7,10 @@ SQLCIPHER_DIR := ${EXTERNAL_DIR}/sqlcipher
 LICENSE := SQLCIPHER_LICENSE
 ASSETS_DIR := assets
 OPENSSL_DIR := ${EXTERNAL_DIR}/openssl
-GIT_DESCRIBE := $(shell git describe)
 LATEST_TAG := $(shell git tag | sort -r | head -1)
 SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
-RELEASE_DIR := sqlcipher-for-android-${GIT_DESCRIBE}
-CHANGE_LOG_HEADER := "Changes included in the ${GIT_DESCRIBE} release of SQLCipher for Android:"
+RELEASE_DIR := sqlcipher-for-android-${LATEST_TAG}
+CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:"
 README := ${RELEASE_DIR}/README
 
 # Use faketime to freeze time to make for reproducible builds.
@@ -53,7 +52,14 @@ build-jni:
 build-java:
 	$(FAKETIME_5) ant release
 
-release:
+release: release-zip release-aar
+
+release-aar: release
+	-rm libs/sqlcipher.jar
+	-rm libs/sqlcipher-javadoc.jar
+	mvn package
+
+release-zip:
 	-rm -rf ${RELEASE_DIR}
 	-rm ${RELEASE_DIR}.zip
 	mkdir ${RELEASE_DIR}
