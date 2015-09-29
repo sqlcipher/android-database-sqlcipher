@@ -36,13 +36,13 @@
 
     ANDROID_PLATFORM_VERSION=android-19
     ANDROID_TOOLCHAIN_DIR=/tmp/sqlcipher-android-toolchain
-    OPENSSL_EXCLUSION_LIST=no-krb5 no-gost no-idea no-camellia \
-        no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 \
-        no-md4 no-ripemd no-rsa no-ecdh no-sock no-ssl2 no-ssl3 \
-        no-dsa no-dh no-ec no-ecdsa no-tls1 no-x509 no-pkcs7 \
-        no-pbe no-pkcs no-tlsext no-pem no-rfc3779 no-whirlpool \
-        no-ocsp no-x509v3 no-ui no-srp no-ssltrace no-tlsext \
-        no-mdc2 no-ecdh no-engine no-tls2 no-srtp
+    OPENSSL_CONFIGURE_OPTIONS="-no-krb5 no-idea no-camellia
+        no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 
+        no-md4 no-ripemd no-rsa no-ecdh no-sock no-ssl2 no-ssl3 
+        no-dsa no-dh no-ec no-ecdsa no-tls1 no-pbe no-pkcs
+        no-tlsext no-pem no-rfc3779 no-whirlpool no-ui no-srp
+        no-ssltrace no-tlsext no-mdc2 no-ecdh no-engine
+        no-tls2 no-srtp -fPIC"
 
     # arm build
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
@@ -56,8 +56,9 @@
     RANLIB=arm-linux-androideabi-ranlib \
         AR=arm-linux-androideabi-ar \
         CC=arm-linux-androideabi-gcc \
-        ./Configure android ${OPENSSL_EXCLUSION_LIST}
+        ./Configure android ${OPENSSL_CONFIGURE_OPTIONS}
 
+    make clean
     make build_crypto
 
     mv libcrypto.a ../android-libs/armeabi/
@@ -76,8 +77,9 @@
     RANLIB=arm-linux-androideabi-ranlib \
         AR=arm-linux-androideabi-ar \
         CC=arm-linux-androideabi-gcc \
-        ./Configure android-armv7 ${OPENSSL_EXCLUSION_LIST}
+        ./Configure android-armv7 ${OPENSSL_CONFIGURE_OPTIONS}
 
+    make clean
     make build_crypto
 
     mv libcrypto.a ../android-libs/armeabi-v7a/
@@ -96,8 +98,9 @@
     RANLIB=i686-linux-android-ranlib \
         AR=i686-linux-android-ar \
         CC=i686-linux-android-gcc \
-        ./Configure android-x86 ${OPENSSL_EXCLUSION_LIST}
+        ./Configure android-x86 ${OPENSSL_CONFIGURE_OPTIONS}
 
+    make clean
     make build_crypto
 
     mv libcrypto.a ../android-libs/x86/
