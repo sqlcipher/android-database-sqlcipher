@@ -9,7 +9,7 @@
     HOST_INFO=`uname -a`
     case ${HOST_INFO} in
         Darwin*)
-            TOOLCHAIN_SYSTEM=darwin-x86_64
+            TOOLCHAIN_SYSTEM=darwin-x86
             ;;
         Linux*)
             if [[ "${HOST_INFO}" == *i686* ]]
@@ -57,7 +57,6 @@
 
     make clean
     make build_crypto
-
     mv libcrypto.a ../android-libs/armeabi/
 
     rm -rf ${ANDROID_TOOLCHAIN_DIR}
@@ -78,7 +77,6 @@
 
     make clean
     make build_crypto
-
     mv libcrypto.a ../android-libs/armeabi-v7a/
 
     rm -rf ${ANDROID_TOOLCHAIN_DIR}    
@@ -99,6 +97,5 @@
 
     make clean
     make build_crypto
-
     mv libcrypto.a ../android-libs/x86/
 )
