@@ -74,7 +74,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
 
-    public static final String SQLCIPHER_ANDROID_VERSION = "3.3.1-1";
+    public static final String SQLCIPHER_ANDROID_VERSION = "3.3.1-2";
 
     // Stores reference to all databases opened in the current process.
     // (The referent Object is not used at this time.)
