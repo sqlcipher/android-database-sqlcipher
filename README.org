@@ -59,7 +59,7 @@ Notepadbot is a sample application pulled from the standard Android samples code
 
 *** Building
 
-In order to build android-database-sqlcipher from source you will need both the Android SDK as well as Android NDK.  To complete the =make init= command, you will need the =android-19= platform installed from the SDK.  Once you have cloned the repo, change directory into the root of the repository and run the following commands:
+In order to build android-database-sqlcipher from source you will need both the Android SDK as well as Android NDK.  We currently recommend using Android NDK version r9d as more current versions such as r10d and r10e cause crashes on the x86 platform.  To complete the =make init= command, you will need the =android-19= platform installed from the SDK.  Once you have cloned the repo, change directory into the root of the repository and run the following commands:
 
 :  # this only needs to be done once
 :  make init
