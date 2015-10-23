@@ -54,7 +54,7 @@ build-java:
 
 release: release-zip release-aar
 
-release-aar: release
+release-aar:
 	-rm libs/sqlcipher.jar
 	-rm libs/sqlcipher-javadoc.jar
 	mvn package
