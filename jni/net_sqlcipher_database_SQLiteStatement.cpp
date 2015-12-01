@@ -29,8 +29,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include "unicode/uchar.h"
+#include "unicode/ustring.h"
 
 #include "sqlite3_exception.h"
+
+#define UNICODE_SUBSTITUTION_CHAR 0xFFFD
 
 namespace sqlcipher {
 
@@ -41,12 +45,32 @@ sqlite3_stmt * compile(JNIEnv* env, jobject object,
 static jfieldID gHandleField;
 static jfieldID gStatementField;
 
+// the android os version
+static jint gAndroidApiVersionCode = -1;
 
 #define GET_STATEMENT(env, object) \
         (sqlite3_stmt *)env->GetIntField(object, gStatementField)
 #define GET_HANDLE(env, object) \
         (sqlite3 *)env->GetIntField(object, gHandleField)
 
+// return the android os version from the env
+jint getAndroidApiVersionCode(JNIEnv * env)
+{
+    if (gAndroidApiVersionCode < 0) {
+        gAndroidApiVersionCode = 0;
+
+        jclass versionClass = env->FindClass("android/os/Build$VERSION");
+        if (NULL != versionClass) {
+            jfieldID sdkIntFieldID = NULL;
+            if (NULL != (sdkIntFieldID = env->GetStaticFieldID(versionClass, "SDK_INT", "I"))) {
+                gAndroidApiVersionCode = env->GetStaticIntField(versionClass, sdkIntFieldID);
+            }
+        }
+        LOGD("gAndroidApiVersionCode = %d", gAndroidApiVersionCode);
+    }
+
+    return gAndroidApiVersionCode;
+}
 
 static void native_execute(JNIEnv* env, jobject object)
 {
@@ -104,7 +128,35 @@ static jstring native_1x1_string(JNIEnv* env, jobject object)
     if (err == SQLITE_ROW) {
         // No errors, read the data and return it
         char const * text = (char const *)sqlite3_column_text(statement, 0);
-        value = env->NewStringUTF(text);
+
+        // this is a work around for https://code.google.com/p/android/issues/detail?id=81341
+        // the bug has been fixed in api 23 (marshmellow)
+        if (getAndroidApiVersionCode(env) >= 23) {
+            value = env->NewStringUTF(text);
+        } else {
+            // clean it up by converting to utf16 before creating java string
+            UErrorCode errorCode = U_ZERO_ERROR;
+            int32_t slen = 0;
+            // Find the length of the input in UTF-16 UChars, (by preflighting the conversion)
+            u_strFromUTF8(NULL, 0, &slen, text, -1, &errorCode);
+            if (U_BUFFER_OVERFLOW_ERROR == errorCode || U_SUCCESS(errorCode)) {
+                  if (slen > 0) {
+                    UChar * utf16Text = new UChar[slen + 1];
+                    int32_t utf16TextLength;
+                    errorCode = U_ZERO_ERROR;
+                    u_strFromUTF8(utf16Text, slen + 1, &utf16TextLength, text, -1, &errorCode);
+                    value = env->NewString(utf16Text, utf16TextLength);
+                    delete utf16Text;
+                } else {
+                    value = env->NewStringUTF("");
+                }
+            } else {
+                // some error, return a signal value
+                UChar utf16Text = UNICODE_SUBSTITUTION_CHAR;
+                value = env->NewString(&utf16Text, 1);
+                LOGE("invalid utf text found in database %d", (int)errorCode);
+            }
+        }
     } else {
         throw_sqlite3_exception_errcode(env, err, sqlite3_errmsg(handle));
     }
@@ -146,6 +198,5 @@ int register_android_database_SQLiteStatement(JNIEnv * env)
     return android::AndroidRuntime::registerNativeMethods(env,
         "net/sqlcipher/database/SQLiteStatement", sMethods, NELEM(sMethods));
 }
-
 
 } // namespace sqlcipher
