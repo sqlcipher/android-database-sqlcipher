@@ -1,0 +1,27 @@
+language: java
+jdk: oraclejdk7
+ 
+before_install:
+  # required libs for android build tools
+  - sudo apt-get update
+  - sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch
+  # for gradle output style
+  - export TERM=dumb
+  # newest Android SDK 24.4.1
+  - wget http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+  - tar -zxf android-sdk_r24.4.1-linux.tgz
+  - export ANDROID_HOME=`pwd`/android-sdk-linux
+  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+  # newest Android NDK
+  - wget http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin -O ndk.bin
+  - chmod +x ndk.bin
+  - ./ndk.bin
+  - ln -sf android-ndk-r10e android-ndk
+  - export ANDROID_NDK_HOME=`pwd`/android-ndk
+  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_NDK_HOME}
+  # manually set sdk.dir variable, according to local paths
+  - echo "sdk.dir=$ANDROID_HOME" > local.properties
+  - echo yes | android update sdk -a -t tools,platform-tools,extra-android-support,extra-android-m2repository,android-21,build-tools-21.0.2,extra-google-google_play_services,extra-google-m2repository --force --no-ui
+script:
+  - make init
+  - make
