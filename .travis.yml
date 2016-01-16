@@ -4,7 +4,7 @@ jdk: oraclejdk7
 install:
   # required libs for android build tools
   - sudo apt-get update > /dev/null
-  - sudo apt-get install -qq --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch
+  - sudo apt-get -qq install --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch
   # for gradle output style
   - export TERM=dumb
   # newest Android SDK 24.4.1
@@ -23,4 +23,4 @@ install:
   - echo "sdk.dir=$ANDROID_HOME" > local.properties
   - echo yes | android update sdk -a -t tools,platform-tools,extra-android-support,extra-android-m2repository,android-21,build-tools-21.0.2,extra-google-google_play_services,extra-google-m2repository --force --no-ui
 
-script: make init && make
+script: make init && make && tar czvf android-sqlcipher-gmetal.tar.gz libs/ assets/
