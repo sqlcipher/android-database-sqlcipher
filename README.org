@@ -72,3 +72,5 @@ Recursively copy the =libs= directory into the root of your application, you wil
 *** License
 
 The Android support libraries are licensed under Apache 2.0, in line with the Android OS code on which they are based. The SQLCipher code itself is licensed under a BSD-style license from Zetetic LLC. Finally, the original SQLite code itself is in the public domain.
+
+[![Build Status](https://travis-ci.org/gmetal/android-database-sqlcipher.svg?branch=master)]
