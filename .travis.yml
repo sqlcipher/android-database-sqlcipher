@@ -1,26 +1,27 @@
 language: java
 jdk: oraclejdk7
- 
 install:
-  # required libs for android build tools
-  - sudo apt-get update > /dev/null
-  - sudo apt-get -qq install --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch
-  # for gradle output style
-  - export TERM=dumb
-  # newest Android SDK 24.4.1
-  - wget http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-  - tar -zxf android-sdk_r24.4.1-linux.tgz
-  - export ANDROID_HOME=`pwd`/android-sdk-linux
-  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-  # newest Android NDK
-  - wget http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin -O ndk.bin
-  - chmod +x ndk.bin
-  - ./ndk.bin > /dev/null
-  - ln -sf android-ndk-r10e android-ndk
-  - export ANDROID_NDK_HOME=`pwd`/android-ndk
-  - export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_NDK_HOME}
-  # manually set sdk.dir variable, according to local paths
-  - echo "sdk.dir=$ANDROID_HOME" > local.properties
-  - echo yes | android update sdk -a -t tools,platform-tools,extra-android-support,extra-android-m2repository,android-21,build-tools-21.0.2,extra-google-google_play_services,extra-google-m2repository --force --no-ui
-
+- sudo apt-get update > /dev/null
+- sudo apt-get -qq install --force-yes libgd2-xpm ia32-libs ia32-libs-multiarch
+- export TERM=dumb
+- wget http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
+- tar -zxf android-sdk_r24.4.1-linux.tgz
+- export ANDROID_HOME=`pwd`/android-sdk-linux
+- export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+- wget http://dl.google.com/android/ndk/android-ndk-r10e-linux-x86_64.bin -O ndk.bin
+- chmod +x ndk.bin
+- "./ndk.bin > /dev/null"
+- ln -sf android-ndk-r10e android-ndk
+- export ANDROID_NDK_HOME=`pwd`/android-ndk
+- export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:${ANDROID_NDK_HOME}
+- echo "sdk.dir=$ANDROID_HOME" > local.properties
+- echo yes | android update sdk -a -t tools,platform-tools,extra-android-support,extra-android-m2repository,android-21,build-tools-21.0.2,extra-google-google_play_services,extra-google-m2repository
+  --force --no-ui
 script: make init && make && tar czvf android-sqlcipher-gmetal.tar.gz libs/ assets/
+deploy:
+  provider: releases
+  api_key:
+    secure: cspljT77LBRZpCVq8oF4ltPpBk0Cwk5+DQMvT4fkqM3b+kf3+qBGwxdLO33jDUDwbE2od4xPVZFhFvsgMrl/CJjF0nevFQJzLOc+/35ATqJgWsQ8lujbSG/0J8NtO0cQ7f/gIS/QvPduHyopdmPOGyBEhLnGlSbtZDJWwPdj4h3WkZvPcwFN0rr+9iVYfj4vPby0mLpafvrPYqcOfIrj86qRD5zpSoC/qbBeDR/rahcHOcyw39dpb1mTL8ZcN1v5P6PtMH3e35+eKyBLE0uEEG2xUpocC6bU8tmrM6OsUSUwdpNGC6tpgFfNMRWNi9YvmpTf1aazKA0Xyj5ZJVDVRguI4pfzbjC6pf0b7QtwAMp5O+aSW+NAIP3X2WShTuBuYnJ6L5Ztwhu8a8SYOVhEWHOkpDPgznhd7+KtnZk3wniOLG2gMHvI06iWvrxPnUNSWD1QJBvWPp+HGzopIQz2qlcOD3Hu71lW1+3DshrKrkdRb618v5bsoCtCheWuKus08KI0cOH7ECDEKMufwzVqkpU7ebG/cdQ5mUmtjUEsXcR2cVvbl3WzAIPOu83iCujTYv+GIPnCBnoo3YbZOYcNInX9Vxs+UVAk5nyXZP1H0R64XY8Jx1KIhCduqowv0YZWc/PlmfAKhPpKZJRs/8/ObJ8mpDW4qXjmko4stXAgOmc=
+  file: android-sqlcipher-gmetal.tar.gz
+  on:
+    repo: gmetal/android-database-sqlcipher
