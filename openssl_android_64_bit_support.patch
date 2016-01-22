@@ -1,0 +1,142 @@
+From 2473df51edf88bb6da659b8f8619b3b4d4af68ae Mon Sep 17 00:00:00 2001
+From: gmetaxas <gmetaxas@gmail.com>
+Date: Sat, 28 Mar 2015 14:03:40 +0200
+Subject: [PATCH 1/3] Support android-arm64-v8a (aarch64) and android-x86_64
+ compilation
+
+---
+ Configure | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Configure b/Configure
+index f776e23..0bfba8d 100755
+--- a/Configure
++++ b/Configure
+@@ -448,6 +448,8 @@ my %table=(
+ "android-x86","gcc:-mandroid -I\$(ANDROID_DEV)/include -B\$(ANDROID_DEV)/lib -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG ${x86_gcc_des} ${x86_gcc_opts}:".eval{my $asm=${x86_elf_asm};$asm=~s/:elf/:android/;$asm}.":dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ "android-armv7","gcc:-march=armv7-a -mandroid -I\$(ANDROID_DEV)/include -B\$(ANDROID_DEV)/lib -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${armv4_asm}:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ "android-mips","gcc:-mandroid -I\$(ANDROID_DEV)/include -B\$(ANDROID_DEV)/lib -O3 -Wall::-D_REENTRANT::-ldl:BN_LLONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${mips32_asm}:o32:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"android-aarch64","gcc:-march=armv8-a -mandroid -I\$(ANDROID_DEV)/include -B\$(ANDROID_DEV)/lib -O3 -fomit-frame-pointer -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR:${aarch64_asm}:linux64:dlfcn:linux-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"android-x86_64","gcc:-mandroid -I\$(ANDROID_DEV)/include -B\$(ANDROID_DEV)/lib -m64 -DL_ENDIAN -O3 -Wall::-D_REENTRANT::-ldl:SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT DES_UNROLL:${x86_64_asm}:elf:dlfcn:linux-shared:-fPIC:-m64:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):::64",
+ 
+ #### *BSD [do see comment about ${BSDthreads} above!]
+ "BSD-generic32","gcc:-O3 -fomit-frame-pointer -Wall::${BSDthreads}:::BN_LLONG RC2_CHAR RC4_INDEX DES_INT DES_UNROLL:${no_asm}:dlfcn:bsd-gcc-shared:-fPIC::.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+
+From 95356cfe718563675aa63ca46bdc3c18ba9f407d Mon Sep 17 00:00:00 2001
+From: gmetaxas <gmetaxas@gmail.com>
+Date: Mon, 30 Mar 2015 07:02:09 +0300
+Subject: [PATCH 2/3] Added config changes
+
+---
+ config | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/config b/config
+index 77f730f..4f5190b 100755
+--- a/config
++++ b/config
+@@ -861,6 +861,8 @@ case "$GUESSOS" in
+   *-*-qnx6) OUT="QNX6" ;;
+   x86-*-android|i?86-*-android) OUT="android-x86" ;;
+   armv[7-9]*-*-android) OUT="android-armv7" ;;
++  aarch64-*-android) OUT="android-aarch64";;
++  x86_64-*-android) OUT="android-x86_64";;
+   *) OUT=`echo $GUESSOS | awk -F- '{print $3}'`;;
+ esac
+ 
+
+From da04212e8a906d489e7cef4502e66db9872942f9 Mon Sep 17 00:00:00 2001
+From: gmetaxas <gmetaxas@gmail.com>
+Date: Mon, 30 Mar 2015 07:07:17 +0300
+Subject: [PATCH 3/3] Updated TABLE
+
+---
+ TABLE | 68 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 68 insertions(+)
+
+diff --git a/TABLE b/TABLE
+index dc3e139..a237b08 100644
+--- a/TABLE
++++ b/TABLE
+@@ -1088,6 +1088,40 @@ $ranlib       =
+ $arflags      = 
+ $multilib     = 
+ 
++*** android-aarch64
++$cc           = gcc
++$cflags       = -march=armv8-a -mandroid -I$(ANDROID_DEV)/include -B$(ANDROID_DEV)/lib -O3 -fomit-frame-pointer -Wall
++$unistd       = 
++$thread_cflag = -D_REENTRANT
++$sys_id       = 
++$lflags       = -ldl
++$bn_ops       = SIXTY_FOUR_BIT_LONG RC4_CHAR RC4_CHUNK DES_INT DES_UNROLL BF_PTR
++$cpuid_obj    = armcap.o arm64cpuid.o mem_clr.o
++$bn_obj       = 
++$ec_obj       = 
++$des_obj      = 
++$aes_obj      = aes_core.o aes_cbc.o aesv8-armx.o
++$bf_obj       = 
++$md5_obj      = 
++$sha1_obj     = sha1-armv8.o sha256-armv8.o sha512-armv8.o
++$cast_obj     = 
++$rc4_obj      = 
++$rmd160_obj   = 
++$rc5_obj      = 
++$wp_obj       = 
++$cmll_obj     = 
++$modes_obj    = ghashv8-armx.o
++$engines_obj  = 
++$perlasm_scheme = linux64
++$dso_scheme   = dlfcn
++$shared_target= linux-shared
++$shared_cflag = -fPIC
++$shared_ldflag = 
++$shared_extension = .so.$(SHLIB_MAJOR).$(SHLIB_MINOR)
++$ranlib       = 
++$arflags      = 
++$multilib     = 
++
+ *** android-armv7
+ $cc           = gcc
+ $cflags       = -march=armv7-a -mandroid -I$(ANDROID_DEV)/include -B$(ANDROID_DEV)/lib -O3 -fomit-frame-pointer -Wall
+@@ -1190,6 +1224,40 @@ $ranlib       =
+ $arflags      = 
+ $multilib     = 
+ 
++*** android-x86_64
++$cc           = gcc
++$cflags       = -mandroid -I$(ANDROID_DEV)/include -B$(ANDROID_DEV)/lib -m64 -DL_ENDIAN -O3 -Wall
++$unistd       = 
++$thread_cflag = -D_REENTRANT
++$sys_id       = 
++$lflags       = -ldl
++$bn_ops       = SIXTY_FOUR_BIT_LONG RC4_CHUNK DES_INT DES_UNROLL
++$cpuid_obj    = x86_64cpuid.o
++$bn_obj       = x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o rsaz_exp.o rsaz-x86_64.o rsaz-avx2.o
++$ec_obj       = ecp_nistz256.o ecp_nistz256-x86_64.o
++$des_obj      = 
++$aes_obj      = aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o aesni-sha256-x86_64.o aesni-mb-x86_64.o
++$bf_obj       = 
++$md5_obj      = md5-x86_64.o
++$sha1_obj     = sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o sha1-mb-x86_64.o sha256-mb-x86_64.o
++$cast_obj     = 
++$rc4_obj      = rc4-x86_64.o rc4-md5-x86_64.o
++$rmd160_obj   = 
++$rc5_obj      = 
++$wp_obj       = wp-x86_64.o
++$cmll_obj     = cmll-x86_64.o cmll_misc.o
++$modes_obj    = ghash-x86_64.o aesni-gcm-x86_64.o
++$engines_obj  = 
++$perlasm_scheme = elf
++$dso_scheme   = dlfcn
++$shared_target= linux-shared
++$shared_cflag = -fPIC
++$shared_ldflag = -m64
++$shared_extension = .so.$(SHLIB_MAJOR).$(SHLIB_MINOR)
++$ranlib       = 
++$arflags      = 
++$multilib     = 64
++
+ *** aux3-gcc
+ $cc           = gcc
+ $cflags       = -O2 -DTERMIO

@@ -36,7 +36,7 @@ import android.util.Log;
     /**
      * Native linkage, do not modify. This comes from the database.
      */
-    /* package */ int nHandle = 0;
+    /* package */ long nHandle = 0;
 
     /**
      * Native linkage, do not modify. When non-0 this holds a reference to a valid
@@ -44,7 +44,7 @@ import android.util.Log;
      * checked in this class when the database lock is held to determine if there
      * is a valid native-side program or not.
      */
-    /* package */ int nStatement = 0;
+    /* package */ long nStatement = 0;
 
     /** the following are for debugging purposes */
     private String mSqlStmt = null;

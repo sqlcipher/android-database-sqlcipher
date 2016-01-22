@@ -26,7 +26,10 @@
     esac
 
     rm ../android-libs/armeabi/libcrypto.a \
-        ../android-libs/x86/libcrypto.a
+        ../android-libs/x86/libcrypto.a \
+        ../android-libs/arm64-v8a/libcrypto.a \
+        ../android-libs/x86_64/libcrypto.a
+
 
     git clean -dfx && git checkout -f
     ./Configure dist
@@ -98,4 +101,60 @@
     make clean
     make build_crypto
     mv libcrypto.a ../android-libs/x86/
+    
+    rm -rf ${ANDROID_TOOLCHAIN_DIR}
+    
+    make clean
+    git clean -dfx && git checkout -f
+
+    # Patch openssl to support building for arm64-v8a && x86_64
+    # Note, we only patch the Configure script
+    patch -p1 < ../../openssl_android_64_bit_support.patch
+
+    # arm64-v8a build
+    ANDROID_PLATFORM_VERSION=android-21
+    ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
+        --platform=${ANDROID_PLATFORM_VERSION} \
+        --install-dir=${ANDROID_TOOLCHAIN_DIR} \
+        --system=${TOOLCHAIN_SYSTEM} \
+        --arch=arm64
+
+    export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
+
+    RANLIB=aarch64-linux-android-ranlib \
+        AR=aarch64-linux-android-ar \
+        CC=aarch64-linux-android-gcc \
+        ./Configure android-aarch64 ${OPENSSL_EXCLUSION_LIST}
+
+    make build_crypto
+
+    mv libcrypto.a ../android-libs/arm64-v8a/
+    
+    rm -rf ${ANDROID_TOOLCHAIN_DIR}    
+
+    make clean
+    git clean -dfx && git checkout -f
+    
+    patch -p1 < ../../openssl_android_64_bit_support.patch
+
+    # x86_64 build
+    ANDROID_PLATFORM_VERSION=android-21
+    ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
+        --platform=${ANDROID_PLATFORM_VERSION} \
+        --install-dir=${ANDROID_TOOLCHAIN_DIR} \
+        --system=${TOOLCHAIN_SYSTEM} \
+        --arch=x86_64
+
+    export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
+
+    RANLIB=x86_64-linux-android-ranlib \
+        AR=x86_64-linux-android-ar \
+        CC=x86_64-linux-android-gcc \
+        ./Configure android-x86_64 ${OPENSSL_EXCLUSION_LIST}
+
+    make build_crypto
+
+    mv libcrypto.a ../android-libs/x86_64/
+    
+    rm -rf ${ANDROID_TOOLCHAIN_DIR}    
 )
