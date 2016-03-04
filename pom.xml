@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.zetetic</groupId>
   <artifactId>android-database-sqlcipher</artifactId>
-  <version>3.3.1-2</version>
+  <version>3.4.0</version>
   <packaging>aar</packaging>
   <name>android-database-sqlcipher</name>
   <description>
