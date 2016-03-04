@@ -3,7 +3,7 @@
 	url = https://github.com/openssl/openssl.git
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
-	url = https://github.com/sqlcipher/sqlcipher.git
+	url = git@git.zetetic.net:/sqlcipher.git
 [submodule "external/dalvik"]
 	path = external/dalvik
 	url = https://github.com/android/platform_dalvik.git
