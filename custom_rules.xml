@@ -1,9 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="custom_rules">
 
-  <condition property="ndk.dir" value="${env.ANDROID_NDK}">
+<!-- find the Android NDK path -->
+  <exec executable="which" outputproperty="which.ndk.build">
+    <arg value="ndk-build"/>
+  </exec>
+  <exec executable="dirname" outputproperty="ndk.build.dir">
+    <arg value="${which.ndk.build}"/>
+  </exec>
+  <condition property="set.ndk.dir" value="${env.ANDROID_NDK}" else="${ndk.build.dir}">
     <isset property="env.ANDROID_NDK" />
   </condition>
+  <condition property="ndk.dir" value="${set.ndk.dir}">
+    <not>
+      <isset property="ndk.dir" />
+    </not>
+  </condition>
+  <fail message="Cannot find Android NDK! Either set ANDROID_NDK or make sure ndk-build is in your PATH.">
+    <condition>
+      <or>
+        <not>
+          <isset property="ndk.dir"/>
+        </not>
+        <equals arg1="${ndk.dir}" arg2=""/>
+        <equals arg1="${ndk.dir}" arg2="."/>
+      </or>
+    </condition>
+  </fail>
 
   <target name="-getgitdetails" >
     <exec executable="git" outputproperty="git.describe">
@@ -20,6 +43,7 @@
     <javadoc sourcepath="${source.dir}"
              destdir="${out.dir}/javadoc"
              packagenames="net.sqlcipher.*"
+             additionalparam="-notimestamp"
              windowtitle="SQLCipher for Android"
              doctitle="SQLCipher for Android" />
     <delete file="${javadoc.jar.name}"/>
