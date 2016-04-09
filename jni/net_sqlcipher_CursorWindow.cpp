@@ -37,8 +37,8 @@ static jfieldID gWindowField;
 static jfieldID gBufferField;
 static jfieldID gSizeCopiedField;
 
-#define GET_WINDOW(env, object) ((CursorWindow *)env->GetIntField(object, gWindowField))
-#define SET_WINDOW(env, object, window) (env->SetIntField(object, gWindowField, (int)window))
+#define GET_WINDOW(env, object) ((CursorWindow *)env->GetLongField(object, gWindowField))
+#define SET_WINDOW(env, object, window) (env->SetLongField(object, gWindowField, (long long int)window))
 #define SET_BUFFER(env, object, buf) (env->SetObjectField(object, gBufferField, buf))
 #define SET_SIZE_COPIED(env, object, size) (env->SetIntField(object, gSizeCopiedField, size))
 
@@ -706,7 +706,7 @@ int register_android_database_CursorWindow(JNIEnv * env)
         return -1;
     }
 
-    gWindowField = env->GetFieldID(clazz, "nWindow", "I");
+    gWindowField = env->GetFieldID(clazz, "nWindow", "J");
 
     if (gWindowField == NULL) {
         LOGE("Error locating fields");
