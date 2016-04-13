@@ -6,6 +6,7 @@
         exit 1
     fi
 
+    ANDROID_LIB_ROOT=../android-libs
     HOST_INFO=`uname -a`
     case ${HOST_INFO} in
         Darwin*)
@@ -25,8 +26,10 @@
             ;;
     esac
 
-    rm ../android-libs/armeabi/libcrypto.a \
-        ../android-libs/x86/libcrypto.a
+    rm -rf ${ANDROID_LIB_ROOT}
+    mkdir -p ${ANDROID_LIB_ROOT}/armeabi
+    mkdir -p ${ANDROID_LIB_ROOT}/armeabi-v7a
+    mkdir -p ${ANDROID_LIB_ROOT}/x86
 
     git clean -dfx && git checkout -f
     ./Configure dist
@@ -57,8 +60,8 @@
 
     make clean
     make build_crypto
-    mv libcrypto.a ../android-libs/armeabi/
-
+    mv libcrypto.a ${ANDROID_LIB_ROOT}/armeabi/
+    
     rm -rf ${ANDROID_TOOLCHAIN_DIR}
 
     #armv7 build
@@ -77,7 +80,7 @@
 
     make clean
     make build_crypto
-    mv libcrypto.a ../android-libs/armeabi-v7a/
+    mv libcrypto.a ${ANDROID_LIB_ROOT}/armeabi-v7a/
 
     rm -rf ${ANDROID_TOOLCHAIN_DIR}    
 
@@ -97,5 +100,5 @@
 
     make clean
     make build_crypto
-    mv libcrypto.a ../android-libs/x86/
+    mv libcrypto.a ${ANDROID_LIB_ROOT}/x86/
 )
