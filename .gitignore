@@ -1,3 +1,5 @@
 build.xml
 proguard-project.txt
 local.properties
+external/android-libs
+obj

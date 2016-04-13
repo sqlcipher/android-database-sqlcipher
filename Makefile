@@ -1,4 +1,6 @@
 .DEFAULT_GOAL := all
+JNI_DIR := ${CURDIR}/jni
+EXTERNAL_DIR := ${CURDIR}/external
 SQLCIPHER_DIR := ${CURDIR}/external/sqlcipher
 SQLCIPHER_CFLAGS :=  -DHAVE_USLEEP=1 -DSQLITE_HAS_CODEC \
 	-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 -DSQLITE_THREADSAFE=1 -DNDEBUG=1 \
@@ -25,4 +27,18 @@ build-amalgamation:
 		CFLAGS="${SQLCIPHER_CFLAGS}" && \
 	make sqlite3.c
 
-all:
+build-native:
+	cd ${JNI_DIR} && \
+	ndk-build --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs \
+		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
+
+clean:
+	cd ${SQLCIPHER_DIR} && \
+	make clean
+	cd ${JNI_DIR} && \
+	ndk-build clean
+
+distclean: clean
+	rm -rf ${EXTERNAL_DIR}/android-libs
+
+all: build-amalgamation build-native
