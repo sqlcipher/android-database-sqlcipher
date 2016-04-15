@@ -1,5 +1,6 @@
 .DEFAULT_GOAL := all
 JNI_DIR := ${CURDIR}/jni
+LIBS_DIR := ${CURDIR}/libs
 EXTERNAL_DIR := ${CURDIR}/external
 SQLCIPHER_DIR := ${CURDIR}/external/sqlcipher
 SQLCIPHER_CFLAGS :=  -DHAVE_USLEEP=1 -DSQLITE_HAS_CODEC \
@@ -11,6 +12,8 @@ SQLCIPHER_CFLAGS :=  -DHAVE_USLEEP=1 -DSQLITE_HAS_CODEC \
 	-DSQLITE_SOUNDEX -DSQLITE_ENABLE_STAT3 -DSQLITE_ENABLE_FTS4_UNICODE61 \
 	-DSQLITE_THREADSAFE -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS3_PARENTHESIS \
 	-DSQLITE_ENABLE_STAT4 -DSQLITE_ENABLE_FTS5
+
+.PHONEY: clean
 
 init: init-environment build-openssl-libraries
 
@@ -27,22 +30,25 @@ build-amalgamation:
 		CFLAGS="${SQLCIPHER_CFLAGS}" && \
 	make sqlite3.c
 
+build-java:
+	ant release
+
 build-native:
 	cd ${JNI_DIR} && \
 	ndk-build V=1 --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs \
 		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
 
 ndk-clean:
-	cd ${JNI_DIR} && \
+	-cd ${JNI_DIR} && \
 	ndk-build clean
 
 clean: ndk-clean
-	cd ${SQLCIPHER_DIR} && \
+	-cd ${SQLCIPHER_DIR} && \
 	make clean
-	cd ${JNI_DIR} && \
-	ndk-build clean
+	ant clean
+	rm -rf ${LIBS_DIR}
 
 distclean: clean
 	rm -rf ${EXTERNAL_DIR}/android-libs
 
-all: build-amalgamation build-native
+all: build-amalgamation build-native build-java
