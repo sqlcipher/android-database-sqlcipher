@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="custom_rules">
+
+  <condition property="ndk.dir" value="${env.ANDROID_NDK}">
+    <isset property="env.ANDROID_NDK" />
+  </condition>
+
+  <target name="-getgitdetails" >
+    <exec executable="git" outputproperty="git.describe">
+      <arg value="describe"/>
+    </exec>
+    <exec executable="git" outputproperty="git.revision">
+      <arg value="rev-parse"/>
+      <arg value="HEAD"/>
+    </exec>
+  </target>
+
+  <target name="-javadoc" description="Generate Javadocs">
+    <property name="javadoc.jar.name" value="${out.dir}/sqlcipher-javadoc.jar" />
+    <javadoc sourcepath="${source.dir}"
+             destdir="${out.dir}/javadoc"
+             packagenames="net.sqlcipher.*"
+             windowtitle="SQLCipher for Android"
+             doctitle="SQLCipher for Android" />
+    <delete file="${javadoc.jar.name}"/>
+    <jar destfile="${javadoc.jar.name}"
+         includes="net/sqlcipher/**"
+         basedir="${out.dir}/javadoc">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="Zetetic"/>
+        <attribute name="Implementation-Title" value="SQLCipher for Android"/>
+        <attribute name="Implementation-URL" value="https://www.zetetic.net/sqlcipher/open-source"/>
+        <attribute name="Implementation-Version" value="${git.describe}"/>
+        <attribute name="Git-Revision" value="${git.revision}"/>
+      </manifest>
+    </jar>
+  </target>
+
+  <target name="-post-build" depends="-getgitdetails,-javadoc">
+    <property name="jar.dir" value="libs" />
+    <property name="jar.name" value="${jar.dir}/sqlcipher.jar" />
+    <property file="${sdk.dir}/tools/source.properties" />
+    <exec executable="cat" outputproperty="ndk.release">
+      <arg value="${ndk.dir}/RELEASE.TXT"/>
+    </exec>
+    <delete file="${jar.name}"/>
+    <mkdir dir="${jar.dir}" />
+    <jar destfile="${jar.name}"
+         includes="net/sqlcipher/**"
+         basedir="${out.classes.absolute.dir}">
+      <manifest>
+        <attribute name="Implementation-Vendor" value="Zetetic"/>
+        <attribute name="Implementation-Title" value="SQLCipher for Android"/>
+        <attribute name="Implementation-URL" value="https://www.zetetic.net/sqlcipher/open-source"/>
+        <attribute name="Implementation-Version" value="${git.describe}"/>
+        <attribute name="Git-Revision" value="${git.revision}"/>
+        <attribute name="Android-SDK-Release" value="${Pkg.Revision}"/>
+        <attribute name="Android-SDK-Host-OS" value="${Archive.HostOs}"/>
+        <attribute name="Android-NDK-Release" value="${ndk.release}"/>
+      </manifest>
+    </jar>
+    <copy file="${out.dir}/sqlcipher-javadoc.jar" todir="${jar.dir}" preservelastmodified="true" overwrite="true"/>
+  </target>
+
+</project>
