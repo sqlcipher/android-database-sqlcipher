@@ -48,7 +48,6 @@
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=${TOOLCHAIN_SYSTEM} \
         --arch=arm
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
@@ -68,7 +67,6 @@
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=${TOOLCHAIN_SYSTEM} \
         --arch=arm
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
@@ -88,7 +86,6 @@
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=${TOOLCHAIN_SYSTEM} \
         --arch=x86
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
