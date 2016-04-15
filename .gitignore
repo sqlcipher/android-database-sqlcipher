@@ -5,3 +5,6 @@ local.properties
 external/android-libs
 obj
 jni/libs
+bin
+libs
+gen
