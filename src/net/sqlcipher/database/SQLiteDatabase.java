@@ -121,7 +121,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (!isOpen()) {
             throw new SQLiteException("database not open");
         }
-        native_rekey(password);
+        native_rekey(String.valueOf(password));
     }
   
     private static void loadICUData(Context context, File workingDir) {
@@ -170,17 +170,19 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     public static synchronized void loadLibs (Context context, File workingDir) {
-        System.loadLibrary("stlport_shared");
-        System.loadLibrary("sqlcipher_android");
-        System.loadLibrary("database_sqlcipher");
+      System.loadLibrary("sqlcipher");
+      
+        // System.loadLibrary("stlport_shared");
+        // System.loadLibrary("sqlcipher_android");
+        // System.loadLibrary("database_sqlcipher");
 
-        boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
+        // boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
 
-        String icuRootPath = systemICUFileExists ? "/system/usr" : workingDir.getAbsolutePath();
-        setICURoot(icuRootPath);
-        if(!systemICUFileExists){
-            loadICUData(context, workingDir);
-        }
+        // String icuRootPath = systemICUFileExists ? "/system/usr" : workingDir.getAbsolutePath();
+        // setICURoot(icuRootPath);
+        // if(!systemICUFileExists){
+        //     loadICUData(context, workingDir);
+        // }
     }
 
     /**
@@ -2325,7 +2327,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             databaseHook.preKey(this);
         }
 
-        native_key(password);
+        native_key(String.valueOf(password));
 
         if(databaseHook != null){
             databaseHook.postKey(this);
@@ -2335,7 +2337,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             mTimeOpened = getTime();
         }
         try {
-            setLocale(Locale.getDefault());
+          //setLocale(Locale.getDefault());
         } catch (RuntimeException e) {
             Log.e(TAG, "Failed to setLocale() when constructing, closing the database", e);
             dbclose();
@@ -2811,9 +2813,9 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     private native int native_status(int operation, boolean reset);
 
-    private native void native_key(char[] key) throws SQLException;
+  //private native void native_key(char[] key) throws SQLException;
     private native void native_key(String key) throws SQLException;
 
     private native void native_rekey(String key) throws SQLException;
-    private native void native_rekey(char[] key) throws SQLException;
+  //private native void native_rekey(char[] key) throws SQLException;
 }
