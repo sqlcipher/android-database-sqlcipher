@@ -29,7 +29,7 @@ build-amalgamation:
 
 build-native:
 	cd ${JNI_DIR} && \
-	ndk-build --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs \
+	ndk-build V=1 --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs \
 		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
 
 clean:
