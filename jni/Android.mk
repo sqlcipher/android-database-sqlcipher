@@ -2,14 +2,36 @@ LOCAL_PATH := $(call my-dir)
 MY_PATH := $(LOCAL_PATH)
 include $(CLEAR_VARS)
 LOCAL_PATH := $(MY_PATH)
-SQLCIPHER_DIR := ../external/sqlcipher
+SQLCIPHER_DIR := $(LOCAL_PATH)/../external/sqlcipher
 SQLCIPHER_SRC := $(SQLCIPHER_DIR)/sqlite3.c
 
-LOCAL_CFLAGS +=  $(SQLCIPHER_CFLAGS)
-LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-libs/$(TARGET_ARCH_ABI)
+LOCAL_CFLAGS +=  $(SQLCIPHER_CFLAGS) -DOS_PATH_SEPARATOR="'/'" -DHAVE_SYS_UIO_H
+LOCAL_C_INCLUDES := $(SQLCIPHER_DIR) $(LOCAL_PATH) $(LOCAL_PATH)/include
+LOCAL_LDLIBS := -llog -lc
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-libs/$(TARGET_ARCH_ABI) -fuse-ld=bfd
 LOCAL_STATIC_LIBRARIES += static-libcrypto
 LOCAL_MODULE    := libsqlcipher
-LOCAL_SRC_FILES := $(SQLCIPHER_SRC)
+LOCAL_SRC_FILES := $(SQLCIPHER_SRC) \
+	jni_exception.cpp \
+	net_sqlcipher_database_SQLiteCompiledSql.cpp \
+	net_sqlcipher_database_SQLiteDatabase.cpp \
+	net_sqlcipher_database_SQLiteProgram.cpp \
+	# net_sqlcipher_database_SQLiteQuery.cpp \
+	# atomic-android-sh.c \
+	# SharedBuffer.cpp \
+	# String16.cpp \
+	# String8.cpp \
+	# net_sqlcipher_CursorWindow.cpp \
+	# CursorWindow.cpp
+
+# LOCAL_SRC_FILES := $(SQLCIPHER_SRC) \
+# 	net_sqlcipher_database_SQLiteCompiledSql.cpp \
+# 	net_sqlcipher_database_SQLiteDatabase.cpp \
+# 	net_sqlcipher_database_SQLiteProgram.cpp \
+# 	net_sqlcipher_database_SQLiteQuery.cpp \
+# 	net_sqlcipher_database_SQLiteStatement.cpp \
+# 	net_sqlcipher_CursorWindow.cpp \
+# 	CursorWindow.cpp
 
 include $(BUILD_SHARED_LIBRARY)
 
