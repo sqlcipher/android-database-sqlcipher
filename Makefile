@@ -51,4 +51,7 @@ clean: ndk-clean
 distclean: clean
 	rm -rf ${EXTERNAL_DIR}/android-libs
 
-all: build-amalgamation build-native build-java
+copy-libs:
+	cp -R ${JNI_DIR}/libs/* ${LIBS_DIR}
+
+all: build-amalgamation build-native build-java copy-libs
