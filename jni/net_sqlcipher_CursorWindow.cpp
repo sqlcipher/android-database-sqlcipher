@@ -32,10 +32,10 @@
 #include "jni_elements.h"
 #include "jni_exception.h"
 #include "sqlite3_exception.h"
-#include <utils/String16.h>
+//#include <utils/String16.h>
 
 namespace sqlcipher {
-
+  
 static jfieldID gWindowField;
 static jfieldID gBufferField;
 static jfieldID gSizeCopiedField;
@@ -323,13 +323,18 @@ LOG_WINDOW("Getting string for %d,%d from %p", row, column, window);
     if (type == FIELD_TYPE_STRING) {
         uint32_t size = field.data.buffer.size;
         if (size > 0) {
-#if WINDOW_STORAGE_UTF8
-            // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
-            android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
-            return env->NewString((jchar const *)utf16.string(), utf16.size());
-#else
-            return env->NewString((jchar const *)window->offsetToPtr(field.data.buffer.offset), size / 2);
-#endif
+          return env->NewString((jchar const*)window->offsetToPtr(field.data.buffer.offset), size);
+// #if WINDOW_STORAGE_UTF8
+
+//           // std::wstring_convert<std::codecvt<char16_t,char,std::mbstate_t>,char16_t> convert;
+//           // std::u16string utf16 = convert.from_bytes(window->offsetToPtr(field.data.buffer.offset));
+          
+//             // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
+//             android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
+//             return env->NewString((jchar const *)utf16.string(), utf16.size());
+// #else
+//             return env->NewString((jchar const *)window->offsetToPtr(field.data.buffer.offset), size / 2);
+// #endif
         } else {
             return env->NewStringUTF("");
         }
@@ -404,26 +409,39 @@ LOG_WINDOW("Copying string for %d,%d from %p", row, column, window);
     if (type == FIELD_TYPE_STRING) {
         uint32_t size = field.data.buffer.size;
         if (size > 0) {
-#if WINDOW_STORAGE_UTF8
-            // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
-            android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
-            int32_t strSize = utf16.size();
-            if (strSize > bufferSize || dst == NULL) {
-                newArray = env->NewCharArray(strSize);
-                env->SetCharArrayRegion(newArray, 0, strSize, (jchar const *)utf16.string());
-            } else {
-                memcpy(dst, (jchar const *)utf16.string(), strSize * 2);
-            }
-            sizeCopied = strSize;
-#else
-            sizeCopied = size/2 + size % 2;
+
             if (size > bufferSize * 2 || dst == NULL) {
                 newArray = env->NewCharArray(sizeCopied);
                 memcpy(newArray, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
             } else {
                 memcpy(dst, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
             }
-#endif
+
+          
+// #if WINDOW_STORAGE_UTF8
+
+//           // std::wstring_convert<std::codecvt<char16_t,char,std::mbstate_t>,char16_t> convert;
+//           // std::u16string utf16 = convert.from_bytes(window->offsetToPtr(field.data.buffer.offset));
+          
+//             // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
+//             android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
+//             int32_t strSize = utf16.size();
+//             if (strSize > bufferSize || dst == NULL) {
+//                 newArray = env->NewCharArray(strSize);
+//                 env->SetCharArrayRegion(newArray, 0, strSize, (jchar const *)utf16.string());
+//             } else {
+//                 memcpy(dst, (jchar const *)utf16.string(), strSize * 2);
+//             }
+//             sizeCopied = strSize;
+// #else
+//             sizeCopied = size/2 + size % 2;
+//             if (size > bufferSize * 2 || dst == NULL) {
+//                 newArray = env->NewCharArray(sizeCopied);
+//                 memcpy(newArray, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
+//             } else {
+//                 memcpy(dst, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
+//             }
+// #endif
         }
     } else if (type == FIELD_TYPE_INTEGER) {
         int64_t value;
