@@ -32,7 +32,11 @@ build-native:
 	ndk-build V=1 --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs \
 		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
 
-clean:
+ndk-clean:
+	cd ${JNI_DIR} && \
+	ndk-build clean
+
+clean: ndk-clean
 	cd ${SQLCIPHER_DIR} && \
 	make clean
 	cd ${JNI_DIR} && \
