@@ -36,14 +36,17 @@ init:
 	android update project -p .
 	cd ${OPENSSL_DIR} && git clean -dfx && \
 	git checkout -f && ./Configure dist
+	-echo '*** Use make to build SQLCipher for Android'
 
 all: build-external build-jni build-java copy-libs
 
-build-external:
+build-external: ${OPENSSL_DIR}/Makefile
 	cd ${EXTERNAL_DIR} && \
 	$(FAKETIME) make -f Android.mk build-local-hack && \
 	$(FAKETIME) ndk-build NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs && \
 	$(FAKETIME) make -f Android.mk copy-libs-hack
+
+${OPENSSL_DIR}/Makefile: init
 
 build-jni:
 	cd ${JNI_DIR} && \
@@ -90,6 +93,21 @@ clean:
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libsqlcipher_android.so
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libdatabase_sqlcipher.so
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libstlport_shared.so
+
+distclean:
+	-rm -rf local.properties
+	-rm -rf build.xml
+	-rm -rf bin
+	-rm -rf gen
+	-rm -rf obj
+	-rm -rf $(EXTERNAL_DIR)/libs
+	-rm -rf ${JNI_DIR}/libs
+	-rm -rf ${LIBRARY_ROOT}
+	-rm -rf ${RELEASE_DIR}
+	-rm -f ${RELEASE_DIR}.zip
+	-rm -rf dist
+	-cd ${OPENSSL_DIR} && git clean -dfx
+	-cd ${SQLCIPHER_DIR} && git clean -dfx
 
 copy-libs:
 	mkdir -p ${LIBRARY_ROOT}/armeabi
