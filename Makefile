@@ -91,6 +91,21 @@ clean:
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libdatabase_sqlcipher.so
 	-rm ${LIBRARY_ROOT}/armeabi-v7a/libstlport_shared.so
 
+distclean:
+	-rm -rf local.properties
+	-rm -rf build.xml
+	-rm -rf bin
+	-rm -rf gen
+	-rm -rf obj
+	-rm -rf $(EXTERNAL_DIR)/libs
+	-rm -rf ${JNI_DIR}/libs
+	-rm -rf ${LIBRARY_ROOT}
+	-rm -rf ${RELEASE_DIR}
+	-rm -f ${RELEASE_DIR}.zip
+	-rm -rf dist
+	-cd ${OPENSSL_DIR} && git clean -dfx
+	-cd ${SQLCIPHER_DIR} && git clean -dfx
+
 copy-libs:
 	mkdir -p ${LIBRARY_ROOT}/armeabi
 	cp ${EXTERNAL_DIR}/libs/armeabi/libsqlcipher_android.so \
