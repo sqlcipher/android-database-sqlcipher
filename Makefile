@@ -36,14 +36,17 @@ init:
 	android update project -p .
 	cd ${OPENSSL_DIR} && git clean -dfx && \
 	git checkout -f && ./Configure dist
+	-echo '*** Use make to build SQLCipher for Android'
 
 all: build-external build-jni build-java copy-libs
 
-build-external:
+build-external: ${OPENSSL_DIR}/Makefile
 	cd ${EXTERNAL_DIR} && \
 	$(FAKETIME) make -f Android.mk build-local-hack && \
 	$(FAKETIME) ndk-build NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs && \
 	$(FAKETIME) make -f Android.mk copy-libs-hack
+
+${OPENSSL_DIR}/Makefile: init
 
 build-jni:
 	cd ${JNI_DIR} && \
