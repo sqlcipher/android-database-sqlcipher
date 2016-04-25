@@ -54,7 +54,7 @@
 
 
 // When defined to true strings are stored as UTF8, otherwise they're UTF16
-#define WINDOW_STORAGE_UTF8 1
+#define WINDOW_STORAGE_UTF8 0
 
 // When defined to true numberic values are stored inline in the field_slot_t, otherwise they're allocated in the window
 #define WINDOW_STORAGE_INLINE_NUMERICS 1
