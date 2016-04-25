@@ -38,15 +38,17 @@ build-native:
 	ndk-build V=1 --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs \
 		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
 
-ndk-clean:
+clean-java:
+	ant clean
+	rm -rf ${LIBS_DIR}
+
+clean-ndk:
 	-cd ${JNI_DIR} && \
 	ndk-build clean
 
-clean: ndk-clean
+clean: clean-ndk clean-java
 	-cd ${SQLCIPHER_DIR} && \
 	make clean
-	ant clean
-	rm -rf ${LIBS_DIR}
 
 distclean: clean
 	rm -rf ${EXTERNAL_DIR}/android-libs
