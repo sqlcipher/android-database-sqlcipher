@@ -28,6 +28,9 @@ import android.os.Process;
 import android.util.Log;
 import android.util.SparseIntArray;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+
 /**
  * A buffer containing multiple cursor rows.
  */
@@ -379,7 +382,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     public String getString(int row, int col) {
         acquireReference();
         try {
-            return getString_native(row - mStartPos, col);
+          return getString_native(row - mStartPos, col);
         } finally {
             releaseReference();
         }
@@ -399,6 +402,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      * {@link SQLiteException} is thrown.
      */
     private native String getString_native(int row, int col);
+  //private native byte[] getString_native(int row, int col);
 
     /**
      * copy the text for the given field in the provided char array.

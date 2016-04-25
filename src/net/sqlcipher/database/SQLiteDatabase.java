@@ -2327,7 +2327,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             databaseHook.preKey(this);
         }
 
-        native_key(String.valueOf(password));
+        native_key(password);
 
         if(databaseHook != null){
             databaseHook.postKey(this);
@@ -2337,6 +2337,12 @@ public class SQLiteDatabase extends SQLiteClosable {
             mTimeOpened = getTime();
         }
         try {
+          Cursor cursor = rawQuery("select count(*) from sqlite_master;", new String[]{});
+          if(cursor != null){
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            cursor.close();
+          }
           //setLocale(Locale.getDefault());
         } catch (RuntimeException e) {
             Log.e(TAG, "Failed to setLocale() when constructing, closing the database", e);
@@ -2813,9 +2819,7 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     private native int native_status(int operation, boolean reset);
 
-  //private native void native_key(char[] key) throws SQLException;
-    private native void native_key(String key) throws SQLException;
-
+  private native void native_key(char[] key) throws SQLException;
+  
     private native void native_rekey(String key) throws SQLException;
-  //private native void native_rekey(char[] key) throws SQLException;
 }

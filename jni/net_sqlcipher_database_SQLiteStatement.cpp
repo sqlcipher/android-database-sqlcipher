@@ -99,8 +99,13 @@ static jstring native_1x1_string(JNIEnv* env, jobject object)
     // Handle the result
     if (err == SQLITE_ROW) {
         // No errors, read the data and return it
-        char const * text = (char const *)sqlite3_column_text(statement, 0);
-        value = env->NewStringUTF(text);
+        //char const * text = (char const *)sqlite3_column_text(statement, 0);
+
+       const jchar *str = 0;
+       jint strlength = 0;
+       str = (const jchar*) sqlite3_column_text16(statement, 0);
+       strlength = sqlite3_column_bytes16(statement, 0) / sizeof(jchar);
+       value = str ? env->NewString(str, strlength) : NULL;
     } else {
         throw_sqlite3_exception_errcode(env, err, sqlite3_errmsg(handle));
     }

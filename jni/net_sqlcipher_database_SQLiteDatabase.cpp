@@ -154,6 +154,27 @@ int native_status(JNIEnv* env, jobject object, jint operation, jboolean reset)
 //   if(keyUtf8 != 0)  free(keyUtf8);
 // }
 
+void native_key_char(JNIEnv* env, jobject object, jcharArray jKey) {
+  int rc;
+  int idx;
+  LOGI("Entered native_key_char");
+  sqlite3 *handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+  jchar *key = env->GetCharArrayElements(jKey, 0);
+  jsize sz = env->GetArrayLength(jKey);
+  char password[sz + 1];
+  for(idx = 0; idx < sz; idx++){
+    password[idx] = (char)key[idx];
+  }
+  password[sz] = '\0';
+  if(sz > 0){
+    rc = sqlite3_key(handle, password, sz);
+    if(rc != SQLITE_OK){
+      throw_sqlite3_exception(env, handle);
+    }
+  }
+  env->ReleaseCharArrayElements(jKey, key, 0);
+}
+
 void native_key_str(JNIEnv* env, jobject object, jstring jKey)
 {
   sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
@@ -620,8 +641,8 @@ static JNINativeMethod sMethods[] =
     // {"setICURoot", "(Ljava/lang/String;)V", (void *)setICURoot},
     {"native_rawExecSQL", "(Ljava/lang/String;)V", (void *)native_rawExecSQL},
     {"native_status", "(IZ)I", (void *)native_status},
-    // {"native_key", "([C)V", (void *)native_key_char},
-    {"native_key", "(Ljava/lang/String;)V", (void *)native_key_str},
+    {"native_key", "([C)V", (void *)native_key_char},
+    //{"native_key", "(Ljava/lang/String;)V", (void *)native_key_str},
     // {"native_rekey", "([C)V", (void *)native_rekey_char},
     {"native_rekey", "(Ljava/lang/String;)V", (void *)native_rekey_str},
 };
