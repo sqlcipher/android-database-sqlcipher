@@ -8,3 +8,4 @@ jni/libs
 bin
 libs
 gen
+*.zip

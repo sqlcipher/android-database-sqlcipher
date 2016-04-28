@@ -3,6 +3,7 @@ JNI_DIR := ${CURDIR}/jni
 LIBS_DIR := ${CURDIR}/libs
 EXTERNAL_DIR := ${CURDIR}/external
 SQLCIPHER_DIR := ${CURDIR}/external/sqlcipher
+LICENSE := ${CURDIR}/SQLCIPHER_LICENSE
 SQLCIPHER_CFLAGS :=  -DHAVE_USLEEP=1 -DSQLITE_HAS_CODEC \
 	-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 -DSQLITE_THREADSAFE=1 -DNDEBUG=1 \
 	-DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 -DSQLITE_TEMP_STORE=3 \
@@ -13,7 +14,7 @@ SQLCIPHER_CFLAGS :=  -DHAVE_USLEEP=1 -DSQLITE_HAS_CODEC \
 	-DSQLITE_THREADSAFE -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS3_PARENTHESIS \
 	-DSQLITE_ENABLE_STAT4 -DSQLITE_ENABLE_FTS5
 
-.PHONEY: clean
+.PHONY: clean develop-zip release-zip release
 
 init: init-environment build-openssl-libraries
 
@@ -49,11 +50,39 @@ clean-ndk:
 clean: clean-ndk clean-java
 	-cd ${SQLCIPHER_DIR} && \
 	make clean
+	rm sqlcipher-for-android-*.zip
 
 distclean: clean
 	rm -rf ${EXTERNAL_DIR}/android-libs
 
 copy-libs:
 	cp -R ${JNI_DIR}/libs/* ${LIBS_DIR}
+
+release-aar:
+	-rm ${LIBS_DIR}/sqlcipher.jar
+	-rm ${LIBS_DIR}/sqlcipher-javadoc.jar
+	mvn package
+
+develop-zip: LATEST_TAG := $(shell git rev-parse --short HEAD)
+develop-zip: SECOND_LATEST_TAG := $(shell git tag | sort -r | head -1)
+develop-zip: release
+
+release-zip: LATEST_TAG := $(shell git tag | sort -r | head -1)
+release-zip: SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
+release-zip: release
+
+release:
+	$(eval RELEASE_DIR := sqlcipher-for-android-${LATEST_TAG})
+	$(eval README := ${RELEASE_DIR}/README)
+	$(eval CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:")
+	-rm -rf ${RELEASE_DIR}
+	-rm ${RELEASE_DIR}.zip
+	mkdir ${RELEASE_DIR}
+	cp -R ${LIBS_DIR}/* ${RELEASE_DIR}
+	cp ${LICENSE} ${RELEASE_DIR}
+	printf "%s\n\n" ${CHANGE_LOG_HEADER} > ${README}
+	git log --pretty=format:' * %s' ${SECOND_LATEST_TAG}..${LATEST_TAG} >> ${README}
+	find ${RELEASE_DIR} | sort -u | zip -@9 ${RELEASE_DIR}.zip
+	rm -rf ${RELEASE_DIR}
 
 all: build-amalgamation build-native build-java copy-libs
