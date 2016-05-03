@@ -511,6 +511,15 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     }
 
     /**
+     * Bogus implementation needed to build with Android 6.0(+) SDK.
+     * This implementation will throw a RuntimeException with a
+     * "not implemented" message.
+     */
+    public void setExtras(Bundle ignored) {
+        throw new RuntimeException("void setExtras(Bundle) not implemented");
+    }
+
+    /**
      * This function returns true if the field has been updated and is
      * used in conjunction with {@link #getUpdatedField} to allow subclasses to
      * support reading uncommitted updates. NOTE: This function and
