@@ -157,7 +157,6 @@ int native_status(JNIEnv* env, jobject object, jint operation, jboolean reset)
 void native_key_char(JNIEnv* env, jobject object, jcharArray jKey) {
   int rc;
   int idx;
-  LOGI("Entered native_key_char");
   sqlite3 *handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
   jchar *key = env->GetCharArrayElements(jKey, 0);
   jsize sz = env->GetArrayLength(jKey);
