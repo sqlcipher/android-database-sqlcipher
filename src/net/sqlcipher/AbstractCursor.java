@@ -42,6 +42,8 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     DataSetObservable mDataSetObservable = new DataSetObservable();
     ContentObservable mContentObservable = new ContentObservable();
 
+    private Bundle mExtras = Bundle.EMPTY;
+
     /* -------------------------------------------------------- */
     /* These need to be implemented by subclasses */
     abstract public int getCount();
@@ -502,8 +504,12 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
         return false;
     }
 
+    public void setExtras(Bundle extras) {
+        mExtras = (extras == null) ? Bundle.EMPTY : extras;
+    }
+
     public Bundle getExtras() {
-        return Bundle.EMPTY;
+        return mExtras;
     }
 
     public Bundle respond(Bundle extras) {
