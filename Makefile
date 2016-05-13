@@ -64,7 +64,7 @@ release-aar:
 	mvn package
 
 develop-zip: LATEST_TAG := $(shell git rev-parse --short HEAD)
-develop-zip: SECOND_LATEST_TAG := $(shell git tag | sort -r | head -1)
+develop-zip: SECOND_LATEST_TAG ?= $(shell git tag | sort -r | head -1)
 develop-zip: release
 
 release-zip: LATEST_TAG := $(shell git tag | sort -r | head -1)
