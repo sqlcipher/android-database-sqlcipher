@@ -1,4 +1,5 @@
 .DEFAULT_GOAL := all
+BIN_DIR := ${CURDIR}/bin
 JNI_DIR := ${CURDIR}/jni
 LIBS_DIR := ${CURDIR}/libs
 EXTERNAL_DIR := ${CURDIR}/external
@@ -77,8 +78,9 @@ release:
 	$(eval CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:")
 	-rm -rf ${RELEASE_DIR}
 	-rm ${RELEASE_DIR}.zip
-	mkdir ${RELEASE_DIR}
+	mkdir -p ${RELEASE_DIR}/docs
 	cp -R ${LIBS_DIR}/* ${RELEASE_DIR}
+	cp -R ${BIN_DIR}/javadoc/* ${RELEASE_DIR}/docs
 	cp ${LICENSE} ${RELEASE_DIR}
 	printf "%s\n\n" ${CHANGE_LOG_HEADER} > ${README}
 	git log --pretty=format:' * %s' ${SECOND_LATEST_TAG}..${LATEST_TAG} >> ${README}
