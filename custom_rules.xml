@@ -17,11 +17,22 @@
 
   <target name="-javadoc" description="Generate Javadocs">
     <property name="javadoc.jar.name" value="${out.dir}/sqlcipher-javadoc.jar" />
-    <javadoc sourcepath="${source.dir}"
+    <javadoc sourcepath="${source.dir};gen"
              destdir="${out.dir}/javadoc"
              packagenames="net.sqlcipher.*"
-             windowtitle="SQLCipher for Android"
-             doctitle="SQLCipher for Android" />
+             bootclasspath="${env.JAVA_HOME}/jre/lib/rt.jar"
+             docletpath="${user.dir}/jars/doclava-1.0.6.jar" >
+      <doclet name="com.google.doclava.Doclava">
+        <param name="-hdf"/>
+        <param name="project.name"/>
+        <param name="SQLCipher for Android"/>
+      </doclet>  
+      <classpath>
+        <fileset dir="${sdk.dir}/platforms/${target}">
+            <include name="android.jar"/>
+        </fileset>
+    </classpath>
+    </javadoc>
     <delete file="${javadoc.jar.name}"/>
     <jar destfile="${javadoc.jar.name}"
          includes="net/sqlcipher/**"
