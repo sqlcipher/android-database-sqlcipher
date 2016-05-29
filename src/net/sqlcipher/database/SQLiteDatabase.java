@@ -165,14 +165,41 @@ public class SQLiteDatabase extends SQLiteClosable {
       }
     }
 
+    /**
+     * Implement this interface to provide custom strategy for loading jni libraries.
+     */
+    public interface LibraryLoader {
+        /**
+         * Load jni libraries by given names.
+         * Straightforward implementation will be calling {@link System#loadLibrary(String name)}
+         * for every provided library name.
+         *
+         * @param libNames library names that sqlcipher need to load
+         */
+        void loadLibraries(String... libNames);
+    }
+
     public static synchronized void loadLibs (Context context) {
         loadLibs(context, context.getFilesDir());
     }
 
     public static synchronized void loadLibs (Context context, File workingDir) {
-        System.loadLibrary("stlport_shared");
-        System.loadLibrary("sqlcipher_android");
-        System.loadLibrary("database_sqlcipher");
+        loadLibs(context, workingDir, new LibraryLoader() {
+            @Override
+            public void loadLibraries(String... libNames) {
+                for (String libName : libNames) {
+                    System.loadLibrary(libName);
+                }
+            }
+        });
+    }
+
+    public static synchronized void loadLibs(Context context, LibraryLoader libraryLoader) {
+        loadLibs(context, context.getFilesDir(), libraryLoader);
+    }
+
+    public static synchronized void loadLibs (Context context, File workingDir, LibraryLoader libraryLoader) {
+        libraryLoader.loadLibraries("stlport_shared", "sqlcipher_android", "database_sqlcipher");
 
         boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
 
