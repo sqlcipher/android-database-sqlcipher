@@ -2329,7 +2329,9 @@ public class SQLiteDatabase extends SQLiteClosable {
             databaseHook.preKey(this);
         }
 
-        native_key(password);
+        if(password != null){
+          native_key(password);
+        }
 
         if(databaseHook != null){
             databaseHook.postKey(this);
