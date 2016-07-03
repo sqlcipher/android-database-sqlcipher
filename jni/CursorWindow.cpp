@@ -17,19 +17,18 @@
 #undef LOG_TAG
 #define LOG_TAG "CursorWindow"
 
-#include <utils/Log.h>
-#include <binder/MemoryHeapBase.h>
-#include <binder/MemoryBase.h>
+// #include <utils/Log.h>
+// #include <binder/MemoryHeapBase.h>
+// #include <binder/MemoryBase.h>
 
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 
 #include <jni.h>
-#include <JNIHelp.h>
+// #include <JNIHelp.h>
 
 #include "CursorWindow.h"
-
 
 namespace sqlcipher {
 
@@ -38,23 +37,23 @@ CursorWindow::CursorWindow(size_t maxSize) :
 {
 }
 
-bool CursorWindow::setMemory(const android::sp<android::IMemory>& memory)
-{
-    mMemory = memory;
-    mData = (uint8_t *) memory->pointer();
-    if (mData == NULL) {
-        return false;
-    }
-    mHeader = (window_header_t *) mData;
+// bool CursorWindow::setMemory(const android::sp<android::IMemory>& memory)
+// {
+//     mMemory = memory;
+//     mData = (uint8_t *) memory->pointer();
+//     if (mData == NULL) {
+//         return false;
+//     }
+//     mHeader = (window_header_t *) mData;
 
-    // Make the window read-only
-    ssize_t size = memory->size();
-    mSize = size;
-    mMaxSize = size;
-    mFreeOffset = size;
-LOG_WINDOW("Created CursorWindow from existing IMemory: mFreeOffset = %d, numRows = %d, numColumns = %d, mSize = %d, mMaxSize = %d, mData = %p", mFreeOffset, mHeader->numRows, mHeader->numColumns, mSize, mMaxSize, mData);
-    return true;
-}
+//     // Make the window read-only
+//     ssize_t size = memory->size();
+//     mSize = size;
+//     mMaxSize = size;
+//     mFreeOffset = size;
+// LOG_WINDOW("Created CursorWindow from existing IMemory: mFreeOffset = %d, numRows = %d, numColumns = %d, mSize = %d, mMaxSize = %d, mData = %p", mFreeOffset, mHeader->numRows, mHeader->numColumns, mSize, mMaxSize, mData);
+//     return true;
+// }
 
 bool CursorWindow::initBuffer(bool localOnly)
 {

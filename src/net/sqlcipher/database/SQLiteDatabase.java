@@ -55,26 +55,24 @@ import android.util.Log;
 import android.util.Pair;
 
 /**
- * Exposes methods to manage a SQLite database.
+ * Exposes methods to manage a SQLCipher database.
  * <p>SQLiteDatabase has methods to create, delete, execute SQL commands, and
  * perform other common database management tasks.
- * <p>See the Notepad sample application in the SDK for an example of creating
- * and managing a database.
+ * <p>A call to <code>loadLibs(…)</code> should occur before attempting to
+ * create or open a database connection.
  * <p> Database names must be unique within an application, not across all
  * applications.
  *
- * <h3>Localized Collation - ORDER BY</h3>
- * <p>In addition to SQLite's default <code>BINARY</code> collator, Android supplies
- * two more, <code>LOCALIZED</code>, which changes with the system's current locale
- * if you wire it up correctly (XXX a link needed!), and <code>UNICODE</code>, which
- * is the Unicode Collation Algorithm and not tailored to the current locale.
  */
 public class SQLiteDatabase extends SQLiteClosable {
     private static final String TAG = "Database";
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
 
-    public static final String SQLCIPHER_ANDROID_VERSION = "3.4.0";
+  /**
+   * The version number of the SQLCipher for Android Java client library.
+   */
+    public static final String SQLCIPHER_ANDROID_VERSION = "3.5.1";
 
     // Stores reference to all databases opened in the current process.
     // (The referent Object is not used at this time.)
@@ -121,7 +119,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (!isOpen()) {
             throw new SQLiteException("database not open");
         }
-        native_rekey(password);
+        native_rekey(String.valueOf(password));
     }
   
     private static void loadICUData(Context context, File workingDir) {
@@ -179,10 +177,16 @@ public class SQLiteDatabase extends SQLiteClosable {
         void loadLibraries(String... libNames);
     }
 
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
     public static synchronized void loadLibs (Context context) {
         loadLibs(context, context.getFilesDir());
     }
 
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
     public static synchronized void loadLibs (Context context, File workingDir) {
         loadLibs(context, workingDir, new LibraryLoader() {
             @Override
@@ -194,20 +198,30 @@ public class SQLiteDatabase extends SQLiteClosable {
         });
     }
 
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
     public static synchronized void loadLibs(Context context, LibraryLoader libraryLoader) {
         loadLibs(context, context.getFilesDir(), libraryLoader);
     }
 
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
     public static synchronized void loadLibs (Context context, File workingDir, LibraryLoader libraryLoader) {
-        libraryLoader.loadLibraries("stlport_shared", "sqlcipher_android", "database_sqlcipher");
+        libraryLoader.loadLibraries("sqlcipher");
 
-        boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
+        // System.loadLibrary("stlport_shared");
+        // System.loadLibrary("sqlcipher_android");
+        // System.loadLibrary("database_sqlcipher");
 
-        String icuRootPath = systemICUFileExists ? "/system/usr" : workingDir.getAbsolutePath();
-        setICURoot(icuRootPath);
-        if(!systemICUFileExists){
-            loadICUData(context, workingDir);
-        }
+        // boolean systemICUFileExists = new File("/system/usr/icu/icudt46l.dat").exists();
+
+        // String icuRootPath = systemICUFileExists ? "/system/usr" : workingDir.getAbsolutePath();
+        // setICURoot(icuRootPath);
+        // if(!systemICUFileExists){
+        //     loadICUData(context, workingDir);
+        // }
     }
 
     /**
@@ -1043,16 +1057,14 @@ public class SQLiteDatabase extends SQLiteClosable {
      *            cursor when query is called, or null for default
      * @param flags to control database access mode and other options
      * @param hook to run on pre/post key events (may be null)
-     * @param errorHandler The {@link DatabaseErrorHandler} to be used when sqlite reports database
-     * corruption (or null for default).
      *
      * @return the newly opened database
      *
      * @throws SQLiteException if the database cannot be opened
      * @throws IllegalArgumentException if the database path is null
      */
-    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
-        return openDatabase(path, password, factory, flags, databaseHook, new DefaultDatabaseErrorHandler());
+    public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
+        return openDatabase(path, password, factory, flags, hook, new DefaultDatabaseErrorHandler());
     }
 
     /**
@@ -2352,7 +2364,9 @@ public class SQLiteDatabase extends SQLiteClosable {
             databaseHook.preKey(this);
         }
 
-        native_key(password);
+        if(password != null){
+          native_key(password);
+        }
 
         if(databaseHook != null){
             databaseHook.postKey(this);
@@ -2362,7 +2376,13 @@ public class SQLiteDatabase extends SQLiteClosable {
             mTimeOpened = getTime();
         }
         try {
-            setLocale(Locale.getDefault());
+          Cursor cursor = rawQuery("select count(*) from sqlite_master;", new String[]{});
+          if(cursor != null){
+            cursor.moveToFirst();
+            int count = cursor.getInt(0);
+            cursor.close();
+          }
+          //setLocale(Locale.getDefault());
         } catch (RuntimeException e) {
             Log.e(TAG, "Failed to setLocale() when constructing, closing the database", e);
             dbclose();
@@ -2838,9 +2858,7 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     private native int native_status(int operation, boolean reset);
 
-    private native void native_key(char[] key) throws SQLException;
-    private native void native_key(String key) throws SQLException;
-
+  private native void native_key(char[] key) throws SQLException;
+  
     private native void native_rekey(String key) throws SQLException;
-    private native void native_rekey(char[] key) throws SQLException;
 }

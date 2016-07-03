@@ -6,6 +6,7 @@
         exit 1
     fi
 
+    ANDROID_LIB_ROOT=../android-libs
     HOST_INFO=`uname -a`
     case ${HOST_INFO} in
         Darwin*)
@@ -25,8 +26,10 @@
             ;;
     esac
 
-    rm ../android-libs/armeabi/libcrypto.a \
-        ../android-libs/x86/libcrypto.a
+    rm -rf ${ANDROID_LIB_ROOT}
+    mkdir -p ${ANDROID_LIB_ROOT}/armeabi
+    mkdir -p ${ANDROID_LIB_ROOT}/armeabi-v7a
+    mkdir -p ${ANDROID_LIB_ROOT}/x86
 
     git clean -dfx && git checkout -f
     ./Configure dist
@@ -45,7 +48,6 @@
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=${TOOLCHAIN_SYSTEM} \
         --arch=arm
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
@@ -57,15 +59,14 @@
 
     make clean
     make build_crypto
-    mv libcrypto.a ../android-libs/armeabi/
-
+    mv libcrypto.a ${ANDROID_LIB_ROOT}/armeabi/
+    
     rm -rf ${ANDROID_TOOLCHAIN_DIR}
 
     #armv7 build
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=${TOOLCHAIN_SYSTEM} \
         --arch=arm
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
@@ -77,7 +78,7 @@
 
     make clean
     make build_crypto
-    mv libcrypto.a ../android-libs/armeabi-v7a/
+    mv libcrypto.a ${ANDROID_LIB_ROOT}/armeabi-v7a/
 
     rm -rf ${ANDROID_TOOLCHAIN_DIR}    
 
@@ -85,7 +86,6 @@
     ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
         --platform=${ANDROID_PLATFORM_VERSION} \
         --install-dir=${ANDROID_TOOLCHAIN_DIR} \
-        --system=${TOOLCHAIN_SYSTEM} \
         --arch=x86
 
     export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
@@ -97,5 +97,5 @@
 
     make clean
     make build_crypto
-    mv libcrypto.a ../android-libs/x86/
+    mv libcrypto.a ${ANDROID_LIB_ROOT}/x86/
 )

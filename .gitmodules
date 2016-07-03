@@ -1,21 +1,6 @@
-[submodule "external/openssl"]
-	path = external/openssl
-	url = https://github.com/openssl/openssl.git
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
 	url = https://github.com/sqlcipher/sqlcipher.git
-[submodule "external/dalvik"]
-	path = external/dalvik
-	url = https://github.com/android/platform_dalvik.git
-[submodule "external/android-sqlite"]
-	path = external/android-sqlite
-	url = https://github.com/android/platform_external_sqlite.git
-[submodule "external/platform-system-core"]
-	path = external/platform-system-core
-	url = https://github.com/android/platform_system_core.git
-[submodule "external/platform-frameworks-base"]
-	path = external/platform-frameworks-base
-	url = https://github.com/android/platform_frameworks_base.git
-[submodule "external/icu4c"]
-	path = external/icu4c
-	url = https://github.com/android/platform_external_icu4c.git
+[submodule "external/openssl"]
+	path = external/openssl
+	url = https://github.com/openssl/openssl.git

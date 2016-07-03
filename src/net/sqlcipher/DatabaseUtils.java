@@ -495,7 +495,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The TEXT field to read
-     * @param values The {@link ContentValues} to put the value into, with the field as the key
+     * @param values The ContentValues to put the value into, with the field as the key
      */
     public static void cursorStringToContentValues(Cursor cursor, String field,
             ContentValues values) {
@@ -520,7 +520,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The TEXT field to read
-     * @param values The {@link ContentValues} to put the value into, with the field as the key
+     * @param values The ContentValues to put the value into, with the field as the key
      * @param key The key to store the value with in the map
      */
     public static void cursorStringToContentValues(Cursor cursor, String field,
@@ -533,7 +533,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The INTEGER field to read
-     * @param values The {@link ContentValues} to put the value into, with the field as the key
+     * @param values The ContentValues to put the value into, with the field as the key
      */
     public static void cursorIntToContentValues(Cursor cursor, String field, ContentValues values) {
         cursorIntToContentValues(cursor, field, values, field);
@@ -544,7 +544,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The INTEGER field to read
-     * @param values The {@link ContentValues} to put the value into, with the field as the key
+     * @param values The ContentValues to put the value into, with the field as the key
      * @param key The key to store the value with in the map
      */
     public static void cursorIntToContentValues(Cursor cursor, String field, ContentValues values,
@@ -562,7 +562,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The INTEGER field to read
-     * @param values The {@link ContentValues} to put the value into, with the field as the key
+     * @param values The ContentValues to put the value into, with the field as the key
      */
     public static void cursorLongToContentValues(Cursor cursor, String field, ContentValues values)
     {
@@ -574,7 +574,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The INTEGER field to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      * @param key The key to store the value with in the map
      */
     public static void cursorLongToContentValues(Cursor cursor, String field, ContentValues values,
@@ -593,7 +593,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The REAL field to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      */
     public static void cursorDoubleToCursorValues(Cursor cursor, String field, ContentValues values)
     {
@@ -605,7 +605,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param field The REAL field to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      * @param key The key to store the value with in the map
      */
     public static void cursorDoubleToContentValues(Cursor cursor, String field,
@@ -622,7 +622,7 @@ public class DatabaseUtils {
      * Read the entire contents of a cursor row and store them in a ContentValues.
      *
      * @param cursor the cursor to read from.
-     * @param values the {@link ContentValues} to put the row into.
+     * @param values the ContentValues to put the row into.
      */
     public static void cursorRowToContentValues(Cursor cursor, ContentValues values) {
         AbstractWindowedCursor awc =
@@ -718,7 +718,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param column The column to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      */
     public static void cursorStringToContentValuesIfPresent(Cursor cursor, ContentValues values,
             String column) {
@@ -734,7 +734,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param column The column to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      */
     public static void cursorLongToContentValuesIfPresent(Cursor cursor, ContentValues values,
             String column) {
@@ -750,7 +750,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param column The column to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      */
     public static void cursorShortToContentValuesIfPresent(Cursor cursor, ContentValues values,
             String column) {
@@ -766,7 +766,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param column The column to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      */
     public static void cursorIntToContentValuesIfPresent(Cursor cursor, ContentValues values,
             String column) {
@@ -782,7 +782,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param column The column to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      */
     public static void cursorFloatToContentValuesIfPresent(Cursor cursor, ContentValues values,
             String column) {
@@ -798,7 +798,7 @@ public class DatabaseUtils {
      *
      * @param cursor The cursor to read from
      * @param column The column to read
-     * @param values The {@link ContentValues} to put the value into
+     * @param values The ContentValues to put the value into
      */
     public static void cursorDoubleToContentValuesIfPresent(Cursor cursor, ContentValues values,
             String column) {

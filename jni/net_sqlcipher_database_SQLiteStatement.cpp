@@ -19,17 +19,13 @@
 #define LOG_TAG "Cursor"
 
 #include <jni.h>
-#include <JNIHelp.h>
-#include <android_runtime/AndroidRuntime.h>
-
 #include <sqlite3.h>
-
-#include <utils/Log.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
+#include "log.h"
+#include "jni_elements.h"
 #include "sqlite3_exception.h"
 
 namespace sqlcipher {
@@ -103,8 +99,13 @@ static jstring native_1x1_string(JNIEnv* env, jobject object)
     // Handle the result
     if (err == SQLITE_ROW) {
         // No errors, read the data and return it
-        char const * text = (char const *)sqlite3_column_text(statement, 0);
-        value = env->NewStringUTF(text);
+        //char const * text = (char const *)sqlite3_column_text(statement, 0);
+
+       const jchar *str = 0;
+       jint strlength = 0;
+       str = (const jchar*) sqlite3_column_text16(statement, 0);
+       strlength = sqlite3_column_bytes16(statement, 0) / sizeof(jchar);
+       value = str ? env->NewString(str, strlength) : NULL;
     } else {
         throw_sqlite3_exception_errcode(env, err, sqlite3_errmsg(handle));
     }
@@ -142,9 +143,7 @@ int register_android_database_SQLiteStatement(JNIEnv * env)
         LOGE("Error locating fields");
         return -1;
     }
-
-    return android::AndroidRuntime::registerNativeMethods(env,
-        "net/sqlcipher/database/SQLiteStatement", sMethods, NELEM(sMethods));
+    return env->RegisterNatives(clazz, sMethods, NELEM(sMethods));
 }
 
 

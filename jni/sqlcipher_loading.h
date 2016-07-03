@@ -17,8 +17,8 @@
 
 
 #include <jni.h>
-#include <JNIHelp.h>
-#include <android_runtime/AndroidRuntime.h>
+/* #include <JNIHelp.h> */
+/* #include <android_runtime/AndroidRuntime.h> */
 
 #include <sqlite3.h>
 

@@ -18,21 +18,21 @@
 #define LOG_TAG "CursorWindow"
 
 #include <jni.h>
-#include <JNIHelp.h>
-#include <android_runtime/AndroidRuntime.h>
-
-#include <utils/Log.h>
-
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 
 #include "CursorWindow.h"
+#include "jni_elements.h"
+#include "jni_exception.h"
 #include "sqlite3_exception.h"
-#include "android_util_Binder.h"
+
+#include <wchar.h>
+#include <stdlib.h>
 
 namespace sqlcipher {
-
+  
 static jfieldID gWindowField;
 static jfieldID gBufferField;
 static jfieldID gSizeCopiedField;
@@ -69,42 +69,42 @@ LOG_WINDOW("native_init_empty: window = %p", window);
     SET_WINDOW(env, object, window);
 }
 
-static void native_init_memory(JNIEnv * env, jobject object, jobject memObj)
-{
-    android::sp<android::IMemory> memory = android::interface_cast<android::IMemory>(android::ibinderForJavaObject(env, memObj));
+// static void native_init_memory(JNIEnv * env, jobject object, jobject memObj)
+// {
+//     android::sp<android::IMemory> memory = android::interface_cast<android::IMemory>(android::ibinderForJavaObject(env, memObj));
    
-    if (memory == NULL) {
-        jniThrowException(env, "java/lang/IllegalStateException", "Couldn't get native binder");
-        return;
-    }
+//     if (memory == NULL) {
+//         jniThrowException(env, "java/lang/IllegalStateException", "Couldn't get native binder");
+//         return;
+//     }
 
-    CursorWindow * window = new CursorWindow();
-    if (!window) {
-        jniThrowException(env, "java/lang/RuntimeException", "No memory for native window object");
-        return;
-    }
-    if (!window->setMemory(memory)) {
-        jniThrowException(env, "java/lang/RuntimeException", "No memory in memObj");
-        delete window;
-        return;
-    }
+//     CursorWindow * window = new CursorWindow();
+//     if (!window) {
+//         jniThrowException(env, "java/lang/RuntimeException", "No memory for native window object");
+//         return;
+//     }
+//     if (!window->setMemory(memory)) {
+//         jniThrowException(env, "java/lang/RuntimeException", "No memory in memObj");
+//         delete window;
+//         return;
+//     }
 
-LOG_WINDOW("native_init_memory: numRows = %d, numColumns = %d, window = %p", window->getNumRows(), window->getNumColumns(), window);
-    SET_WINDOW(env, object, window);
-}
+// LOG_WINDOW("native_init_memory: numRows = %d, numColumns = %d, window = %p", window->getNumRows(), window->getNumColumns(), window);
+//     SET_WINDOW(env, object, window);
+// }
 
-static jobject native_getBinder(JNIEnv * env, jobject object)
-{
-    CursorWindow * window = GET_WINDOW(env, object);
-    if (window) {
-        android::sp<android::IMemory> memory = window->getMemory();
-        if (memory != NULL) {
-            android::sp<android::IBinder> binder = memory->asBinder();
-            return javaObjectForIBinder(env, binder);
-        }
-    }
-    return NULL;
-}
+// static jobject native_getBinder(JNIEnv * env, jobject object)
+// {
+//     CursorWindow * window = GET_WINDOW(env, object);
+//     if (window) {
+//         android::sp<android::IMemory> memory = window->getMemory();
+//         if (memory != NULL) {
+//             android::sp<android::IBinder> binder = memory->asBinder();
+//             return javaObjectForIBinder(env, binder);
+//         }
+//     }
+//     return NULL;
+// }
 
 static void native_clear(JNIEnv * env, jobject object)
 {
@@ -167,9 +167,10 @@ LOG_WINDOW("Getting long for %d,%d from %p", row, column, window);
 #if WINDOW_STORAGE_UTF8
             return strtoll((char const *)window->offsetToPtr(field.data.buffer.offset), NULL, 0);
 #else
-            String8 ascii((char16_t *) window->offsetToPtr(field.data.buffer.offset), size / 2);
-            char const * str = ascii.string();
-            return strtoll(str, NULL, 0);
+            return strtoll((char const *)window->offsetToPtr(field.data.buffer.offset), NULL, 0);
+            // String8 ascii((char16_t *) window->offsetToPtr(field.data.buffer.offset), size / 2);
+            // char const * str = ascii.string();
+            // return strtoll(str, NULL, 0);
 #endif
         } else {
             return 0;
@@ -233,7 +234,7 @@ LOG_WINDOW("Checking if column is a blob or null for %d,%d from %p", row, column
     err = window->read_field_slot(row, column, &field);
     if (err != 0) {
         throwExceptionWithRowCol(env, row, column);
-        return NULL;
+        return false;
     }
 
     return field.type == FIELD_TYPE_BLOB || field.type == FIELD_TYPE_NULL;
@@ -249,7 +250,7 @@ LOG_WINDOW("Checking if column is a string or null for %d,%d from %p", row, colu
     err = window->read_field_slot(row, column, &field);
     if (err != 0) {
         throwExceptionWithRowCol(env, row, column);
-        return NULL;
+        return false;
     }
 
     return field.type == FIELD_TYPE_STRING || field.type == FIELD_TYPE_NULL;
@@ -265,7 +266,7 @@ LOG_WINDOW("Checking if column is an integer for %d,%d from %p", row, column, wi
     err = window->read_field_slot(row, column, &field);
     if (err != 0) {
         throwExceptionWithRowCol(env, row, column);
-        return NULL;
+        return false;
     }
 
     return field.type == FIELD_TYPE_INTEGER;
@@ -281,7 +282,7 @@ LOG_WINDOW("Getting type for %d,%d from %p", row, column, window);
     err = window->read_field_slot(row, column, &field);
     if (err != 0) {
         throwExceptionWithRowCol(env, row, column);
-        return NULL;
+        return false;
     }
 
     return field.type;
@@ -297,7 +298,7 @@ LOG_WINDOW("Checking if column is a float for %d,%d from %p", row, column, windo
     err = window->read_field_slot(row, column, &field);
     if (err != 0) {
         throwExceptionWithRowCol(env, row, column);
-        return NULL;
+        return false;
     }
 
     return field.type == FIELD_TYPE_FLOAT;
@@ -305,37 +306,37 @@ LOG_WINDOW("Checking if column is a float for %d,%d from %p", row, column, windo
 
 static jstring getString_native(JNIEnv* env, jobject object, jint row, jint column)
 {
+  int i;
     int32_t err;
     CursorWindow * window = GET_WINDOW(env, object);
-LOG_WINDOW("Getting string for %d,%d from %p", row, column, window);
-
+    LOG_WINDOW("Getting string for %d,%d from %p", row, column, window);
     field_slot_t field;
     err = window->read_field_slot(row, column, &field);
     if (err != 0) {
         throwExceptionWithRowCol(env, row, column);
         return NULL;
     }
-
     uint8_t type = field.type;
-    if (type == FIELD_TYPE_STRING) {
-        uint32_t size = field.data.buffer.size;
-        if (size > 0) {
-#if WINDOW_STORAGE_UTF8
-            // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
-            android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
-            return env->NewString((jchar const *)utf16.string(), utf16.size());
-#else
-            return env->NewString((jchar const *)window->offsetToPtr(field.data.buffer.offset), size / 2);
-#endif
-        } else {
-            return env->NewStringUTF("");
-        }
+    jint size = (jint)field.data.buffer.size;
+    if (type == FIELD_TYPE_NULL) {
+         return NULL;
+    } else if (type == FIELD_TYPE_BLOB) {
+        throw_sqlite3_exception(env, "Unable to convert BLOB to string");
+        return NULL;
+    } else if (type == FIELD_TYPE_STRING) {
+      jchar * buf = (jchar *)window->offsetToPtr(field.data.buffer.offset);
+      jclass strClass = env->FindClass("java/lang/String"); 
+      jmethodID ctorID = env->GetMethodID(strClass, "<init>", "([BLjava/lang/String;)V"); 
+      jstring encoding = env->NewStringUTF("UTF-16LE");
+      jbyteArray bytes = env->NewByteArray(size); 
+      env->SetByteArrayRegion(bytes, 0, size, (jbyte*)buf);
+      return (jstring)env->NewObject(strClass, ctorID, bytes, encoding);
     } else if (type == FIELD_TYPE_INTEGER) {
         int64_t value;
         if (window->getLong(row, column, &value)) {
-            char buf[32];
-            snprintf(buf, sizeof(buf), "%lld", value);
-            return env->NewStringUTF(buf);
+          char buf[32];
+          snprintf(buf, sizeof(buf), "%lld", value);
+          return env->NewStringUTF((const char*)buf);
         }
         return NULL;
     } else if (type == FIELD_TYPE_FLOAT) {
@@ -345,14 +346,6 @@ LOG_WINDOW("Getting string for %d,%d from %p", row, column, window);
             snprintf(buf, sizeof(buf), "%g", value);
             return env->NewStringUTF(buf);
         }
-        return NULL;
-    } else if (type == FIELD_TYPE_NULL) {
-        return NULL;
-    } else if (type == FIELD_TYPE_BLOB) {
-        throw_sqlite3_exception(env, "Unable to convert BLOB to string");
-        return NULL;
-    } else {
-        throwUnknowTypeException(env, type);
         return NULL;
     }
 }
@@ -401,26 +394,54 @@ LOG_WINDOW("Copying string for %d,%d from %p", row, column, window);
     if (type == FIELD_TYPE_STRING) {
         uint32_t size = field.data.buffer.size;
         if (size > 0) {
-#if WINDOW_STORAGE_UTF8
-            // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
-            android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
-            int32_t strSize = utf16.size();
+
+          // std::string input = (const char*)window->offsetToPtr(field.data.buffer.offset);
+          // std::wstring result = utf8_to_utf16(input);
+
+          jstring input = env->NewStringUTF((const char*)window->offsetToPtr(field.data.buffer.offset));
+          const jchar* buffer = env->GetStringChars(input, JNI_FALSE);
+          jstring result = env->NewString(buffer, size - 1);
+          int32_t strSize = size - 1;
             if (strSize > bufferSize || dst == NULL) {
                 newArray = env->NewCharArray(strSize);
-                env->SetCharArrayRegion(newArray, 0, strSize, (jchar const *)utf16.string());
+                env->SetCharArrayRegion(newArray, 0, strSize, (jchar const *)result);
             } else {
-                memcpy(dst, (jchar const *)utf16.string(), strSize * 2);
+                memcpy(dst, (jchar const *)result, strSize * 2);
             }
             sizeCopied = strSize;
-#else
-            sizeCopied = size/2 + size % 2;
-            if (size > bufferSize * 2 || dst == NULL) {
-                newArray = env->NewCharArray(sizeCopied);
-                memcpy(newArray, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
-            } else {
-                memcpy(dst, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
-            }
-#endif
+          
+            // if (size > bufferSize * 2 || dst == NULL) {
+            //     newArray = env->NewCharArray(sizeCopied);
+            //     memcpy(newArray, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
+            // } else {
+            //     memcpy(dst, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
+            // }
+
+          
+// #if WINDOW_STORAGE_UTF8
+
+//           // std::wstring_convert<std::codecvt<char16_t,char,std::mbstate_t>,char16_t> convert;
+//           // std::u16string utf16 = convert.from_bytes(window->offsetToPtr(field.data.buffer.offset));
+          
+//             // Pass size - 1 since the UTF8 is null terminated and we don't want a null terminator on the UTF16 string
+//             android::String16 utf16((char const *)window->offsetToPtr(field.data.buffer.offset), size - 1);
+//             int32_t strSize = utf16.size();
+//             if (strSize > bufferSize || dst == NULL) {
+//                 newArray = env->NewCharArray(strSize);
+//                 env->SetCharArrayRegion(newArray, 0, strSize, (jchar const *)utf16.string());
+//             } else {
+//                 memcpy(dst, (jchar const *)utf16.string(), strSize * 2);
+//             }
+//             sizeCopied = strSize;
+// #else
+//             sizeCopied = size/2 + size % 2;
+//             if (size > bufferSize * 2 || dst == NULL) {
+//                 newArray = env->NewCharArray(sizeCopied);
+//                 memcpy(newArray, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
+//             } else {
+//                 memcpy(dst, (jchar const *)window->offsetToPtr(field.data.buffer.offset), size);
+//             }
+// #endif
         }
     } else if (type == FIELD_TYPE_INTEGER) {
         int64_t value;
@@ -477,9 +498,10 @@ LOG_WINDOW("Getting double for %d,%d from %p", row, column, window);
 #if WINDOW_STORAGE_UTF8
             return strtod((char const *)window->offsetToPtr(field.data.buffer.offset), NULL);
 #else
-            String8 ascii((char16_t *) window->offsetToPtr(field.data.buffer.offset), size / 2);
-            char const * str = ascii.string();
-            return strtod(str, NULL);
+            return strtod((char const *)window->offsetToPtr(field.data.buffer.offset), NULL);
+            // String8 ascii((char16_t *) window->offsetToPtr(field.data.buffer.offset), size / 2);
+            // char const * str = ascii.string();
+            // return strtod(str, NULL);
 #endif
         } else {
             return 0.0;
@@ -670,14 +692,15 @@ static JNINativeMethod sMethods[] =
 {
      /* name, signature, funcPtr */
     {"native_init", "(Z)V", (void *)native_init_empty},
-    {"native_init", "(Landroid/os/IBinder;)V", (void *)native_init_memory},
-    {"native_getBinder", "()Landroid/os/IBinder;", (void *)native_getBinder},
+    // {"native_init", "(Landroid/os/IBinder;)V", (void *)native_init_memory},
+    // {"native_getBinder", "()Landroid/os/IBinder;", (void *)native_getBinder},
     {"native_clear", "()V", (void *)native_clear},
     {"close_native", "()V", (void *)native_close},
     {"getLong_native", "(II)J", (void *)getLong_native},
     {"getBlob_native", "(II)[B", (void *)getBlob_native},
     {"isBlob_native", "(II)Z", (void *)isBlob_native},
     {"getString_native", "(II)Ljava/lang/String;", (void *)getString_native},
+    //{"getString_native", "(II)[B", (void *)getString_native},
     {"copyStringToBuffer_native", "(IIILandroid/database/CharArrayBuffer;)[C", (void *)copyStringToBuffer_native},
     {"getDouble_native", "(II)D", (void *)getDouble_native},
     {"isNull_native", "(II)Z", (void *)isNull_native},
@@ -733,8 +756,8 @@ int register_android_database_CursorWindow(JNIEnv * env)
         return -1;
     }
 
-    return android::AndroidRuntime::registerNativeMethods(env, "net/sqlcipher/CursorWindow",
-            sMethods, NELEM(sMethods));
+    clazz = env->FindClass("net/sqlcipher/CursorWindow");
+    return env->RegisterNatives(clazz, sMethods, NELEM(sMethods));
 }
 
 } // namespace sqlcipher

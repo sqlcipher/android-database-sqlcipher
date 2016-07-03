@@ -20,17 +20,14 @@
 #include <stdint.h>
 #include <sys/types.h>
 #include <sys/mman.h>
-
-
-#include <cutils/log.h>
 #include <stddef.h>
 #include <stdint.h>
-
-#include <binder/IMemory.h>
-#include <utils/RefBase.h>
-
 #include <jni.h>
+#include "log.h"
 
+// #include <cutils/log.h>
+// #include <binder/IMemory.h>
+// #include <utils/RefBase.h>
 
 #define DEFAULT_WINDOW_SIZE 4096
 #define MAX_WINDOW_SIZE (1024 * 1024)
@@ -57,7 +54,7 @@
 
 
 // When defined to true strings are stored as UTF8, otherwise they're UTF16
-#define WINDOW_STORAGE_UTF8 1
+#define WINDOW_STORAGE_UTF8 0
 
 // When defined to true numberic values are stored inline in the field_slot_t, otherwise they're allocated in the window
 #define WINDOW_STORAGE_INLINE_NUMERICS 1
@@ -107,11 +104,11 @@ class CursorWindow
 public:
                         CursorWindow(size_t maxSize);
                         CursorWindow(){}
-    bool                setMemory(const android::sp<android::IMemory>&);
+    /* bool                setMemory(const android::sp<android::IMemory>&); */
                         ~CursorWindow();
 
     bool                initBuffer(bool localOnly);
-    android::sp<android::IMemory>         getMemory() {return mMemory;}
+    /* android::sp<android::IMemory>         getMemory() {return mMemory;} */
 
     size_t              size() {return mSize;}
     uint8_t *           data() {return mData;}
@@ -195,7 +192,7 @@ private:
     size_t mSize;
     size_t mMaxSize;
     window_header_t * mHeader;
-    android::sp<android::IMemory> mMemory;
+    /* android::sp<android::IMemory> mMemory; */
 
     /**
      * Offset of the lowest unused data byte in the array.

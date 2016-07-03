@@ -1,122 +1,90 @@
-
 .DEFAULT_GOAL := all
-LIBRARY_ROOT := libs
+BIN_DIR := ${CURDIR}/bin
 JNI_DIR := ${CURDIR}/jni
+LIBS_DIR := ${CURDIR}/libs
 EXTERNAL_DIR := ${CURDIR}/external
-SQLCIPHER_DIR := ${EXTERNAL_DIR}/sqlcipher
-LICENSE := SQLCIPHER_LICENSE
-ASSETS_DIR := assets
-OPENSSL_DIR := ${EXTERNAL_DIR}/openssl
-LATEST_TAG := $(shell git tag | sort -r | head -1)
-SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
-RELEASE_DIR := sqlcipher-for-android-${LATEST_TAG}
-CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:"
-README := ${RELEASE_DIR}/README
+SQLCIPHER_DIR := ${CURDIR}/external/sqlcipher
+LICENSE := ${CURDIR}/SQLCIPHER_LICENSE
+SQLCIPHER_CFLAGS :=  -DHAVE_USLEEP=1 -DSQLITE_HAS_CODEC \
+	-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 -DSQLITE_THREADSAFE=1 -DNDEBUG=1 \
+	-DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 -DSQLITE_TEMP_STORE=3 \
+	-DSQLITE_ENABLE_FTS3_BACKWARDS -DSQLITE_ENABLE_LOAD_EXTENSION \
+	-DSQLITE_ENABLE_MEMORY_MANAGEMENT -DSQLITE_ENABLE_COLUMN_METADATA \
+	-DSQLITE_ENABLE_FTS4 -DSQLITE_ENABLE_UNLOCK_NOTIFY -DSQLITE_ENABLE_RTREE \
+	-DSQLITE_SOUNDEX -DSQLITE_ENABLE_STAT3 -DSQLITE_ENABLE_FTS4_UNICODE61 \
+	-DSQLITE_THREADSAFE -DSQLITE_ENABLE_JSON1 -DSQLITE_ENABLE_FTS3_PARENTHESIS \
+	-DSQLITE_ENABLE_STAT4 -DSQLITE_ENABLE_FTS5
 
-# Use faketime to freeze time to make for reproducible builds.
-# faketime needs to have a very specific timestamp format in order to freeze
-# time.  The time needs to be frozen so that the timestamps don't depend on
-# the speed of the machine that the build process is running on.  See `man
-# faketime` for more info on the "advanced timestamp format".  Also, force
-# time to UTC so its always the same on all machines.
-ifeq ($(shell if which faketime > /dev/null; then echo faketime; fi),faketime)
-  export TZ=UTC
-  TIMESTAMP := $(shell faketime -f "`git log -n1 --format=format:%ai`" \
-                   date -u '+%Y-%m-%d %H:%M:%S')
-  TOUCH := touch -t $(shell faketime -f "`git log -n1 --format=format:%ai`" \
-                        date -u '+%Y%m%d%H%M.%S')
-# frozen time
-  FAKETIME := faketime -f "$(TIMESTAMP)"
-# time moving at 5% of normal speed
-  FAKETIME_5 := faketime -f "@$(TIMESTAMP) x0.05"
-endif
+.PHONY: clean develop-zip release-zip release
 
-init:
+init: init-environment build-openssl-libraries
+
+init-environment:
 	git submodule update --init
-	android update project -p .
-	cd ${OPENSSL_DIR} && git clean -dfx && \
-	git checkout -f && ./Configure dist
-
-all: build-external build-jni build-java copy-libs
-
-build-external:
-	cd ${EXTERNAL_DIR} && \
-	$(FAKETIME) make -f Android.mk build-local-hack && \
-	$(FAKETIME) ndk-build NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs && \
-	$(FAKETIME) make -f Android.mk copy-libs-hack
-
-build-jni:
-	cd ${JNI_DIR} && \
-	$(FAKETIME) ndk-build NDK_LIBS_OUT=$(JNI_DIR)/libs
-
-build-java:
-	$(FAKETIME_5) ant release
-
-release: release-zip release-aar
-
-release-aar:
-	-rm libs/sqlcipher.jar
-	-rm libs/sqlcipher-javadoc.jar
-	mvn package
-
-release-zip:
-	-rm -rf ${RELEASE_DIR}
-	-rm ${RELEASE_DIR}.zip
-	mkdir ${RELEASE_DIR}
-	cp -R ${LIBRARY_ROOT} ${RELEASE_DIR}
-	cp -R ${ASSETS_DIR} ${RELEASE_DIR}
-	cp ${LICENSE} ${RELEASE_DIR}
-	printf "%s\n\n" ${CHANGE_LOG_HEADER} > ${README}
-	git log --pretty=format:' * %s' ${SECOND_LATEST_TAG}..${LATEST_TAG} >> ${README}
-# fix the timestamp on the files to include in the zipball
-	find ${RELEASE_DIR} | xargs $(TOUCH)
-	ls -lR ${RELEASE_DIR}
-	find ${RELEASE_DIR} | sort -u | $(FAKETIME) zip -@9 ${RELEASE_DIR}.zip
-	rm -rf ${RELEASE_DIR}
-
-clean:
-	-rm SQLCipher\ for\ Android\*.zip
-	-ant clean
-	-cd ${EXTERNAL_DIR} && ndk-build clean NDK_LIBS_OUT=$(EXTERNAL_DIR)/libs
-	-cd ${SQLCIPHER_DIR} && make clean
-	-cd ${JNI_DIR} && ndk-build clean NDK_LIBS_OUT=$(JNI_DIR)/libs
-	-rm ${LIBRARY_ROOT}/armeabi/libsqlcipher_android.so
-	-rm ${LIBRARY_ROOT}/armeabi/libdatabase_sqlcipher.so
-	-rm ${LIBRARY_ROOT}/armeabi/libstlport_shared.so
-	-rm ${LIBRARY_ROOT}/sqlcipher.jar
-	-rm ${LIBRARY_ROOT}/x86/libsqlcipher_android.so
-	-rm ${LIBRARY_ROOT}/x86/libdatabase_sqlcipher.so
-	-rm ${LIBRARY_ROOT}/x86/libstlport_shared.so
-	-rm ${LIBRARY_ROOT}/armeabi-v7a/libsqlcipher_android.so
-	-rm ${LIBRARY_ROOT}/armeabi-v7a/libdatabase_sqlcipher.so
-	-rm ${LIBRARY_ROOT}/armeabi-v7a/libstlport_shared.so
-
-copy-libs:
-	mkdir -p ${LIBRARY_ROOT}/armeabi
-	cp ${EXTERNAL_DIR}/libs/armeabi/libsqlcipher_android.so \
-		 ${LIBRARY_ROOT}/armeabi  && \
-	cp ${JNI_DIR}/libs/armeabi/libdatabase_sqlcipher.so \
-		${LIBRARY_ROOT}/armeabi && \
-	cp ${EXTERNAL_DIR}/libs/armeabi/libstlport_shared.so \
-		 ${LIBRARY_ROOT}/armeabi
-	mkdir -p ${LIBRARY_ROOT}/x86
-	cp ${EXTERNAL_DIR}/libs/x86/libsqlcipher_android.so \
-		 ${LIBRARY_ROOT}/x86  && \
-	cp ${JNI_DIR}/libs/x86/libdatabase_sqlcipher.so \
-		${LIBRARY_ROOT}/x86 && \
-	cp ${EXTERNAL_DIR}/libs/x86/libstlport_shared.so \
-		 ${LIBRARY_ROOT}/x86
-	mkdir -p ${LIBRARY_ROOT}/armeabi-v7a
-	cp ${EXTERNAL_DIR}/libs/armeabi-v7a/libsqlcipher_android.so \
-		 ${LIBRARY_ROOT}/armeabi-v7a  && \
-	cp ${JNI_DIR}/libs/armeabi-v7a/libdatabase_sqlcipher.so \
-		${LIBRARY_ROOT}/armeabi-v7a && \
-	cp ${EXTERNAL_DIR}/libs/armeabi-v7a/libstlport_shared.so \
-		 ${LIBRARY_ROOT}/armeabi-v7a
-
-copy-libs-dist:
-	cp ${LIBRARY_ROOT}/*.jar dist/SQLCipherForAndroid-SDK/libs/ && \
-	cp ${LIBRARY_ROOT}/armeabi/*.so dist/SQLCipherForAndroid-SDK/libs/armeabi/
+	android update project -p ${CURDIR}
 
 build-openssl-libraries:
 	./build-openssl-libraries.sh
+
+build-amalgamation:
+	cd ${SQLCIPHER_DIR} && \
+	./configure --enable-tempstore=yes \
+		CFLAGS="${SQLCIPHER_CFLAGS}" && \
+	make sqlite3.c
+
+build-java:
+	ant release
+
+build-native:
+	cd ${JNI_DIR} && \
+	ndk-build V=1 --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs \
+		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
+
+clean-java:
+	ant clean
+	rm -rf ${LIBS_DIR}
+
+clean-ndk:
+	-cd ${JNI_DIR} && \
+	ndk-build clean
+
+clean: clean-ndk clean-java
+	-cd ${SQLCIPHER_DIR} && \
+	make clean
+	rm sqlcipher-for-android-*.zip
+
+distclean: clean
+	rm -rf ${EXTERNAL_DIR}/android-libs
+
+copy-libs:
+	cp -R ${JNI_DIR}/libs/* ${LIBS_DIR}
+
+release-aar:
+	-rm ${LIBS_DIR}/sqlcipher.jar
+	-rm ${LIBS_DIR}/sqlcipher-javadoc.jar
+	mvn package
+
+develop-zip: LATEST_TAG := $(shell git rev-parse --short HEAD)
+develop-zip: SECOND_LATEST_TAG ?= $(shell git tag | sort -r | head -1)
+develop-zip: release
+
+release-zip: LATEST_TAG := $(shell git tag | sort -r | head -1)
+release-zip: SECOND_LATEST_TAG := $(shell git tag | sort -r | head -2 | tail -1)
+release-zip: release
+
+release:
+	$(eval RELEASE_DIR := sqlcipher-for-android-${LATEST_TAG})
+	$(eval README := ${RELEASE_DIR}/README)
+	$(eval CHANGE_LOG_HEADER := "Changes included in the ${LATEST_TAG} release of SQLCipher for Android:")
+	-rm -rf ${RELEASE_DIR}
+	-rm ${RELEASE_DIR}.zip
+	mkdir -p ${RELEASE_DIR}/docs
+	cp -R ${LIBS_DIR}/* ${RELEASE_DIR}
+	cp -R ${BIN_DIR}/javadoc/* ${RELEASE_DIR}/docs
+	cp ${LICENSE} ${RELEASE_DIR}
+	printf "%s\n\n" ${CHANGE_LOG_HEADER} > ${README}
+	git log --pretty=format:' * %s' ${SECOND_LATEST_TAG}..${LATEST_TAG} >> ${README}
+	find ${RELEASE_DIR} | sort -u | zip -@9 ${RELEASE_DIR}.zip
+	rm -rf ${RELEASE_DIR}
+
+all: build-amalgamation build-native build-java copy-libs

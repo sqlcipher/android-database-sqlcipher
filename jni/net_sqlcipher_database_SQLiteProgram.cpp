@@ -17,20 +17,19 @@
 #undef LOG_TAG
 #define LOG_TAG "Cursor"
 
+// #include <JNIHelp.h>
+// #include <android_runtime/AndroidRuntime.h>
+// #include <utils/Log.h>
+
 #include <jni.h>
-#include <JNIHelp.h>
-#include <android_runtime/AndroidRuntime.h>
-
 #include <sqlite3.h>
-
-#include <utils/Log.h>
-
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-
+#include "log.h"
+#include "jni_elements.h"
+#include "jni_exception.h"
 #include "sqlite3_exception.h"
-
 
 namespace sqlcipher {
 
@@ -187,9 +186,7 @@ int register_android_database_SQLiteProgram(JNIEnv * env)
         LOGE("Error locating fields");
         return -1;
     }
-
-    return android::AndroidRuntime::registerNativeMethods(env,
-        "net/sqlcipher/database/SQLiteProgram", sMethods, NELEM(sMethods));
+    return env->RegisterNatives(clazz, sMethods, NELEM(sMethods));
 }
 
 
