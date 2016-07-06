@@ -145,7 +145,7 @@ static jlong getLong_native(JNIEnv * env, jobject object, jint row, jint column)
 {
     int32_t err;
     CursorWindow * window = GET_WINDOW(env, object);
-LOG_WINDOW("Getting long for %d,%d from %p", row, column, window);
+    LOG_WINDOW("Getting long for %d,%d from %p", row, column, window);
 
     field_slot_t field;
     err = window->read_field_slot(row, column, &field);
@@ -164,14 +164,13 @@ LOG_WINDOW("Getting long for %d,%d from %p", row, column, window);
     } else if (type == FIELD_TYPE_STRING) {
         uint32_t size = field.data.buffer.size;
         if (size > 0) {
-#if WINDOW_STORAGE_UTF8
-            return strtoll((char const *)window->offsetToPtr(field.data.buffer.offset), NULL, 0);
-#else
-            return strtoll((char const *)window->offsetToPtr(field.data.buffer.offset), NULL, 0);
-            // String8 ascii((char16_t *) window->offsetToPtr(field.data.buffer.offset), size / 2);
-            // char const * str = ascii.string();
-            // return strtoll(str, NULL, 0);
-#endif
+          long long int result;
+          jstring data = env->NewString((const jchar*)window->offsetToPtr(field.data.buffer.offset), (jsize)size);
+          const char* utf8data = env->GetStringUTFChars(data, NULL);
+          result = strtoll(utf8data, NULL, 0);
+          if(utf8data) env->ReleaseStringUTFChars(data, utf8data);
+          if(data) env->DeleteLocalRef(data);
+          return result;
         } else {
             return 0;
         }
@@ -373,7 +372,7 @@ static jcharArray copyStringToBuffer_native(JNIEnv* env, jobject object, jint ro
 {
     int32_t err;
     CursorWindow * window = GET_WINDOW(env, object);
-LOG_WINDOW("Copying string for %d,%d from %p", row, column, window);
+    LOG_WINDOW("Copying string for %d,%d from %p", row, column, window);
 
     field_slot_t field;
     err = window->read_field_slot(row, column, &field);
@@ -495,14 +494,13 @@ LOG_WINDOW("Getting double for %d,%d from %p", row, column, window);
     } else if (type == FIELD_TYPE_STRING) {
         uint32_t size = field.data.buffer.size;
         if (size > 0) {
-#if WINDOW_STORAGE_UTF8
-            return strtod((char const *)window->offsetToPtr(field.data.buffer.offset), NULL);
-#else
-            return strtod((char const *)window->offsetToPtr(field.data.buffer.offset), NULL);
-            // String8 ascii((char16_t *) window->offsetToPtr(field.data.buffer.offset), size / 2);
-            // char const * str = ascii.string();
-            // return strtod(str, NULL);
-#endif
+          double result;
+          jstring data = env->NewString((const jchar*)window->offsetToPtr(field.data.buffer.offset), (jsize)size);
+          const char* utf8data = env->GetStringUTFChars(data, NULL);
+          result = strtod(utf8data, NULL);
+          if(utf8data) env->ReleaseStringUTFChars(data, utf8data);
+          if(data) env->DeleteLocalRef(data);
+          return result;
         } else {
             return 0.0;
         }
