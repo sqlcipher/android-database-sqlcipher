@@ -119,7 +119,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (!isOpen()) {
             throw new SQLiteException("database not open");
         }
-        native_rekey(String.valueOf(password));
+        native_rekey(password == null ? null : String.valueOf(password));
     }
   
     private static void loadICUData(Context context, File workingDir) {
@@ -293,6 +293,11 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Flag for {@link #openDatabase} to create the database file if it does not already exist.
      */
     public static final int CREATE_IF_NECESSARY = 0x10000000;     // update native code if changing
+
+    /**
+     * SQLite memory database name
+     */
+    public static final String MEMORY = ":memory:";
 
     /**
      * Indicates whether the most-recently started transaction has been marked as successful.
@@ -959,7 +964,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
-      return openDatabase(path, password.toCharArray(), factory, flags, null);
+      return openDatabase(path, password, factory, flags, null);
     }
 
     /**
@@ -981,7 +986,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags) {
-      return openDatabase(path, password, factory, flags, null);
+      return openDatabase(path, password, factory, flags, null, null);
     }
 
     /**
@@ -1005,7 +1010,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
-      return openDatabase(path, password.toCharArray(), factory, flags, hook);
+      return openDatabase(path, password, factory, flags, hook, null);
     }
 
     /**
@@ -1029,7 +1034,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
-        return openDatabase(path, password, factory, flags, hook, new DefaultDatabaseErrorHandler());
+        return openDatabase(path, password, factory, flags, hook, null);
     }
 
     /**
@@ -1056,7 +1061,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags,
                                               SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
-      return openDatabase(path, password.toCharArray(), factory, flags, hook, errorHandler);
+      return openDatabase(path, password == null ? null : password.toCharArray(), factory, flags, hook, errorHandler);
     }
 
     /**
@@ -1084,10 +1089,11 @@ public class SQLiteDatabase extends SQLiteClosable {
     public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags,
                                               SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
         SQLiteDatabase sqliteDatabase = null;
+        DatabaseErrorHandler myErrorHandler = (errorHandler != null) ? errorHandler : new DefaultDatabaseErrorHandler();
 
         try {
             // Open the database.
-            sqliteDatabase = new SQLiteDatabase(path, factory, flags, errorHandler);
+            sqliteDatabase = new SQLiteDatabase(path, factory, flags, myErrorHandler);
             sqliteDatabase.openDatabaseInternal(password, hook);
         } catch (SQLiteDatabaseCorruptException e) {
             // Try to recover from this, if possible.
@@ -1097,10 +1103,10 @@ public class SQLiteDatabase extends SQLiteClosable {
             // NOTE: if this errorHandler.onCorruption() throws the exception _should_
             // bubble back to the original caller.
             // DefaultDatabaseErrorHandler deletes the corrupt file, EXCEPT for memory database
-            errorHandler.onCorruption(sqliteDatabase);
+            myErrorHandler.onCorruption(sqliteDatabase);
 
             // try *once* again:
-            sqliteDatabase = new SQLiteDatabase(path, factory, flags, errorHandler);
+            sqliteDatabase = new SQLiteDatabase(path, factory, flags, myErrorHandler);
             sqliteDatabase.openDatabaseInternal(password, hook);
         }
 
@@ -1122,7 +1128,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Equivalent to openDatabase(file.getPath(), password, factory, CREATE_IF_NECESSARY, databaseHook).
      */
     public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
-        return openOrCreateDatabase(file.getPath(), password, factory, databaseHook);
+        return openOrCreateDatabase(file, password, factory, databaseHook, null);
     }
 
     /**
@@ -1137,12 +1143,12 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
                                                       DatabaseErrorHandler errorHandler) {
-        return openDatabase(file.getPath(), password.toCharArray(), factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
+        return openOrCreateDatabase(file == null ? null : file.getPath(), password, factory, databaseHook, errorHandler);
     }
 
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
                                                       DatabaseErrorHandler errorHandler) {
-        return openDatabase(path, password.toCharArray(), factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
+        return openDatabase(path, password == null ? null : password.toCharArray(), factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
     }
 
     public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
@@ -1158,14 +1164,14 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Equivalent to openDatabase(file.getPath(), password, factory, CREATE_IF_NECESSARY).
      */
     public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory) {
-        return openOrCreateDatabase(file.getPath(), password, factory, null);
+        return openOrCreateDatabase(file, password, factory, null);
     }
 
     /**
      * Equivalent to openDatabase(path, password, factory, CREATE_IF_NECESSARY).
      */
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory) {
-      return openDatabase(path, password.toCharArray(), factory, CREATE_IF_NECESSARY, null);
+      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
 
     /**
@@ -1192,7 +1198,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public static SQLiteDatabase create(CursorFactory factory, String password) {
         // This is a magic string with special meaning for SQLite.
-      return openDatabase(":memory:", password.toCharArray(), factory, CREATE_IF_NECESSARY);
+      return openDatabase(MEMORY, password == null ? null : password.toCharArray(), factory, CREATE_IF_NECESSARY);
     }
 
     /**
@@ -1211,7 +1217,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws SQLiteException if the database cannot be opened 
      */
     public static SQLiteDatabase create(CursorFactory factory, char[] password) {
-        return openDatabase(":memory:", password, factory, CREATE_IF_NECESSARY);
+        return openDatabase(MEMORY, password, factory, CREATE_IF_NECESSARY);
     }
 
 
