@@ -100,7 +100,9 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (!isOpen()) {
             throw new SQLiteException("database not open");
         }
-        native_rekey(password);
+        if (password != null) {
+            native_rekey(password);
+        }
     }
 
     /**
@@ -119,7 +121,9 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (!isOpen()) {
             throw new SQLiteException("database not open");
         }
-        native_rekey(password == null ? null : String.valueOf(password));
+        if (password != null) {
+            native_rekey(String.valueOf(password));
+        }
     }
   
     private static void loadICUData(Context context, File workingDir) {
@@ -2829,7 +2833,7 @@ public class SQLiteDatabase extends SQLiteClosable {
 
     private native int native_status(int operation, boolean reset);
 
-  private native void native_key(char[] key) throws SQLException;
+    private native void native_key(char[] key) throws SQLException;
   
     private native void native_rekey(String key) throws SQLException;
 }
