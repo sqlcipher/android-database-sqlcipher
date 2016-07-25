@@ -126,7 +126,7 @@ public abstract class SQLiteOpenHelper {
      */
 
     public synchronized SQLiteDatabase getWritableDatabase(String password) {
-      return getWritableDatabase(password.toCharArray());
+      return getWritableDatabase(password == null ? null : password.toCharArray());
     }
   
     public synchronized SQLiteDatabase getWritableDatabase(char[] password) {
@@ -211,7 +211,7 @@ public abstract class SQLiteOpenHelper {
      *     or {@link #close} is called.
      */
     public synchronized SQLiteDatabase getReadableDatabase(String password) {
-      return getReadableDatabase(password.toCharArray());
+      return getReadableDatabase(password == null ? null : password.toCharArray());
     }
   
     public synchronized SQLiteDatabase getReadableDatabase(char[] password) {
