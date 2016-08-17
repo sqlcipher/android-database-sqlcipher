@@ -337,34 +337,59 @@ namespace sqlcipher {
     if (type == FIELD_TYPE_STRING) {
       uint32_t size = field.data.buffer.size;
       if (size > 0) {
-        jstring input = env->NewStringUTF((const char*)window->offsetToPtr(field.data.buffer.offset));
-        const jchar* buffer = env->GetStringChars(input, JNI_FALSE);
-        jstring result = env->NewString(buffer, size - 1);
-        int32_t strSize = size - 1;
+        jsize length = (jsize)size/sizeof(jchar);
+        int32_t strSize = (jsize)size/sizeof(jchar);
+        jstring content = env->NewString((const jchar *)window->offsetToPtr(field.data.buffer.offset), length);
+        const jchar *elements = env->GetStringChars(content, JNI_FALSE);
         if (strSize > bufferSize || dst == NULL) {
-          newArray = env->NewCharArray(strSize);
-          env->SetCharArrayRegion(newArray, 0, strSize, (jchar const *)result);
+          newArray = env->NewCharArray(length);
+          env->SetCharArrayRegion(newArray, 0, length, elements);
+          if(elements) env->ReleaseStringChars(content, elements);
+          if(content) env->DeleteLocalRef(content);
         } else {
-          memcpy(dst, (jchar const *)result, strSize * 2);
+          memcpy(dst, elements, strSize * 2);
         }
         sizeCopied = strSize;
       }
     } else if (type == FIELD_TYPE_INTEGER) {
       int64_t value;
       if (window->getLong(row, column, &value)) {
-        char buf[32];
         int len;
-        snprintf(buf, sizeof(buf), "%lld", value);
-        jchar* dst = env->GetCharArrayElements(buffer, NULL);
-        sizeCopied = charToJchar(buf, dst, bufferSize);
+        char buf[32];
+        len = snprintf(buf, sizeof(buf), "%lld", value);
+        jint bufferLength = env->GetArrayLength(buffer);
+        if(len > bufferLength || dst == NULL){
+          jstring content = env->NewStringUTF(buf);
+          const jchar *elements = env->GetStringChars(content, JNI_FALSE);
+          newArray = env->NewCharArray(len);
+          env->SetCharArrayRegion(newArray, 0, len, elements);
+          sizeCopied = len;
+          if(elements) env->ReleaseStringChars(content, elements);
+          if(content) env->DeleteLocalRef(content);
+        } else {
+          memcpy(dst, buf, len);
+          sizeCopied = charToJchar(buf, dst, bufferSize);
+        }
       }
     } else if (type == FIELD_TYPE_FLOAT) {
       double value;
       if (window->getDouble(row, column, &value)) {
-        char tempbuf[32];
-        snprintf(tempbuf, sizeof(tempbuf), "%g", value);
-        jchar* dst = env->GetCharArrayElements(buffer, NULL);
-        sizeCopied = charToJchar(tempbuf, dst, bufferSize);
+        int len;
+        char buf[32];
+        len = snprintf(buf, sizeof(buf), "%g", value);
+        jint bufferLength = env->GetArrayLength(buffer);
+        if(len > bufferLength || dst == NULL){
+          jstring content = env->NewStringUTF(buf);
+          const jchar *elements = env->GetStringChars(content, JNI_FALSE);
+          newArray = env->NewCharArray(len);
+          env->SetCharArrayRegion(newArray, 0, len, elements);
+          sizeCopied = len;
+          if(elements) env->ReleaseStringChars(content, elements);
+          if(content) env->DeleteLocalRef(content);
+        } else {
+          memcpy(dst, buf, len);
+          sizeCopied = charToJchar(buf, dst, bufferSize);
+        }
       }
     } else if (type == FIELD_TYPE_NULL) {
     } else if (type == FIELD_TYPE_BLOB) {
