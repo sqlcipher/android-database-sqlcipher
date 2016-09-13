@@ -29,6 +29,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,6 +58,8 @@ import android.util.Config;
 import android.util.Log;
 import android.util.Pair;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * Exposes methods to manage a SQLCipher database.
  * <p>SQLiteDatabase has methods to create, delete, execute SQL commands, and
@@ -68,6 +74,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final String TAG = "Database";
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
+    private static final String KEY_ENCODING = "UTF-8";
 
   /**
    * The version number of the SQLCipher for Android Java client library.
@@ -101,7 +108,11 @@ public class SQLiteDatabase extends SQLiteClosable {
             throw new SQLiteException("database not open");
         }
         if (password != null) {
-            native_rekey(password);
+          byte[] keyMaterial = getBytes(password.toCharArray());
+          rekey(keyMaterial);
+          for(byte data : keyMaterial) {
+            data = 0;
+          }
         }
     }
 
@@ -122,8 +133,12 @@ public class SQLiteDatabase extends SQLiteClosable {
             throw new SQLiteException("database not open");
         }
         if (password != null) {
-            native_rekey(String.valueOf(password));
-        }
+          byte[] keyMaterial = getBytes(password);
+          rekey(keyMaterial);
+          for(byte data : keyMaterial) {
+            data = 0;
+          }
+        }     
     }
   
     private static void loadICUData(Context context, File workingDir) {
@@ -2332,41 +2347,94 @@ public class SQLiteDatabase extends SQLiteClosable {
         mErrorHandler = errorHandler;
     }
 
-    private void openDatabaseInternal(char[] password, SQLiteDatabaseHook databaseHook) {
-        dbopen(mPath, mFlags);
-
-        if(databaseHook != null) {
-            databaseHook.preKey(this);
-        }
-
-        if(password != null){
-          native_key(password);
-        }
-
-        if(databaseHook != null){
-            databaseHook.postKey(this);
-        }
-
-        if (SQLiteDebug.DEBUG_SQL_CACHE) {
-            mTimeOpened = getTime();
-        }
-        try {
-          Cursor cursor = rawQuery("select count(*) from sqlite_master;", new String[]{});
-          if(cursor != null){
-            cursor.moveToFirst();
-            int count = cursor.getInt(0);
-            cursor.close();
-          }
-          //setLocale(Locale.getDefault());
-        } catch (RuntimeException e) {
-            Log.e(TAG, "Failed to setLocale() when constructing, closing the database", e);
-            dbclose();
-            if (SQLiteDebug.DEBUG_SQL_CACHE) {
-                mTimeClosed = getTime();
+  private void openDatabaseInternal(final char[] password, SQLiteDatabaseHook hook) {
+    boolean shouldCloseConnection = true;
+    final byte[] keyMaterial = getBytes(password);
+    dbopen(mPath, mFlags);
+    try {
+      
+      keyDatabase(hook, new Runnable() {
+          public void run() {
+            if(keyMaterial != null && keyMaterial.length > 0) {
+              key(keyMaterial);
             }
-            throw e;
+          }
+        });
+      shouldCloseConnection = false;
+      
+    } catch(RuntimeException ex) {
+
+      if(containsNull(password)) {
+        keyDatabase(hook, new Runnable() {
+            public void run() {
+              if(password != null) {
+                key_mutf8(password);
+              }
+            }
+          });
+        if(keyMaterial != null && keyMaterial.length > 0) {
+          rekey(keyMaterial);
         }
+        shouldCloseConnection = false;
+      } else {
+        throw ex;
+      }
+
+    } finally {
+      if(shouldCloseConnection) {
+        dbclose();
+        if (SQLiteDebug.DEBUG_SQL_CACHE) {
+          mTimeClosed = getTime();
+        }
+      }
+      if(keyMaterial != null && keyMaterial.length > 0) {
+        for(byte data : keyMaterial) {
+          data = 0;
+        }
+      }
     }
+    
+  }
+
+  private boolean containsNull(char[] data) {
+    char defaultValue = '\u0000';
+    boolean status = false;
+    if(data != null && data.length > 0) {
+      for(char datum : data) {
+        if(datum == defaultValue) {
+          status = true;
+          break;
+        }
+      }
+    }
+    return status;
+  }
+  
+  private void keyDatabase(SQLiteDatabaseHook databaseHook, Runnable keyOperation) {
+    if(databaseHook != null) {
+      databaseHook.preKey(this);
+    }
+    if(keyOperation != null){
+      keyOperation.run();
+    }
+    if(databaseHook != null){
+      databaseHook.postKey(this);
+    }
+    if (SQLiteDebug.DEBUG_SQL_CACHE) {
+      mTimeOpened = getTime();
+    }
+    try {
+      Cursor cursor = rawQuery("select count(*) from sqlite_master;", new String[]{});
+      if(cursor != null){
+        cursor.moveToFirst();
+        int count = cursor.getInt(0);
+        cursor.close();
+      }
+    } catch (RuntimeException e) {
+      Log.e(TAG, e.getMessage(), e);
+      throw e;
+    }
+  }
 
     private String getTime() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ").format(System.currentTimeMillis());
@@ -2761,6 +2829,15 @@ public class SQLiteDatabase extends SQLiteClosable {
         return attachedDbs;
     }
 
+    private byte[] getBytes(char[] data) {
+      if(data == null || data.length == 0) return null;
+      CharBuffer charBuffer = CharBuffer.wrap(data);
+      ByteBuffer byteBuffer = Charset.forName(KEY_ENCODING).encode(charBuffer);
+      byte[] result =  new byte[byteBuffer.limit()];
+      byteBuffer.get(result);
+      return result;
+    }
+
     /**
      * Sets the root directory to search for the ICU data file
      */
@@ -2836,4 +2913,8 @@ public class SQLiteDatabase extends SQLiteClosable {
     private native void native_key(char[] key) throws SQLException;
   
     private native void native_rekey(String key) throws SQLException;
+
+  private native void key(byte[] key) throws SQLException;
+  private native void key_mutf8(char[] key) throws SQLException;
+  private native void rekey(byte[] key) throws SQLException;
 }

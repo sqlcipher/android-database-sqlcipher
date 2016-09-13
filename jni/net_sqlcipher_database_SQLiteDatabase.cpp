@@ -31,26 +31,12 @@
 #include "sqlite3_exception.h"
 #include "sqlcipher_loading.h"
 
-// #include <utils/Log.h>
-// #include <JNIHelp.h>
-// #include <android_runtime/AndroidRuntime.h>
-// #include <sqlite3_android.h>
-// #include <utils/Log.h>
-// #include <utils/threads.h>
-// #include <utils/List.h>
-// #include <utils/Errors.h>
-// #include <unicode/utypes.h>
-// #include <unicode/ucnv.h>
-// #include <unicode/ucnv_err.h>
-
 #define UTF16_STORAGE 0
 #define INVALID_VERSION -1
 #define SQLITE_SOFT_HEAP_LIMIT (4 * 1024 * 1024)
 #define ANDROID_TABLE "android_metadata"
 /* uncomment the next line to force-enable logging of all statements */
 // #define DB_LOG_STATEMENTS
-
-
 
 namespace sqlcipher {
 
@@ -107,7 +93,42 @@ namespace sqlcipher {
     return value;
   }
 
-  void native_key_char(JNIEnv* env, jobject object, jcharArray jKey) {
+  void native_key(JNIEnv* env, jobject object, jbyteArray jKey) {
+    int rc = 0;
+    int index = 0;
+    jsize size = 0;
+    jbyte *key = 0;
+    sqlite3 *handle = NULL;
+    handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    key = env->GetByteArrayElements(jKey, NULL);
+    size = env->GetArrayLength(jKey);
+    if(key == NULL || size == 0) goto done;
+    rc = sqlite3_key(handle, key, size);
+    if(rc != SQLITE_OK) {
+      throw_sqlite3_exception(env, handle);
+    }
+  done:
+    if(key) env->ReleaseByteArrayElements(jKey, key, JNI_ABORT);
+  }
+
+  void native_rekey(JNIEnv* env, jobject object, jbyteArray jKey) {
+    int rc = 0;
+    jsize size = 0;
+    jbyte *key = 0;
+    sqlite3 *handle = NULL;
+    handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
+    key = env->GetByteArrayElements(jKey, NULL);
+    size = env->GetArrayLength(jKey);
+    if(key == NULL || size == 0) goto done;
+    rc = sqlite3_rekey(handle, key, size);
+    if(rc != SQLITE_OK) {
+      throw_sqlite3_exception(env, handle);
+    }
+  done:
+    if(key) env->ReleaseByteArrayElements(jKey, key, JNI_ABORT);
+  }
+
+  void native_key_mutf8(JNIEnv* env, jobject object, jcharArray jKey) {
     int rc;
     int idx;
     jint releaseElements = 0;
@@ -126,21 +147,7 @@ namespace sqlcipher {
     }
     env->ReleaseStringUTFChars(key, password);
   }
-
-  void native_rekey_str(JNIEnv* env, jobject object, jstring jKey) {
-    sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
-    char const * key = env->GetStringUTFChars(jKey, NULL);
-    jsize keyLen = env->GetStringUTFLength(jKey);
-
-    if ( keyLen > 0 ) {
-      int status = sqlite3_rekey(handle, key, keyLen);
-      if ( status != SQLITE_OK ) {
-        throw_sqlite3_exception(env, handle);
-      }
-    }
-    env->ReleaseStringUTFChars(jKey, key);
-  }
-
+    
   void native_rawExecSQL(JNIEnv* env, jobject object, jstring sql)
   {
     sqlite3 * handle = (sqlite3 *)env->GetIntField(object, offset_db_handle);
@@ -523,15 +530,13 @@ namespace sqlcipher {
       {"native_execSQL", "(Ljava/lang/String;)V", (void *)native_execSQL},
       {"lastInsertRow", "()J", (void *)lastInsertRow},
       {"lastChangeCount", "()I", (void *)lastChangeCount},
-      // {"native_setLocale", "(Ljava/lang/String;I)V", (void *)native_setLocale},
       {"native_getDbLookaside", "()I", (void *)native_getDbLookaside},
       {"releaseMemory", "()I", (void *)native_releaseMemory},
-      // {"setICURoot", "(Ljava/lang/String;)V", (void *)setICURoot},
       {"native_rawExecSQL", "(Ljava/lang/String;)V", (void *)native_rawExecSQL},
       {"native_status", "(IZ)I", (void *)native_status},
-      {"native_key", "([C)V", (void *)native_key_char},
-      // {"native_rekey", "([C)V", (void *)native_rekey_char},
-      {"native_rekey", "(Ljava/lang/String;)V", (void *)native_rekey_str},
+      {"key_mutf8", "([C)V", (void *)native_key_mutf8},
+      {"key", "([B)V", (void *)native_key},
+      {"rekey", "([B)V", (void *)native_rekey},
     };
 
   int register_android_database_SQLiteDatabase(JNIEnv *env)
