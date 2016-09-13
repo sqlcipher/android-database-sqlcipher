@@ -79,7 +79,7 @@ public class SQLiteDatabase extends SQLiteClosable {
   /**
    * The version number of the SQLCipher for Android Java client library.
    */
-    public static final String SQLCIPHER_ANDROID_VERSION = "3.5.3";
+    public static final String SQLCIPHER_ANDROID_VERSION = "3.5.4";
 
     // Stores reference to all databases opened in the current process.
     // (The referent Object is not used at this time.)
