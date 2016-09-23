@@ -145,6 +145,7 @@ namespace sqlcipher {
         throw_sqlite3_exception(env, handle);
       }
     }
+    env->ReleaseCharArrayElements(jKey, jKeyChar, JNI_ABORT);
     env->ReleaseStringUTFChars(key, password);
   }
     
