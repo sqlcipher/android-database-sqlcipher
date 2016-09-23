@@ -4,8 +4,8 @@
 
 *** Compatibility
 
-    SQLCipher for Android runs on Android 2.1 - Android N, for =armeabi=, =armeabi-v7a=m, and =x86= architectures.
-
+    SQLCipher for Android runs on Android 2.1 - Android N, for =armeabi=, =armeabi-v7a=, and =x86= architectures. SQLCipher for Android does not currently include 64-bit native libaries, however it will work on 64-bit devices. Please read [[https://discuss.zetetic.net/t/sqlcipher-for-android-native-library-support/1440][this]] for additional details.
+    
 *** Contributions
 
 We welcome contributions, to contribute to SQLCipher for Android, a [[https://www.zetetic.net/contributions/][contributor agreement]] needs to be submitted.  All submissions should be based on the =master= branch.
