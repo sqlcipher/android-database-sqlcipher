@@ -40,7 +40,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -368,7 +368,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static int sQueryLogTimeInMillis = 0;  // lazily initialized
     private static final int QUERY_LOG_SQL_LENGTH = 64;
     private static final String COMMIT_SQL = "COMMIT;";
-    private final Random mRandom = new Random();
+    private final SecureRandom mRandom = new SecureRandom();
     private String mLastSqlStatement = null;
 
     // String prefix for slow database query EventLog records that show
