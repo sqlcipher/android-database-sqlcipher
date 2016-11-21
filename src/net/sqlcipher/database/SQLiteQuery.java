@@ -62,7 +62,6 @@ public class SQLiteQuery extends SQLiteProgram {
             int maxRead, int lastPos) {
         long timeStart = SystemClock.uptimeMillis();
         mDatabase.lock();
-        mDatabase.logTimeStat(mSql, timeStart, SQLiteDatabase.GET_LOCK_LOG_PREFIX);
         try {
             acquireReference();
             try {
@@ -77,7 +76,6 @@ public class SQLiteQuery extends SQLiteProgram {
                 if (SQLiteDebug.DEBUG_SQL_STATEMENTS) {
                     Log.d(TAG, "fillWindow(): " + mSql);
                 }
-                mDatabase.logTimeStat(mSql, timeStart);
                 return numRows;
             } catch (IllegalStateException e){
                 // simply ignore it

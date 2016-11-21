@@ -40,7 +40,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.locks.ReentrantLock;
@@ -368,7 +367,6 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static int sQueryLogTimeInMillis = 0;  // lazily initialized
     private static final int QUERY_LOG_SQL_LENGTH = 64;
     private static final String COMMIT_SQL = "COMMIT;";
-    private final Random mRandom = new Random();
     private String mLastSqlStatement = null;
 
     // String prefix for slow database query EventLog records that show
@@ -2181,7 +2179,6 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (!isOpen()) {
             throw new IllegalStateException("database not open");
         }
-        logTimeStat(mLastSqlStatement, timeStart, GET_LOCK_LOG_PREFIX);
         try {
             native_execSQL(sql);
         } catch (SQLiteDatabaseCorruptException e) {
@@ -2189,15 +2186,6 @@ public class SQLiteDatabase extends SQLiteClosable {
             throw e;
         } finally {
             unlock();
-        }
-
-        // Log commit statements along with the most recently executed
-        // SQL statement for disambiguation.  Note that instance
-        // equality to COMMIT_SQL is safe here.
-        if (sql == COMMIT_SQL) {
-            logTimeStat(mLastSqlStatement, timeStart, COMMIT_SQL);
-        } else {
-            logTimeStat(sql, timeStart, null);
         }
     }
 
@@ -2207,7 +2195,6 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (!isOpen()) {
             throw new IllegalStateException("database not open");
         }
-        logTimeStat(mLastSqlStatement, timeStart, GET_LOCK_LOG_PREFIX);
         try {
             native_rawExecSQL(sql);
         } catch (SQLiteDatabaseCorruptException e) {
@@ -2215,15 +2202,6 @@ public class SQLiteDatabase extends SQLiteClosable {
             throw e;
         } finally {
             unlock();
-        }
-
-        // Log commit statements along with the most recently executed
-        // SQL statement for disambiguation.  Note that instance
-        // equality to COMMIT_SQL is safe here.
-        if (sql == COMMIT_SQL) {
-            logTimeStat(mLastSqlStatement, timeStart, COMMIT_SQL);
-        } else {
-            logTimeStat(sql, timeStart, null);
         }
     }
 
@@ -2266,7 +2244,6 @@ public class SQLiteDatabase extends SQLiteClosable {
             }
             unlock();
         }
-        logTimeStat(sql, timeStart);
     }
 
     @Override
@@ -2467,67 +2444,6 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public final String getPath() {
         return mPath;
-    }
-
-    /* package */ void logTimeStat(String sql, long beginMillis) {
-        logTimeStat(sql, beginMillis, null);
-    }
-
-    /* package */ void logTimeStat(String sql, long beginMillis, String prefix) {
-        // Keep track of the last statement executed here, as this is
-        // the common funnel through which all methods of hitting
-        // libsqlite eventually flow.
-        mLastSqlStatement = sql;
-
-        // Sample fast queries in proportion to the time taken.
-        // Quantize the % first, so the logged sampling probability
-        // exactly equals the actual sampling rate for this query.
-
-        int samplePercent;
-        long durationMillis = SystemClock.uptimeMillis() - beginMillis;
-        if (durationMillis == 0 && prefix == GET_LOCK_LOG_PREFIX) {
-            // The common case is locks being uncontended.  Don't log those,
-            // even at 1%, which is our default below.
-            return;
-        }
-        if (sQueryLogTimeInMillis == 0) {
-            sQueryLogTimeInMillis = 500;//SystemProperties.getInt("db.db_operation.threshold_ms", 500);
-        }
-        if (durationMillis >= sQueryLogTimeInMillis) {
-            samplePercent = 100;
-        } else {;
-            samplePercent = (int) (100 * durationMillis / sQueryLogTimeInMillis) + 1;
-            if (mRandom.nextInt(100) >= samplePercent) return;
-        }
-
-        // Note: the prefix will be "COMMIT;" or "GETLOCK:" when non-null.  We wait to do
-        // it here so we avoid allocating in the common case.
-        if (prefix != null) {
-            sql = prefix + sql;
-        }
-
-        if (sql.length() > QUERY_LOG_SQL_LENGTH) sql = sql.substring(0, QUERY_LOG_SQL_LENGTH);
-
-        // ActivityThread.currentPackageName() only returns non-null if the
-        // current thread is an application main thread.  This parameter tells
-        // us whether an event loop is blocked, and if so, which app it is.
-        //
-        // Sadly, there's no fast way to determine app name if this is *not* a
-        // main thread, or when we are invoked via Binder (e.g. ContentProvider).
-        // Hopefully the full path to the database will be informative enough.
-
-        //TODO get the current package name
-        String blockingPackage = "unknown";//ActivityThread.currentPackageName();
-        if (blockingPackage == null) blockingPackage = "";
-
-        /*
-          EventLog.writeEvent(
-          EVENT_DB_OPERATION,
-          getPathForLogs(),
-          sql,
-          durationMillis,
-          blockingPackage,
-          samplePercent);*/
     }
 
     /**

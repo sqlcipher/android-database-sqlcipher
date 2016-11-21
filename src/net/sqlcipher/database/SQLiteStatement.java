@@ -56,7 +56,6 @@ public class SQLiteStatement extends SQLiteProgram
         acquireReference();
         try {
             native_execute();
-            mDatabase.logTimeStat(mSql, timeStart);
         } finally {
             releaseReference();
             mDatabase.unlock();
@@ -82,7 +81,6 @@ public class SQLiteStatement extends SQLiteProgram
         acquireReference();
         try {
             native_execute();
-            mDatabase.logTimeStat(mSql, timeStart);
             return (mDatabase.lastChangeCount() > 0) ? mDatabase.lastInsertRow() : -1;
         } finally {
             releaseReference();
@@ -100,7 +98,6 @@ public class SQLiteStatement extends SQLiteProgram
         acquireReference();
         try {
             native_execute();
-            mDatabase.logTimeStat(mSql, timeStart);
             return mDatabase.lastChangeCount();
         } finally {
             releaseReference();
@@ -126,7 +123,6 @@ public class SQLiteStatement extends SQLiteProgram
         acquireReference();
         try {
             long retValue = native_1x1_long();
-            mDatabase.logTimeStat(mSql, timeStart);
             return retValue;
         } finally {
             releaseReference();
@@ -152,7 +148,6 @@ public class SQLiteStatement extends SQLiteProgram
         acquireReference();
         try {
             String retValue = native_1x1_string();
-            mDatabase.logTimeStat(mSql, timeStart);
             return retValue;
         } finally {
             releaseReference();
