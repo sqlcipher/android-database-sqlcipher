@@ -43,6 +43,7 @@ CursorWindow::CursorWindow(size_t maxSize) :
 //     mData = (uint8_t *) memory->pointer();
 //     if (mData == NULL) {
 //         return false;
+
 //     }
 //     mHeader = (window_header_t *) mData;
 
@@ -121,39 +122,27 @@ LOG_WINDOW("Allocated row %u, rowSlot is at offset %u, fieldDir is %d bytes at o
 
 uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
 {
-    int32_t size;
+    size_t size = 0, new_allocation_sz = 0;
     uint32_t padding;
+    void *tempData = NULL;
     if (aligned) {
         // 4 byte alignment
         padding = 4 - (mFreeOffset & 0x3);
     } else {
         padding = 0;
     }
-
     size = requestedSize + padding;
-
     if (size > freeSpace()) {
-        LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d", mSize, size, freeSpace(), mHeader->numRows);
-        // Only grow the window if the first row doesn't fit
-        if (mHeader->numRows > 1) {
-LOGE("not growing since there are already %d row(s), max size %d", mHeader->numRows, mMaxSize);
-            return 0;
-        }
-
-        // Find a new size that will fit the allocation
-        int allocated = mSize - freeSpace();
-        int newSize = mSize + WINDOW_ALLOCATION_SIZE;
-        while (size > (newSize - allocated)) {
-            newSize += WINDOW_ALLOCATION_SIZE;
-            if (newSize > mMaxSize) {
-                LOGE("Attempting to grow window beyond max size (%d)", mMaxSize);
-                return 0;
-            }
-        }
-LOG_WINDOW("found size %d", newSize);
-        mSize = newSize;
+        LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d",
+             mSize, size, freeSpace(), mHeader->numRows);
+        new_allocation_sz = mSize + size - freeSpace();
+        tempData = realloc((void *)mData, new_allocation_sz);
+        if(tempData == NULL) return 0;
+        mData = (uint8_t *)tempData;
+        mHeader = (window_header_t *)mData;
+        LOGE("allocation grew to:%d", new_allocation_sz);
+        mSize = new_allocation_sz;
     }
-
     uint32_t offset = mFreeOffset + padding;
     mFreeOffset += size;
     return offset;
