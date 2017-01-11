@@ -1,6 +1,6 @@
 [submodule "external/sqlcipher"]
 	path = external/sqlcipher
-	url = https://github.com/sqlcipher/sqlcipher.git
+	url = git@git.zetetic.net:/sqlcipher.git
 [submodule "external/openssl"]
 	path = external/openssl
 	url = https://github.com/openssl/openssl.git
