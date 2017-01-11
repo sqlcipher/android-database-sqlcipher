@@ -43,7 +43,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @deprecated do not use this
      */
     @Deprecated
-    protected int nHandle = 0;
+    protected long nHandle = 0;
 
     /**
      * the SQLiteCompiledSql object for the given sql statement.
@@ -56,7 +56,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @deprecated do not use this
      */
     @Deprecated
-    protected int nStatement = 0;
+    protected long nStatement = 0;
 
     /* package */ SQLiteProgram(SQLiteDatabase db, String sql) {
         mDatabase = db;
@@ -95,7 +95,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
             // it is already in compiled-sql cache.
             // try to acquire the object.
             if (!mCompiledSql.acquire()) {
-                int last = mCompiledSql.nStatement;
+                long last = mCompiledSql.nStatement;
                 // the SQLiteCompiledSql in cache is in use by some other SQLiteProgram object.
                 // we can't have two different SQLiteProgam objects can't share the same
                 // CompiledSql object. create a new one.
@@ -149,7 +149,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      *
      * @return a unique identifier for this program
      */
-    public final int getUniqueId() {
+    public final long getUniqueId() {
         return nStatement;
     }
 

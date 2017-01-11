@@ -38,9 +38,9 @@ static jfieldID gStatementField;
 
 
 #define GET_STATEMENT(env, object) \
-        (sqlite3_stmt *)env->GetIntField(object, gStatementField)
+        (sqlite3_stmt *)env->GetLongField(object, gStatementField)
 #define GET_HANDLE(env, object) \
-        (sqlite3 *)env->GetIntField(object, gHandleField)
+        (sqlite3 *)env->GetLongField(object, gHandleField)
 
 static void native_compile(JNIEnv* env, jobject object, jstring sqlString)
 {
@@ -179,8 +179,8 @@ int register_android_database_SQLiteProgram(JNIEnv * env)
         return -1;
     }
 
-    gHandleField = env->GetFieldID(clazz, "nHandle", "I");
-    gStatementField = env->GetFieldID(clazz, "nStatement", "I");
+    gHandleField = env->GetFieldID(clazz, "nHandle", "J");
+    gStatementField = env->GetFieldID(clazz, "nStatement", "J");
 
     if (gHandleField == NULL || gStatementField == NULL) {
         LOGE("Error locating fields");

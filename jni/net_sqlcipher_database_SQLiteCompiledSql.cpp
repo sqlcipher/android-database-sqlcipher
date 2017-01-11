@@ -38,9 +38,9 @@ static jfieldID gStatementField;
 
 
 #define GET_STATEMENT(env, object) \
-        (sqlite3_stmt *)env->GetIntField(object, gStatementField)
+        (sqlite3_stmt *)env->GetLongField(object, gStatementField)
 #define GET_HANDLE(env, object) \
-        (sqlite3 *)env->GetIntField(object, gHandleField)
+        (sqlite3 *)env->GetLongField(object, gHandleField)
 
 
 sqlite3_stmt * compile(JNIEnv* env, jobject object,
@@ -54,7 +54,7 @@ sqlite3_stmt * compile(JNIEnv* env, jobject object,
     // Make sure not to leak the statement if it already exists
     if (statement != NULL) {
         sqlite3_finalize(statement);
-        env->SetIntField(object, gStatementField, 0);
+        env->SetLongField(object, gStatementField, 0);
     }
 
     // Compile the SQL
@@ -66,7 +66,7 @@ sqlite3_stmt * compile(JNIEnv* env, jobject object,
     if (err == SQLITE_OK) {
         // Store the statement in the Java object for future calls
         LOGV("Prepared statement %p on %p", statement, handle);
-        env->SetIntField(object, gStatementField, (int)statement);
+        env->SetLongField(object, gStatementField, (intptr_t)statement);
         return statement;
     } else {
         // Error messages like 'near ")": syntax error' are not
@@ -97,7 +97,7 @@ static void native_finalize(JNIEnv* env, jobject object)
 
     if (statement != NULL) {
         sqlite3_finalize(statement);
-        env->SetIntField(object, gStatementField, 0);
+        env->SetLongField(object, gStatementField, 0);
     }
 }
 
@@ -118,8 +118,8 @@ int register_android_database_SQLiteCompiledSql(JNIEnv * env)
         return -1;
     }
 
-    gHandleField = env->GetFieldID(clazz, "nHandle", "I");
-    gStatementField = env->GetFieldID(clazz, "nStatement", "I");
+    gHandleField = env->GetFieldID(clazz, "nHandle", "J");
+    gStatementField = env->GetFieldID(clazz, "nStatement", "J");
 
     if (gHandleField == NULL || gStatementField == NULL) {
         LOGE("Error locating fields");

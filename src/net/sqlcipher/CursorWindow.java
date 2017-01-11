@@ -41,7 +41,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     /** The pointer to the native window class. set by the native methods in
      * android_database_CursorWindow.cpp
      */
-    private int nWindow;
+    private long nWindow;
 
     private int mStartPos;
 
