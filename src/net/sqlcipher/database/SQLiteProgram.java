@@ -64,9 +64,10 @@ public abstract class SQLiteProgram extends SQLiteClosable {
         db.acquireReference();
         db.addSQLiteClosable(this);
         this.nHandle = db.mNativeHandle;
+        int crudPrefixLength = 6;
 
         // only cache CRUD statements
-        String prefixSql = mSql.substring(0, 6);
+        String prefixSql = mSql.length() >= crudPrefixLength ? mSql.substring(0, crudPrefixLength) : mSql;
         if (!prefixSql.equalsIgnoreCase("INSERT") && !prefixSql.equalsIgnoreCase("UPDATE") &&
                 !prefixSql.equalsIgnoreCase("REPLAC") &&
                 !prefixSql.equalsIgnoreCase("DELETE") && !prefixSql.equalsIgnoreCase("SELECT")) {
