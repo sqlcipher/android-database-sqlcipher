@@ -181,19 +181,54 @@ public class SQLiteDatabase extends SQLiteClosable {
       }
     }
 
-  /**
-   * Loads the native SQLCipher library into the application process.
-   */
+    /**
+     * Implement this interface to provide custom strategy for loading jni libraries.
+     */
+    public interface LibraryLoader {
+        /**
+         * Load jni libraries by given names.
+         * Straightforward implementation will be calling {@link System#loadLibrary(String name)}
+         * for every provided library name.
+         *
+         * @param libNames library names that sqlcipher need to load
+         */
+        void loadLibraries(String... libNames);
+    }
+
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
     public static synchronized void loadLibs (Context context) {
         loadLibs(context, context.getFilesDir());
     }
 
-  /**
-   * Loads the native SQLCipher library into the application process.
-   */
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
     public static synchronized void loadLibs (Context context, File workingDir) {
-      System.loadLibrary("sqlcipher");
-      
+        loadLibs(context, workingDir, new LibraryLoader() {
+            @Override
+            public void loadLibraries(String... libNames) {
+                for (String libName : libNames) {
+                    System.loadLibrary(libName);
+                }
+            }
+        });
+    }
+
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
+    public static synchronized void loadLibs(Context context, LibraryLoader libraryLoader) {
+        loadLibs(context, context.getFilesDir(), libraryLoader);
+    }
+
+    /**
+     * Loads the native SQLCipher library into the application process.
+     */
+    public static synchronized void loadLibs (Context context, File workingDir, LibraryLoader libraryLoader) {
+        libraryLoader.loadLibraries("sqlcipher");
+
         // System.loadLibrary("stlport_shared");
         // System.loadLibrary("sqlcipher_android");
         // System.loadLibrary("database_sqlcipher");
