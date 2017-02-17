@@ -7,7 +7,6 @@
     fi
 
     ANDROID_LIB_ROOT=../android-libs
-    ANDROID_PLATFORM_VERSION=android-23
     ANDROID_TOOLCHAIN_DIR=/tmp/sqlcipher-android-toolchain
     OPENSSL_CONFIGURE_OPTIONS="no-krb5 no-idea no-camellia \
         no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 \
@@ -49,30 +48,35 @@
                 TOOLCHAIN_PREFIX=arm-linux-androideabi
                 CONFIGURE_ARCH=android
                 PLATFORM_OUTPUT_DIR=armeabi
+                ANDROID_PLATFORM_VERSION=android-9
                 ;;
             armeabi-v7a)
                 TOOLCHAIN_ARCH=arm
                 TOOLCHAIN_PREFIX=arm-linux-androideabi
                 CONFIGURE_ARCH=android -march=armv7-a
                 PLATFORM_OUTPUT_DIR=armeabi-v7a
+                ANDROID_PLATFORM_VERSION=android-9
                 ;;
             x86)
                 TOOLCHAIN_ARCH=x86
                 TOOLCHAIN_PREFIX=i686-linux-android
                 CONFIGURE_ARCH=android-x86
                 PLATFORM_OUTPUT_DIR=x86
+                ANDROID_PLATFORM_VERSION=android-9
                 ;;
             x86_64)
                 TOOLCHAIN_ARCH=x86_64
                 TOOLCHAIN_PREFIX=x86_64-linux-android
                 CONFIGURE_ARCH=android64
                 PLATFORM_OUTPUT_DIR=x86_64
+                ANDROID_PLATFORM_VERSION=android-21
                 ;;
             arm64-v8a)
                 TOOLCHAIN_ARCH=arm64
                 TOOLCHAIN_PREFIX=aarch64-linux-android
                 CONFIGURE_ARCH=android64-aarch64
                 PLATFORM_OUTPUT_DIR=arm64-v8a
+                ANDROID_PLATFORM_VERSION=android-21
                 ;;                
             *)
                 echo "Unsupported build platform:${SQLCIPHER_TARGET_PLATFORM}"
@@ -84,7 +88,7 @@
                            --platform=${ANDROID_PLATFORM_VERSION} \
                            --install-dir=${ANDROID_TOOLCHAIN_DIR} \
                            --arch=${TOOLCHAIN_ARCH}
-        
+
         export PATH=${ANDROID_TOOLCHAIN_DIR}/bin:$PATH
         export CROSS_SYSROOT=${ANDROID_TOOLCHAIN_DIR}/sysroot
     
