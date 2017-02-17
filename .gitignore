@@ -9,3 +9,4 @@ bin
 libs
 gen
 *.zip
+.d
