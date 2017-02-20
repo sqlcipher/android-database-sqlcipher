@@ -10,3 +10,4 @@ libs
 gen
 *.zip
 .d
+jni/libs*
