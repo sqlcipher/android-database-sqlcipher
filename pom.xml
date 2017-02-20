@@ -47,6 +47,9 @@
         <version>4.3.0</version>
         <extensions>true</extensions>
         <configuration>
+          <sdk>
+            <platform>23</platform>
+          </sdk>
           <sign>
             <debug>false</debug>
           </sign>
