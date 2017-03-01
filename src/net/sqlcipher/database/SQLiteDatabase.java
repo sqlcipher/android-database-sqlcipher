@@ -2026,7 +2026,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             // Run the program and then cleanup
             statement.execute();
 
-            long insertedRowId = lastInsertRow();
+            long insertedRowId = lastChangeCount() > 0 ? lastInsertRow() : -1;
             if (insertedRowId == -1) {
                 Log.e(TAG, "Error inserting <redacted values> using <redacted sql> into " + table);
             } else {
