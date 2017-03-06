@@ -32,18 +32,16 @@ public class SQLiteQuery extends SQLiteProgram {
 
     /** The index of the unbound OFFSET parameter */
     private int mOffsetIndex;
-    
+
     /** Args to bind on requery */
     private String[] mBindArgs;
 
-    private boolean mClosed = false;
-
     /**
      * Create a persistent query object.
-     * 
+     *
      * @param db The database that this query object is associated with
-     * @param query The SQL string for this query. 
-     * @param offsetIndex The 1-based index to the OFFSET parameter, 
+     * @param query The SQL string for this query.
+     * @param offsetIndex The 1-based index to the OFFSET parameter,
      */
     /* package */ SQLiteQuery(SQLiteDatabase db, String query, int offsetIndex, String[] bindArgs) {
         super(db, query);
@@ -96,7 +94,7 @@ public class SQLiteQuery extends SQLiteProgram {
      * Get the column count for the statement. Only valid on query based
      * statements. The database must be locked
      * when calling this method.
-     * 
+     *
      * @return The number of column in the statement's result set.
      */
     /* package */ int columnCountLocked() {
@@ -111,7 +109,7 @@ public class SQLiteQuery extends SQLiteProgram {
     /**
      * Retrieves the column name for the given column index. The database must be locked
      * when calling this method.
-     * 
+     *
      * @param columnIndex the index of the column to get the name for
      * @return The requested column's name
      */
@@ -123,16 +121,10 @@ public class SQLiteQuery extends SQLiteProgram {
             releaseReference();
         }
     }
-    
+
     @Override
     public String toString() {
         return "SQLiteQuery: " + mSql;
-    }
-    
-    @Override
-    public void close() {
-        super.close();
-        mClosed = true;
     }
 
     /**
@@ -154,7 +146,7 @@ public class SQLiteQuery extends SQLiteProgram {
                 errMsg.append(" ");
                 IllegalStateException leakProgram = new IllegalStateException(
                         errMsg.toString(), e);
-                throw leakProgram;                
+                throw leakProgram;
             }
         }
     }
@@ -183,7 +175,7 @@ public class SQLiteQuery extends SQLiteProgram {
         if (!mClosed) super.bindString(index, value);
     }
 
-    private final native int native_fill_window(CursorWindow window, 
+    private final native int native_fill_window(CursorWindow window,
             int startPos, int offsetParam, int maxRead, int lastPos);
 
     private final native int native_column_count();
