@@ -83,6 +83,7 @@
                 exit 1
         esac
 
+        rm -rf ${ANDROID_TOOLCHAIN_DIR}
         mkdir -p "${ANDROID_LIB_ROOT}/${SQLCIPHER_TARGET_PLATFORM}"
         ${ANDROID_NDK_ROOT}/build/tools/make-standalone-toolchain.sh \
                            --platform=${ANDROID_PLATFORM_VERSION} \
@@ -111,6 +112,5 @@
         fi
         
         mv libcrypto.a ${ANDROID_LIB_ROOT}/${PLATFORM_OUTPUT_DIR}
-        rm -rf ${ANDROID_TOOLCHAIN_DIR}
     done    
 )
