@@ -35,6 +35,7 @@ public class SQLiteQuery extends SQLiteProgram {
     
     /** Args to bind on requery */
     private String[] mBindArgs;
+    private Object[] mObjectBindArgs;
 
     private boolean mClosed = false;
 
@@ -50,6 +51,13 @@ public class SQLiteQuery extends SQLiteProgram {
 
         mOffsetIndex = offsetIndex;
         mBindArgs = bindArgs;
+    }
+
+    SQLiteQuery(SQLiteDatabase db, String query, int offsetIndex, Object[] bindArgs) {
+        super(db, query);
+        mOffsetIndex = offsetIndex;
+        mObjectBindArgs = bindArgs;
+        mBindArgs = new String[mObjectBindArgs.length];
     }
 
     /**
@@ -142,8 +150,12 @@ public class SQLiteQuery extends SQLiteProgram {
         if (mBindArgs != null) {
             int len = mBindArgs.length;
             try {
-                for (int i = 0; i < len; i++) {
-                    super.bindString(i + 1, mBindArgs[i]);
+                if(mObjectBindArgs != null) {
+                    bindArguments(mObjectBindArgs);
+                } else {
+                    for (int i = 0; i < len; i++) {
+                        super.bindString(i + 1, mBindArgs[i]);
+                    }
                 }
             } catch (SQLiteMisuseException e) {
                 StringBuilder errMsg = new StringBuilder("mSql " + mSql);
@@ -181,6 +193,33 @@ public class SQLiteQuery extends SQLiteProgram {
     public void bindString(int index, String value) {
         mBindArgs[index - 1] = value;
         if (!mClosed) super.bindString(index, value);
+    }
+
+    public void bindArguments(Object[] args){
+        if(args != null && args.length > 0){
+            for(int i = 0; i < args.length; i++){
+                Object value = args[i];
+                if(value == null){
+                    bindNull(i + 1);
+                } else if (value instanceof Double) {
+                    bindDouble(i + 1, (Double)value);
+                } else if (value instanceof Float) {
+                    float number = ((Number)value).floatValue();
+                    bindDouble(i + 1, new Double(number));
+                } else if (value instanceof Long) {
+                    bindLong(i + 1, (Long)value);
+                } else if(value instanceof Integer) {
+                    int number = ((Number) value).intValue();
+                    bindLong(i + 1, new Long(number));
+                } else if (value instanceof Boolean) {
+                    bindLong(i + 1, (Boolean)value ? 1 : 0);
+                } else if (value instanceof byte[]) {
+                    bindBlob(i + 1, (byte[])value);
+                } else {
+                    bindString(i + 1, value.toString());
+                }
+            }
+        }
     }
 
     private final native int native_fill_window(CursorWindow window, 

@@ -1785,6 +1785,53 @@ public class SQLiteDatabase extends SQLiteClosable {
         return rawQueryWithFactory(null, sql, selectionArgs, null);
     }
 
+
+      /**
+     * Runs the provided SQL and returns a {@link Cursor} over the result set.
+     *
+     * @param sql the SQL query. The SQL string must not be ; terminated
+     * @param args You may include ?s in where clause in the query,
+     *     which will be replaced by the values from args. The
+     *     values will be bound by their type.
+     *
+     * @return A {@link Cursor} object, which is positioned before the first entry. Note that
+     * {@link Cursor}s are not synchronized, see the documentation for more details.
+     *
+     * @throws SQLiteException if there is an issue executing the sql or the SQL string is invalid
+     * @throws IllegalStateException if the database is not open
+     */
+    public Cursor rawQuery(String sql, Object[] args) {
+        if (!isOpen()) {
+            throw new IllegalStateException("database not open");
+        }
+        long timeStart = 0;
+        if (Config.LOGV || mSlowQueryThreshold != -1) {
+            timeStart = System.currentTimeMillis();
+        }
+        SQLiteDirectCursorDriver driver = new SQLiteDirectCursorDriver(this, sql, null);
+        Cursor cursor = null;
+        try {
+            cursor = driver.query(mFactory, args);
+        } finally {
+            if (Config.LOGV || mSlowQueryThreshold != -1) {
+                // Force query execution
+                int count = -1;
+                if (cursor != null) {
+                    count = cursor.getCount();
+                }
+
+                long duration = System.currentTimeMillis() - timeStart;
+
+                if (Config.LOGV || duration >= mSlowQueryThreshold) {
+                    Log.v(TAG,
+                          "query (" + duration + " ms): " + driver.toString() +
+                          ", args are <redacted>, count is " + count);
+                }
+            }
+        }
+        return new CrossProcessCursorWrapper(cursor);
+    }
+
     /**
      * Runs the provided SQL and returns a cursor over the result set.
      *
