@@ -57,7 +57,8 @@ public class SQLiteQuery extends SQLiteProgram {
         super(db, query);
         mOffsetIndex = offsetIndex;
         mObjectBindArgs = bindArgs;
-        mBindArgs = new String[mObjectBindArgs.length];
+        int length = mObjectBindArgs != null ? mObjectBindArgs.length : 0;
+        mBindArgs = new String[length];
     }
 
     /**
