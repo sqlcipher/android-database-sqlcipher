@@ -47,14 +47,19 @@ build-amalgamation:
 build-java:
 	ant release
 
-build-native:
+build-native-32:
 	cd ${JNI_DIR} && \
 	ndk-build V=1 --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs32 \
 		NDK_APPLICATION_MK=$(JNI_DIR)/Application32.mk \
-		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}" && \
+		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
+
+build-native-64:
+	cd ${JNI_DIR} && \
 	ndk-build V=1 --environment-overrides NDK_LIBS_OUT=$(JNI_DIR)/libs64 \
 		NDK_APPLICATION_MK=$(JNI_DIR)/Application64.mk \
 		SQLCIPHER_CFLAGS="${SQLCIPHER_CFLAGS}"
+
+build-native: build-native-32 build-native-64
 
 clean-java:
 	ant clean
@@ -77,7 +82,7 @@ distclean: clean
 	rm -rf ${EXTERNAL_DIR}/android-libs
 
 copy-libs:
-	cp -R ${JNI_DIR}/libs32/* ${JNI_DIR}/libs64/* ${LIBS_DIR}
+	-cp -R ${JNI_DIR}/libs32/* ${JNI_DIR}/libs64/* ${LIBS_DIR}
 
 release-aar:
 	-rm ${LIBS_DIR}/sqlcipher.jar
