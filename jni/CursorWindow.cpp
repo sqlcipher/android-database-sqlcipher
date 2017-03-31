@@ -24,6 +24,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include <jni.h>
 // #include <JNIHelp.h>
@@ -103,6 +104,9 @@ field_slot_t * CursorWindow::allocRow()
         return NULL;
     }
 
+    // Record the original offset of the rowSlot prior to allocation of the field directory
+    uint32_t rowSlotOffset = (uint8_t*)rowSlot - mData;
+
     // Allocate the slots for the field directory
     size_t fieldDirSize = mHeader->numColumns * sizeof(field_slot_t);
     uint32_t fieldDirOffset = alloc(fieldDirSize);
@@ -113,6 +117,10 @@ field_slot_t * CursorWindow::allocRow()
     }
     field_slot_t * fieldDir = (field_slot_t *)offsetToPtr(fieldDirOffset);
     memset(fieldDir, 0x0, fieldDirSize);
+
+    // Reset the rowSlot pointer relative to mData
+    // If the last alloc relocated mData this will be rowSlot's new address, otherwise the value will not change
+    rowSlot = (row_slot_t*)(mData + rowSlotOffset);
 
 LOG_WINDOW("Allocated row %u, rowSlot is at offset %u, fieldDir is %d bytes at offset %u\n", (mHeader->numRows - 1), ((uint8_t *)rowSlot) - mData, fieldDirSize, fieldDirOffset);
     rowSlot->offset = fieldDirOffset;
