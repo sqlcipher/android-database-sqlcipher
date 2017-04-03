@@ -35,6 +35,8 @@
 
 #define ROW_SLOT_CHUNK_NUM_ROWS 16
 
+#define GROW_WINDOW_SIZE_EXTRA MAX_WINDOW_SIZE / 10
+
 // Row slots are allocated in chunks of ROW_SLOT_CHUNK_NUM_ROWS,
 // with an offset after the rows that points to the next chunk
 #define ROW_SLOT_CHUNK_SIZE ((ROW_SLOT_CHUNK_NUM_ROWS * sizeof(row_slot_t)) + sizeof(uint32_t))

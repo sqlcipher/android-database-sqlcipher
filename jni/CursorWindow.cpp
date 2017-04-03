@@ -143,7 +143,7 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
     if (size > freeSpace()) {
         LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d",
              mSize, size, freeSpace(), mHeader->numRows);
-        new_allocation_sz = mSize + size - freeSpace();
+        new_allocation_sz = mSize + size - freeSpace() + GROW_WINDOW_SIZE_EXTRA;
         tempData = realloc((void *)mData, new_allocation_sz);
         if(tempData == NULL) return 0;
         mData = (uint8_t *)tempData;
