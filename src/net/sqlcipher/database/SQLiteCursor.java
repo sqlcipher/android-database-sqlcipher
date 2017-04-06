@@ -20,6 +20,7 @@ import net.sqlcipher.AbstractWindowedCursor;
 import net.sqlcipher.CursorWindow;
 import net.sqlcipher.SQLException;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -165,11 +166,19 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     /**
      * @hide
      */   
-    protected class MainThreadNotificationHandler extends Handler {
+    protected static class MainThreadNotificationHandler extends Handler {
+
+        private final WeakReference<SQLiteCursor> wrappedCursor;
+
+        MainThreadNotificationHandler(SQLiteCursor cursor) {
+          wrappedCursor = new WeakReference<SQLiteCursor>(cursor);
+        }
+
         public void handleMessage(Message msg) {
-            
-        	notifyDataSetChange();
-            
+            SQLiteCursor cursor = wrappedCursor.get();
+            if(cursor != null){
+              cursor.notifyDataSetChange();
+            }
         }
     }
     
@@ -184,7 +193,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                 mNotificationHandler == null) {
             queryThreadLock();
             try {
-                mNotificationHandler = new MainThreadNotificationHandler();
+                mNotificationHandler = new MainThreadNotificationHandler(this);
                 if (mPendingData) {
                 	notifyDataSetChange();
                     mPendingData = false;

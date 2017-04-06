@@ -2496,7 +2496,7 @@ public class SQLiteDatabase extends SQLiteClosable {
   }
 
     private String getTime() {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ").format(System.currentTimeMillis());
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ", Locale.US).format(System.currentTimeMillis());
     }
 
     /**

@@ -206,12 +206,12 @@ public class SQLiteQuery extends SQLiteProgram {
                     bindDouble(i + 1, (Double)value);
                 } else if (value instanceof Float) {
                     float number = ((Number)value).floatValue();
-                    bindDouble(i + 1, new Double(number));
+                    bindDouble(i + 1, Double.valueOf(number));
                 } else if (value instanceof Long) {
                     bindLong(i + 1, (Long)value);
                 } else if(value instanceof Integer) {
                     int number = ((Number) value).intValue();
-                    bindLong(i + 1, new Long(number));
+                    bindLong(i + 1, Long.valueOf(number));
                 } else if (value instanceof Boolean) {
                     bindLong(i + 1, (Boolean)value ? 1 : 0);
                 } else if (value instanceof byte[]) {

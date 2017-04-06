@@ -369,7 +369,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
 
         // Long.valueOf() returns null sometimes!
 //        Long rowid = Long.valueOf(getLong(mRowIdColumnIndex));
-        Long rowid = new Long(getLong(mRowIdColumnIndex));
+        Long rowid = Long.valueOf(getLong(mRowIdColumnIndex));
         if (rowid == null) {
             throw new IllegalStateException("null rowid. mRowIdColumnIndex = " + mRowIdColumnIndex);
         }

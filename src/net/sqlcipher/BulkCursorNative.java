@@ -166,7 +166,7 @@ public abstract class BulkCursorNative extends Binder implements IBulkCursor
 
                 case RESPOND_TRANSACTION: {
                     data.enforceInterface(IBulkCursor.descriptor);
-                    Bundle extras = data.readBundle();
+                    Bundle extras = data.readBundle(getClass().getClassLoader());
                     Bundle returnExtras = respond(extras);
                     reply.writeNoException();
                     reply.writeBundle(returnExtras);
@@ -334,7 +334,7 @@ final class BulkCursorProxy implements IBulkCursor {
             count = -1;
         } else {
             count = reply.readInt();
-            mExtras = reply.readBundle();
+            mExtras = reply.readBundle(getClass().getClassLoader());
         }
 
         data.recycle();
@@ -412,7 +412,7 @@ final class BulkCursorProxy implements IBulkCursor {
 
             DatabaseUtils.readExceptionFromParcel(reply);
 
-            mExtras = reply.readBundle();
+            mExtras = reply.readBundle(getClass().getClassLoader());
             data.recycle();
             reply.recycle();
         }
@@ -431,7 +431,7 @@ final class BulkCursorProxy implements IBulkCursor {
 
         DatabaseUtils.readExceptionFromParcel(reply);
 
-        Bundle returnExtras = reply.readBundle();
+        Bundle returnExtras = reply.readBundle(getClass().getClassLoader());
         data.recycle();
         reply.recycle();
         return returnExtras;
