@@ -58,6 +58,11 @@ public abstract class SQLiteProgram extends SQLiteClosable {
     @Deprecated
     protected long nStatement = 0;
 
+    /**
+     * Indicates whether {@link #close()} has been called.
+     */
+    boolean mClosed = false;
+
     /* package */ SQLiteProgram(SQLiteDatabase db, String sql) {
         mDatabase = db;
         mSql = sql.trim();
@@ -142,7 +147,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
                 // it is in compiled-sql cache. reset its CompiledSql#mInUse flag
                 mCompiledSql.release();
             }
-        } 
+        }
     }
 
     /**
@@ -177,6 +182,9 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @param index The 1-based index to the parameter to bind null to
      */
     public void bindNull(int index) {
+        if (mClosed) {
+            throw new IllegalStateException("program already closed");
+        }
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -196,6 +204,9 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @param value The value to bind
      */
     public void bindLong(int index, long value) {
+        if (mClosed) {
+            throw new IllegalStateException("program already closed");
+        }
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -215,6 +226,9 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @param value The value to bind
      */
     public void bindDouble(int index, double value) {
+        if (mClosed) {
+            throw new IllegalStateException("program already closed");
+        }
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -236,6 +250,9 @@ public abstract class SQLiteProgram extends SQLiteClosable {
     public void bindString(int index, String value) {
         if (value == null) {
             throw new IllegalArgumentException("the bind value at index " + index + " is null");
+        }
+        if (mClosed) {
+            throw new IllegalStateException("program already closed");
         }
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
@@ -259,6 +276,9 @@ public abstract class SQLiteProgram extends SQLiteClosable {
         if (value == null) {
             throw new IllegalArgumentException("the bind value at index " + index + " is null");
         }
+        if (mClosed) {
+            throw new IllegalStateException("program already closed");
+        }
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -274,6 +294,9 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * Clears all existing bindings. Unset bindings are treated as NULL.
      */
     public void clearBindings() {
+        if (mClosed) {
+            throw new IllegalStateException("program already closed");
+        }
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
         }
@@ -289,6 +312,9 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * Release this program's resources, making it invalid.
      */
     public void close() {
+        if (mClosed) {
+            return;
+        }
         if (!mDatabase.isOpen()) {
             return;
         }
@@ -298,6 +324,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
         } finally {
             mDatabase.unlock();
         }
+        mClosed = true;
     }
 
     /**
