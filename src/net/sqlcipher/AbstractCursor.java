@@ -512,6 +512,10 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
         return mExtras;
     }
 
+    @Override
+    public void setExtras(Bundle extras) {
+    }
+
     public Bundle respond(Bundle extras) {
         return Bundle.EMPTY;
     }
