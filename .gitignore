@@ -11,3 +11,4 @@ gen
 *.zip
 .d
 jni/libs*
+TAGS
