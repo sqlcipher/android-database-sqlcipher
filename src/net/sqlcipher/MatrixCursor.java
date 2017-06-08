@@ -18,8 +18,6 @@ package net.sqlcipher;
 
 import java.util.ArrayList;
 
-import android.database.CharArrayBuffer;
-
 
 /**
  * A mutable cursor implementation backed by an array of {@code Object}s. Use
@@ -211,6 +209,21 @@ public class MatrixCursor extends AbstractCursor {
             }
 
             data[index++] = columnValue;
+            return this;
+        }
+
+        /**
+         * Offer value for possible inclusion if this cursor defines the given
+         * column. Columns not defined by the cursor are silently ignored.
+         *
+         * @return this builder to support chaining
+         */
+        public RowBuilder add(String columnName, Object value) {
+            for (int i = 0; i < columnNames.length; i++) {
+                if (columnName.equals(columnNames[i])) {
+                    data[index + i] = value;
+                }
+            }
             return this;
         }
     }
