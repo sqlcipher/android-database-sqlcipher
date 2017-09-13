@@ -1,0 +1,3 @@
+[submodule "android-database-sqlcipher/src/main/external/openssl"]
+	path = android-database-sqlcipher/src/main/external/openssl
+	url = https://github.com/openssl/openssl.git
