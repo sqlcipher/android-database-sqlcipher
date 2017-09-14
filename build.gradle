@@ -19,6 +19,8 @@ allprojects {
 }
 
 ext {
+  clientVersionNumber = "3.5.7"
+  nativeRootOutputDir = "${projectDir}/${name}/src/main"
   sqlcipherDir = "${projectDir}/${name}/src/main/external/sqlcipher"
   opensslDir = "${projectDir}/${name}/src/main/external/openssl"  
   sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +

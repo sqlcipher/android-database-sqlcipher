@@ -8,7 +8,7 @@ SQLCIPHER_SRC := $(SQLCIPHER_DIR)/sqlite3.c
 LOCAL_CFLAGS +=  $(SQLCIPHER_CFLAGS) -DLOG_NDEBUG
 LOCAL_C_INCLUDES := $(SQLCIPHER_DIR) $(LOCAL_PATH)
 LOCAL_LDLIBS := -llog -latomic
-LOCAL_LDFLAGS += -L$(LOCAL_PATH)/android-libs/$(TARGET_ARCH_ABI) -fuse-ld=bfd
+LOCAL_LDFLAGS += -L$(LOCAL_PATH)/../external/android-libs/$(TARGET_ARCH_ABI) -fuse-ld=bfd
 LOCAL_STATIC_LIBRARIES += static-libcrypto
 LOCAL_MODULE    := libsqlcipher
 LOCAL_SRC_FILES := $(SQLCIPHER_SRC) \

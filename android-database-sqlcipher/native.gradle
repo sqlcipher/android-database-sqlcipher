@@ -1,0 +1,85 @@
+task buildOpenSSL (type:Exec) {
+  workingDir "${projectDir}"
+  commandLine "./build-openssl-libraries.sh"
+}
+
+task buildAmalgamation () {
+  doLast {
+    exec {
+      workingDir "${projectDir}/src/main/external/sqlcipher"
+      environment("CFLAGS", "${rootProject.ext.sqlcipherCFlags}")
+      commandLine "./configure", "--enable-tempstore=yes", "--with-crypto-lib=none"
+    }
+    exec {
+      workingDir "${projectDir}/src/main/external/sqlcipher"
+      environment("CFLAGS", "${rootProject.ext.sqlcipherCFlags}")
+      commandLine "make",  "sqlite3.c"
+    }
+  }
+}
+
+task buildNative32() {
+  description "Build the 32-bit native SQLCipher binaries"
+  doLast {
+    executeNdkBuild(
+      "${rootProject.ext.nativeRootOutputDir}/libs32",
+      file("src/main/cpp").absolutePath,
+      file("src/main/cpp/Application32.mk").absolutePath,
+      "${rootProject.ext.sqlcipherCFlags}")
+  }
+}
+
+task buildNative64() {
+  description "Build the 64-bit native SQLCipher binaries"
+  doLast {
+    executeNdkBuild(
+      "${rootProject.ext.nativeRootOutputDir}/libs64",
+      file("src/main/cpp").absolutePath,
+      file("src/main/cpp/Application64.mk").absolutePath,
+      "${rootProject.ext.sqlcipherCFlags}")
+  }
+}
+
+task cleanOpenSSL {
+  description "Clean the OpenSSL source"
+  doLast {
+    logger.info "Cleaning OpenSSL directory:${rootProject.ext.opensslDir}"
+    exec {
+      workingDir "${rootProject.ext.opensslDir}"
+      commandLine "git", "checkout", "-f"
+    }
+  }
+}
+
+task cleanSQLCipher() {
+  description "Clean the SQLCipher source"
+  doLast {
+    logger.info "Cleaning SQLCipher directory:${rootProject.ext.sqlcipherDir}"
+    exec {
+      workingDir "${rootProject.ext.sqlcipherDir}"
+      commandLine "git", "checkout", "-f"
+    }
+  }
+}
+
+task cleanNative() {
+  description "Clean the native (JNI) build artifacts"
+  doLast {
+    logger.info "Cleaning native build artifacts"
+    exec {
+      workingDir "${projectDir}/src/main"
+      commandLine "rm", "-rf", "libs32", "lib64", "obj"
+    }
+  }
+}
+
+def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile, cflags) {
+  logger.info "Executing NDK build command"
+  exec {
+    def outputDirectory = "NDK_LIBS_OUT=${outputDir}"
+    def applicationFile = "NDK_APPLICATION_MK=${applicationMkFile}"
+    environment("SQLCIPHER_CFLAGS", "${cflags}")
+    commandLine "ndk-build", "--environment-overrides", outputDirectory,
+    "-C", androidMkDirectory, applicationFile
+  }
+}

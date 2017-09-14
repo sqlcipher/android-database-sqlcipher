@@ -1,4 +1,5 @@
-apply plugin: 'com.android.library'
+apply plugin: "com.android.library"
+apply from: "native.gradle"
 
 android {
 
@@ -9,56 +10,34 @@ android {
     minSdkVersion 14
     targetSdkVersion 26
     versionCode 1
-    versionName "1.0"
+    versionName "${rootProject.ext.clientVersionNumber}"
   }
 
   buildTypes {
     release {
       minifyEnabled false
-      //proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
     }
   }
 
-  externalNativeBuild {
-    ndkBuild {
-      path "${projectDir}/src/main/cpp/Android.mk"
+  sourceSets {
+    main {
+      jniLibs.srcDirs "${rootProject.ext.nativeRootOutputDir}/libs32/",
+      "${rootProject.ext.nativeRootOutputDir}/libs64/"
     }
   }
 
-  task buildOpenSSL (type:Exec) {
-    workingDir "${projectDir}"
-    commandLine "./build-openssl-libraries.sh"
+  task distclean(dependsOn: [clean, cleanSQLCipher, cleanOpenSSL]) {
+    description "Clean up build, SQLCipher, and OpenSSL artifacts"
   }
 
-  task buildAmalgamation () {
-    doLast {
-      exec {
-        workingDir "${projectDir}/src/main/external/sqlcipher"
-        environment("CFLAGS", "${rootProject.ext.sqlcipherCFlags}")
-        commandLine "./configure", "--enable-tempstore=yes", "--with-crypto-lib=none"
-      }
-      exec {
-        workingDir "${projectDir}/src/main/external/sqlcipher"
-        environment("CFLAGS", "${rootProject.ext.sqlcipherCFlags}")
-        commandLine "make",  "sqlite3.c"
-      }
-    }
-  }
+  clean.dependsOn cleanNative
 
   preBuild.dependsOn buildAmalgamation
 
-  // task cleanOpenSSL() {
-  //   println "OpenSSL dir:${rootProject.ext.opensslDir}"
-  //   println "Cleaning OpenSSL"
-  // }
+  afterEvaluate {
+    android.libraryVariants.all { variant ->
+      variant.javaCompile.dependsOn([buildNative32, buildNative64])
+    }
+  }
 
-  // task cleanSQLCipher() {
-  //   println "SQLCipher dir:${rootProject.ext.sqlcipherDir}"
-  //   println "Cleaning SQLCipher"
-  // }
-
-}
-
-dependencies {
-  compile fileTree(dir: 'libs', include: ['*.jar'])
 }
