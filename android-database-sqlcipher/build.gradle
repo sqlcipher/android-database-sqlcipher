@@ -25,6 +25,38 @@ android {
     }
   }
 
+  task buildOpenSSL (type:Exec) {
+    workingDir "${projectDir}"
+    commandLine "./build-openssl-libraries.sh"
+  }
+
+  task buildAmalgamation () {
+    doLast {
+      exec {
+        workingDir "${projectDir}/src/main/external/sqlcipher"
+        environment("CFLAGS", "${rootProject.ext.sqlcipherCFlags}")
+        commandLine "./configure", "--enable-tempstore=yes", "--with-crypto-lib=none"
+      }
+      exec {
+        workingDir "${projectDir}/src/main/external/sqlcipher"
+        environment("CFLAGS", "${rootProject.ext.sqlcipherCFlags}")
+        commandLine "make",  "sqlite3.c"
+      }
+    }
+  }
+
+  preBuild.dependsOn buildAmalgamation
+
+  // task cleanOpenSSL() {
+  //   println "OpenSSL dir:${rootProject.ext.opensslDir}"
+  //   println "Cleaning OpenSSL"
+  // }
+
+  // task cleanSQLCipher() {
+  //   println "SQLCipher dir:${rootProject.ext.sqlcipherDir}"
+  //   println "Cleaning SQLCipher"
+  // }
+
 }
 
 dependencies {

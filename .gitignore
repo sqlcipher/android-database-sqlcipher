@@ -1,3 +1,7 @@
 .gradle
 build
 .DS_Store
+android-database-sqlcipher/src/main/external/sqlcipher
+android-database-sqlcipher/src/main/external/openssl
+android-database-sqlcipher/src/main/external/android-libs/
+android-database-sqlcipher/.externalNativeBuild/
