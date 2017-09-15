@@ -6,9 +6,6 @@ buildscript {
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:2.3.3'
-
-    // NOTE: Do not place your application dependencies here; they belong
-    // in the individual module build.gradle files
   }
 }
 
@@ -21,6 +18,7 @@ allprojects {
 ext {
   clientVersionNumber = "3.5.7"
   nativeRootOutputDir = "${projectDir}/${name}/src/main"
+  androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
   sqlcipherDir = "${projectDir}/${name}/src/main/external/sqlcipher"
   opensslDir = "${projectDir}/${name}/src/main/external/openssl"  
   sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +
@@ -44,9 +42,6 @@ ext {
     "-DSQLCIPHER_CRYPTO_OPENSSL"
 }
 
-// task clean(type: Delete, dependsOn: [cleanOpenSSL, cleanSQLCipher]) {
-//   delete rootProject.buildDir
-// }
 task clean(type: Delete) {
   delete rootProject.buildDir
 }

@@ -26,13 +26,9 @@ android {
     }
   }
 
-  task distclean(dependsOn: [clean, cleanSQLCipher, cleanOpenSSL]) {
-    description "Clean up build, SQLCipher, and OpenSSL artifacts"
-  }
-
   clean.dependsOn cleanNative
 
-  preBuild.dependsOn buildAmalgamation
+  preBuild.dependsOn([buildOpenSSL, buildAmalgamation])
 
   afterEvaluate {
     android.libraryVariants.all { variant ->

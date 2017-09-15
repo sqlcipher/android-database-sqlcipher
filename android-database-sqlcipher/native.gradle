@@ -1,6 +1,14 @@
-task buildOpenSSL (type:Exec) {
-  workingDir "${projectDir}"
-  commandLine "./build-openssl-libraries.sh"
+task buildOpenSSL () {
+  onlyIf {
+    def armNativeFile = new File("${androidNativeRootDir}/armeabi/libcrypto.a")
+    return !armNativeFile.exists()
+  }
+  doLast {
+    exec {
+      workingDir "${projectDir}"
+      commandLine "./build-openssl-libraries.sh"
+    }
+  }
 }
 
 task buildAmalgamation () {
@@ -60,11 +68,15 @@ task cleanNative() {
   description "Clean the native (JNI) build artifacts"
   doLast {
     logger.info "Cleaning native build artifacts"
-    exec {
-      workingDir "${projectDir}/src/main"
-      commandLine "rm", "-rf", "libs32", "lib64", "obj"
+    ["libs32", "libs64", "obj"].each {
+      new File("${projectDir}/src/main/${it}").deleteDir()
     }
+    new File("${androidNativeRootDir}/").deleteDir()
   }
+}
+
+task distclean(dependsOn: [clean, cleanSQLCipher, cleanOpenSSL]) {
+  description "Clean build, SQLCipher, and OpenSSL artifacts"
 }
 
 def gitClean(directory) {
