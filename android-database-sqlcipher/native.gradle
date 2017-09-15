@@ -40,25 +40,19 @@ task buildNative64() {
   }
 }
 
-task cleanOpenSSL {
+task cleanOpenSSL() {
   description "Clean the OpenSSL source"
   doLast {
-    logger.info "Cleaning OpenSSL directory:${rootProject.ext.opensslDir}"
-    exec {
-      workingDir "${rootProject.ext.opensslDir}"
-      commandLine "git", "checkout", "-f"
-    }
+    logger.info "Cleaning OpenSSL source"
+    gitClean("${rootProject.ext.opensslDir}")
   }
 }
 
 task cleanSQLCipher() {
   description "Clean the SQLCipher source"
   doLast {
-    logger.info "Cleaning SQLCipher directory:${rootProject.ext.sqlcipherDir}"
-    exec {
-      workingDir "${rootProject.ext.sqlcipherDir}"
-      commandLine "git", "checkout", "-f"
-    }
+    logger.info "Cleaning SQLCipher source"
+    gitClean("${rootProject.ext.sqlcipherDir}")
   }
 }
 
@@ -70,6 +64,14 @@ task cleanNative() {
       workingDir "${projectDir}/src/main"
       commandLine "rm", "-rf", "libs32", "lib64", "obj"
     }
+  }
+}
+
+def gitClean(directory) {
+  logger.info "Cleaning directory:${directory}"
+  exec {
+    workingDir "${directory}"
+    commandLine "git", "checkout", "-f"
   }
 }
 
