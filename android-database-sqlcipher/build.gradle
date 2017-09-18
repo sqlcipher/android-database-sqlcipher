@@ -10,7 +10,7 @@ android {
     minSdkVersion 14
     targetSdkVersion 26
     versionCode 1
-    versionName "${rootProject.ext.clientVersionNumber}"
+    versionName "${clientVersionNumber}"
   }
 
   buildTypes {
@@ -33,6 +33,13 @@ android {
   afterEvaluate {
     android.libraryVariants.all { variant ->
       variant.javaCompile.dependsOn([buildNative32, buildNative64])
+      variant.outputs.each { output ->
+        def outputFile = output.outputFile
+        if (outputFile != null && outputFile.name.endsWith(".aar")) {
+          def fileName = "${archivesBaseName}-${clientVersionNumber}.aar"
+          output.outputFile = new File(outputFile.parent, fileName)
+        }
+      }
     }
   }
 
