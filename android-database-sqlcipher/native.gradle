@@ -71,12 +71,14 @@ task cleanNative() {
     ["libs32", "libs64", "obj"].each {
       new File("${projectDir}/src/main/${it}").deleteDir()
     }
-    new File("${androidNativeRootDir}/").deleteDir()
   }
 }
 
 task distclean(dependsOn: [clean, cleanSQLCipher, cleanOpenSSL]) {
   description "Clean build, SQLCipher, and OpenSSL artifacts"
+  doLast {
+    new File("${androidNativeRootDir}/").deleteDir()
+  }
 }
 
 def gitClean(directory) {
@@ -93,7 +95,8 @@ def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile, cflags) {
     def outputDirectory = "NDK_LIBS_OUT=${outputDir}"
     def applicationFile = "NDK_APPLICATION_MK=${applicationMkFile}"
     environment("SQLCIPHER_CFLAGS", "${cflags}")
-    commandLine "ndk-build", "--environment-overrides", outputDirectory,
+    commandLine "ndk-build",
+    "--environment-overrides", outputDirectory,
     "-C", androidMkDirectory, applicationFile
   }
 }
