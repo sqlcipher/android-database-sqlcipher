@@ -87,6 +87,10 @@ def gitClean(directory) {
     workingDir "${directory}"
     commandLine "git", "checkout", "-f"
   }
+  exec {
+    workingDir "${directory}"
+    commandLine "git", "clean", "-d", "-f"
+  }
 }
 
 def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile, cflags) {
