@@ -4,3 +4,4 @@
 [submodule "android-database-sqlcipher/src/main/external/sqlcipher"]
 	path = android-database-sqlcipher/src/main/external/sqlcipher
 	url = https://github.com/sqlcipher/sqlcipher.git
+	ignore = untracked
