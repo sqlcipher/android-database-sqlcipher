@@ -6,7 +6,9 @@ task buildOpenSSL () {
   doLast {
     exec {
       workingDir "${projectDir}"
-      commandLine "./build-openssl-libraries.sh"
+      commandLine "./build-openssl-libraries.sh",
+      "${minimumAndroidSdkVersion}",
+      "${minimumAndroid64BitSdkVersion}"
     }
   }
 }
