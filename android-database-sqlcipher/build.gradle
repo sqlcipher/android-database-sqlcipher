@@ -21,8 +21,7 @@ android {
 
   sourceSets {
     main {
-      jniLibs.srcDirs "${rootProject.ext.nativeRootOutputDir}/libs32/",
-      "${rootProject.ext.nativeRootOutputDir}/libs64/"
+      jniLibs.srcDirs "${rootProject.ext.nativeRootOutputDir}/libs"
     }
   }
 
@@ -32,7 +31,7 @@ android {
 
   afterEvaluate {
     android.libraryVariants.all { variant ->
-      variant.javaCompile.dependsOn([buildNative32, buildNative64])
+      variant.javaCompile.dependsOn(buildNative)
       variant.outputs.each { output ->
         def outputFile = output.outputFile
         if (outputFile != null && outputFile.name.endsWith(".aar")) {
