@@ -283,7 +283,7 @@ namespace sqlcipher {
       int64_t value;
       if (window->getLong(row, column, &value)) {
         char buf[32];
-        snprintf(buf, sizeof(buf), "%lld", value);
+        snprintf(buf, sizeof(buf), "%"PRId64"", value);
         return env->NewStringUTF((const char*)buf);
       }
       return NULL;
@@ -294,8 +294,8 @@ namespace sqlcipher {
         snprintf(buf, sizeof(buf), "%g", value);
         return env->NewStringUTF(buf);
       }
-      return NULL;
     }
+    return NULL;
   }
 
   /**
@@ -359,7 +359,7 @@ namespace sqlcipher {
       if (window->getLong(row, column, &value)) {
         int len;
         char buf[32];
-        len = snprintf(buf, sizeof(buf), "%lld", value);
+        len = snprintf(buf, sizeof(buf), "%"PRId64"", value);
         jint bufferLength = env->GetArrayLength(buffer);
         if(len > bufferLength || dst == NULL){
           jstring content = env->NewStringUTF(buf);
