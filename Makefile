@@ -2,6 +2,9 @@
 .PHONY: clean distclean build
 GRADLE = ./gradlew
 
+init:
+	git submodule update --init
+
 clean:
 	$(GRADLE) clean
 
