@@ -60,7 +60,10 @@ task cleanNative() {
   doLast {
     logger.info "Cleaning native build artifacts"
     ["libs", "obj"].each {
-      new File("${projectDir}/src/main/${it}").deleteDir()
+      File file = new File("${projectDir}/src/main/${it}")
+      if(file.exists()){
+        file.deleteDir()
+      }
     }
   }
 }

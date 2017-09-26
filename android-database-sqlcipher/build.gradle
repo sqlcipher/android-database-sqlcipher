@@ -1,6 +1,6 @@
 apply plugin: "com.android.library"
-apply plugin: "maven-publish"
 apply from: "native.gradle"
+apply from: "maven.gradle"
 
 android {
 
@@ -43,56 +43,4 @@ android {
     }
   }
 
-}
-
-publishing {
-  publications {
-    sqlcipher(MavenPublication) {
-      groupId "net.zetetic"
-      artifactId "android-database-sqlcipher"
-      version "${clientVersionNumber}"
-      artifact("$buildDir/outputs/aar/${archivesBaseName}-${clientVersionNumber}.aar")
-      pom.withXml {
-        asNode().children().last() + {
-          resolveStrategy = Closure.DELEGATE_FIRST
-          name "android-database-sqlcipher"
-          description "SQLCipher for Android is a plugin to SQLite that provides full database encryption."
-          url "https://www.zetetic.net/sqlcipher"
-          scm {
-            url "https://github.com/sqlcipher/android-database-sqlcipher.git"
-            connection "scm:git:https://github.com/sqlcipher/android-database-sqlcipher.git"
-            developerConnection "scm:git:https://github.com/sqlcipher/android-database-sqlcipher.git"
-          }
-          licenses {
-            license {
-              url "https://www.zetetic.net/sqlcipher/license/"
-            }
-          }
-          developers {
-            developer {
-              name "Zetetic Support"
-              email "support@zetetic.net"
-              organization "Zetetic LLC"
-              organizationUrl "https://www.zetetic.net/"
-            }
-          }
-          distributionManagement {
-            snapshotRepository {
-              id "ossrh"
-              url "https://oss.sonatype.org/content/repositories/snapshots"
-            }
-            repository {
-              id "ossrh"
-              url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-            }
-          }
-        }
-      }
-    }
-  }
-  repositories {
-    maven {
-      url "$buildDir/repo"
-    }
-  }
 }
