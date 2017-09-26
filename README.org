@@ -1,10 +1,10 @@
 *** Download Source and Binaries
 
-    The latest binary packages for developers, with the jar’s, .so’s and a quick sample can be [[https://www.zetetic.net/sqlcipher/open-source][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
+    The latest AAR binary packages can be [[https://www.zetetic.net/sqlcipher/open-source][here]], the source can be found [[https://github.com/sqlcipher/android-database-sqlcipher][here]].
 
 *** Compatibility
 
-    SQLCipher for Android runs on Android 2.1 - Android N, for =armeabi=, =armeabi-v7a=, =x86=, =x86_64=, and =arm64_v8a= architectures.
+    SQLCipher for Android runs on Android 4–Android 8, for =armeabi=, =armeabi-v7a=, =x86=, =x86_64=, and =arm64_v8a= architectures.
     
 *** Contributions
 
@@ -51,23 +51,17 @@ We’ve packaged up a very simple SDK for any Android developer to add SQLCipher
 :  SQLiteDatabase.loadLibs(this); //first init the db libraries with the context
 :  SQLiteOpenHelper.getWritableDatabase("thisismysecret"):
 
-An article covering both integration of SQLCipher into an Android application as well as building the source can be found [[http://sqlcipher.net/sqlcipher-for-android][here]].
-
-Notepad + SQLCipher = Notepadbot
-
-Notepadbot is a sample application pulled from the standard Android samples code and updated to use SQLCipher. You can browse the source [[https://github.com/guardianproject/notepadbot][here]] and download the apk [[https://github.com/guardianproject/notepadbot/downloads][here]].
+An article covering both integration of SQLCipher into an Android application as well as building the source can be found [[https://www.zetetic.net/sqlcipher/sqlcipher-for-android/][here]].
 
 *** Building
 
-In order to build android-database-sqlcipher from source you will need both the Android SDK as well as Android NDK. With different Android SDK installation approaches available, please make sure the =android= binary is available on your =PATH=. We currently recommend using Android NDK version r11c. To complete the =make init= command, you will need the =android-23= platform installed from the SDK. The =make init= command will build OpenSSL for the required platforms, thus the =ANDROID_NDK_ROOT= environment variable must be defined which should point to your NDK root. Once you have cloned the repo, change directory into the root of the repository and run the following commands:
+In order to build android-database-sqlcipher from source you will need both the Android SDK as well as Android NDK. With different Android SDK installation approaches available. We currently recommend using Android NDK version r15c. To complete the =make . The =ANDROID_NDK_ROOT= environment variable must be defined which should point to your NDK root. Once you have cloned the repo, change directory into the root of the repository and run the following commands:
 
 :  # this only needs to be done once
 :  make init
 
 :  # to build the source
-:  make
-
-Recursively copy the =libs= directory into the root of your application, you will also need the =assets= directory copied into the root of your application folder. A detailed set of instructions and further customization can be found [[http://sqlcipher.net/sqlcipher-for-android/][here]].
+:  make build
 
 *** License
 
