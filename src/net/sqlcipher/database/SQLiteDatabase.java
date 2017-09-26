@@ -683,11 +683,11 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public void beginTransactionWithListener(SQLiteTransactionListener transactionListener) {
         lockForced();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         boolean ok = false;
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             // If this thread already had the lock then get out
             if (mLock.getHoldCount() > 1) {
                 if (mInnerTransactionIsSuccessful) {
@@ -732,13 +732,13 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalStateException if the database is not open or is not locked by the current thread
      */
     public void endTransaction() {
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
-        if (!mLock.isHeldByCurrentThread()) {
-            throw new IllegalStateException("no transaction pending");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
+            if (!mLock.isHeldByCurrentThread()) {
+                throw new IllegalStateException("no transaction pending");
+            }
             if (mInnerTransactionIsSuccessful) {
                 mInnerTransactionIsSuccessful = false;
             } else {
@@ -1326,10 +1326,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public int getVersion() {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             prog = new SQLiteStatement(this, "PRAGMA user_version;");
             long version = prog.simpleQueryForLong();
             return (int) version;
@@ -1359,10 +1359,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public long getMaximumSize() {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             prog = new SQLiteStatement(this,
                                        "PRAGMA max_page_count;");
             long pageCount = prog.simpleQueryForLong();
@@ -1383,10 +1383,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public long setMaximumSize(long numBytes) {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             long pageSize = getPageSize();
             long numPages = numBytes / pageSize;
             // If numBytes isn't a multiple of pageSize, bump up a page
@@ -1411,10 +1411,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public long getPageSize() {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             prog = new SQLiteStatement(this,
                                        "PRAGMA page_size;");
             long size = prog.simpleQueryForLong();
@@ -1582,10 +1582,10 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public SQLiteStatement compileStatement(String sql) throws SQLException {
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             return new SQLiteStatement(this, sql);
         } finally {
             unlock();
@@ -2110,11 +2110,11 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public int delete(String table, String whereClause, String[] whereArgs) {
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         SQLiteStatement statement = null;
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             statement = compileStatement("DELETE FROM " + table
                                          + (!TextUtils.isEmpty(whereClause)
                                             ? " WHERE " + whereClause : ""));
@@ -2200,11 +2200,11 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
 
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         SQLiteStatement statement = null;
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             statement = compileStatement(sql.toString());
 
             // Bind the values
@@ -2258,10 +2258,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public void execSQL(String sql) throws SQLException {
         long timeStart = SystemClock.uptimeMillis();
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             native_execSQL(sql);
         } catch (SQLiteDatabaseCorruptException e) {
             onCorruption();
@@ -2274,10 +2274,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public void rawExecSQL(String sql){
         long timeStart = SystemClock.uptimeMillis();
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             native_rawExecSQL(sql);
         } catch (SQLiteDatabaseCorruptException e) {
             onCorruption();
@@ -2304,11 +2304,11 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
         long timeStart = SystemClock.uptimeMillis();
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         SQLiteStatement statement = null;
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             statement = compileStatement(sql);
             if (bindArgs != null) {
                 int numArgs = bindArgs.length;
