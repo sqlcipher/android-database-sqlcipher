@@ -1,5 +1,6 @@
 .POSIX:
-.PHONY: clean distclean build
+.PHONY: init clean distclean build-openssl build publish-local-snapshot \
+	publish-local-release publish-remote-snapshot public-remote-release
 GRADLE = ./gradlew
 
 init:
@@ -19,7 +20,7 @@ build:
 
 publish-local-snapshot:
 	@ $(collect-signing-info) \
-	$(GRADLE) --no-daemon \
+	$(GRADLE) \
 	-PpublishSnapshot=true \
 	-PpublishLocal=true \
 	-PsigningKeyId="$$gpgKeyId" \
@@ -29,7 +30,7 @@ publish-local-snapshot:
 
 publish-local-release:
 	@ $(collect-signing-info) \
-	$(GRADLE) --no-daemon \
+	$(GRADLE) \
 	-PpublishSnapshot=false \
 	-PpublishLocal=true \
 	-PsigningKeyId="$$gpgKeyId" \
@@ -40,7 +41,7 @@ publish-local-release:
 publish-remote-snapshot:
 	@ $(collect-signing-info) \
 	$(collect-nexus-info) \
-	$(GRADLE) --no-daemon \
+	$(GRADLE) \
 	-PpublishSnapshot=true \
 	-PpublishLocal=false \
 	-PsigningKeyId="$$gpgKeyId" \
@@ -53,7 +54,7 @@ publish-remote-snapshot:
 publish-remote-release:
 	@ $(collect-signing-info) \
 	$(collect-nexus-info) \
-	$(GRADLE) --no-daemon \
+	$(GRADLE) \
 	-PpublishSnapshot=false \
 	-PpublishLocal=false \
 	-PsigningKeyId="$$gpgKeyId" \
