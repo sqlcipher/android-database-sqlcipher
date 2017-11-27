@@ -10,78 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="382a8211-d7d3-441f-932a-eda016caf007" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.gitmodules" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/modules/android-database-sqlcipher_git.iml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/bintray.gradle" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/CursorWindow.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/CursorWindow.h" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/jni_elements.h" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/jni_exception.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/jni_exception.h" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/log.h" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/net_sqlcipher_CursorWindow.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/net_sqlcipher_database_SQLiteCompiledSql.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/net_sqlcipher_database_SQLiteDatabase.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/net_sqlcipher_database_SQLiteDebug.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/net_sqlcipher_database_SQLiteProgram.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/net_sqlcipher_database_SQLiteQuery.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/net_sqlcipher_database_SQLiteStatement.cpp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/sqlcipher_loading.h" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/app/jni/sqlite3_exception.h" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.lock" afterPath="$PROJECT_DIR$/.gradle/4.1/fileHashes/fileHashes.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/cache.properties" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/gradle.xml" afterPath="$PROJECT_DIR$/.idea/gradle.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/roiland/testjniapplication/ExampleInstrumentedTest.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/app/src/test/java/com/roiland/testjniapplication/ExampleUnitTest.java" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Android.mk" afterPath="$PROJECT_DIR$/app/Android.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Application32.mk" afterPath="$PROJECT_DIR$/app/Application32.mk" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/Application64.mk" afterPath="$PROJECT_DIR$/app/Application64.mk" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/build.gradle" afterPath="$PROJECT_DIR$/app/build.gradle" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/external/sqlcipher/sqlite3.h" afterPath="$PROJECT_DIR$/app/external/sqlcipher/sqlite3.h" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/AbstractCursor.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/AbstractCursor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/AbstractWindowedCursor.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/AbstractWindowedCursor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CrossProcessCursorWrapper.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CrossProcessCursorWrapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/Cursor.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/Cursor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CursorIndexOutOfBoundsException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CursorIndexOutOfBoundsException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CursorWindow.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CursorWindow.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CursorWrapper.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/CursorWrapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/DatabaseErrorHandler.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/DatabaseErrorHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/DatabaseUtils.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/DatabaseUtils.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/DefaultDatabaseErrorHandler.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/DefaultDatabaseErrorHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/MatrixCursor.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/MatrixCursor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/SQLException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/SQLException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/StaleDataException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/StaleDataException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/DatabaseObjectNotClosedException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/DatabaseObjectNotClosedException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteAbortException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteAbortException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteClosable.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteClosable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteCompiledSql.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteCompiledSql.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteConstraintException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteConstraintException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteContentHelper.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteContentHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteCursor.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteCursor.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteCursorDriver.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteCursorDriver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDatabase.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDatabase.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDatabaseCorruptException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDatabaseCorruptException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDatabaseHook.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDatabaseHook.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDebug.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDebug.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDirectCursorDriver.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDirectCursorDriver.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDiskIOException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDiskIOException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDoneException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDoneException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteFullException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteFullException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteMisuseException.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteMisuseException.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteOpenHelper.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteOpenHelper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteProgram.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteProgram.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteQuery.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteQuery.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteQueryBuilder.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteQueryBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteStatement.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteStatement.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteTransactionListener.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteTransactionListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SqliteWrapper.java" afterPath="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SqliteWrapper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" afterPath="$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -105,11 +37,101 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
+      <file leaf-file-name="FrameworkWalSingleThreadedTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/FrameworkWalSingleThreadedTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="38">
+              <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SingleThreadedTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SingleThreadedTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="38">
+              <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SQLCipherEncryptedSingleThreadedTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SQLCipherEncryptedSingleThreadedTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="38">
+              <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SQLCipherSingleThreadedTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SQLCipherSingleThreadedTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="38">
+              <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ConcurrentTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/ConcurrentTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="51" lean-forward="false" selection-start-line="0" selection-start-column="41" selection-end-line="0" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FrameworkConcurrentTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/FrameworkConcurrentTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="149">
+              <caret line="26" column="40" lean-forward="false" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="IBulkCursor.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/net/sqlcipher/IBulkCursor.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="126">
+            <state relative-caret-position="411">
               <caret line="64" column="23" lean-forward="false" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FrameworkWalConcurrentTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/FrameworkWalConcurrentTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="31">
+              <caret line="20" column="51" lean-forward="false" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="51" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SQLCipherConcurrentTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/SQLCipherConcurrentTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="133">
+              <caret line="25" column="40" lean-forward="false" selection-start-line="25" selection-start-column="40" selection-end-line="25" selection-end-column="40" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SQLCipherEncryptedConcurrentTest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/SQLCipherEncryptedConcurrentTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="69">
+              <caret line="26" column="22" lean-forward="true" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
               <folding />
             </state>
           </provider>
@@ -1930,9 +1952,21 @@
         <option value="$PROJECT_DIR$/app/src/main/cpp/net_sqlcipher_database_SQLiteDatabase.cpp" />
         <option value="$PROJECT_DIR$/app/external/sqlcipher/sqlite3.h" />
         <option value="$PROJECT_DIR$/app/Android.mk" />
-        <option value="$PROJECT_DIR$/app/build.gradle" />
         <option value="$PROJECT_DIR$/app/src/main/java/net/sqlcipher/database/SQLiteDatabase.java" />
         <option value="$PROJECT_DIR$/app/external/sqlcipher/sqlite3.c" />
+        <option value="$PROJECT_DIR$/app/build.gradle" />
+        <option value="$PROJECT_DIR$/app/src/test/java/net/sqlcipher/testjniapplication/ExampleUnitTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/ExampleInstrumentedTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/FrameworkSingleThreadedTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/FrameworkWalSingleThreadedTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SingleThreadedTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SQLCipherEncryptedSingleThreadedTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SQLCipherSingleThreadedTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/ConcurrentTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/FrameworkWalConcurrentTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/SQLCipherEncryptedConcurrentTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/SQLCipherConcurrentTest.java" />
+        <option value="$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/FrameworkConcurrentTest.java" />
       </list>
     </option>
   </component>
@@ -1958,31 +1992,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="AndroidView">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SqlcipherJni" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="Gradle Scripts" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidBuildScriptsGroupNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="SqlcipherJni" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="app" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -2051,6 +2061,55 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="AndroidView">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android-database-sqlcipher" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="External Build Files" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.ndk.ExternalBuildFilesGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android-database-sqlcipher" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Gradle Scripts" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidBuildScriptsGroupNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android-database-sqlcipher" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="android-database-sqlcipher" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="app" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidModuleNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="java" />
+              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.android.AndroidSourceTypeNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
       <pane id="PackagesPane">
         <subPane>
           <PATH>
@@ -2065,7 +2124,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -2156,7 +2214,7 @@
       <option name="DEEP_LINK" value="" />
       <option name="ACTIVITY_CLASS" value="" />
       <method>
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1511769817244" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1511771131045" />
       </method>
     </configuration>
     <configuration default="true" type="AndroidTestRunConfigurationType" factoryName="Android Instrumented Tests">
@@ -2203,7 +2261,7 @@
         <option name="ADVANCED_PROFILING_ENABLED" value="false" />
       </Profilers>
       <method>
-        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1511769817244" />
+        <option name="com.android.instantApps.provision.BeforeRunTask" enabled="true" clearCache="false" clearProvisionedDevices="false" myTimestamp="1511771131046" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -2235,6 +2293,27 @@
         </option>
         <option name="vmOptions" />
       </ExternalSystemSettings>
+      <method />
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+      <module name="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" />
+      <option name="MAIN_CLASS_NAME" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
       <method />
     </configuration>
     <configuration default="true" type="JarApplication" factoryName="JAR Application">
@@ -2411,7 +2490,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Android Profiler" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3291714" sideWeight="0.49811524" order="6" side_tool="false" content_ui="tabs" />
@@ -2429,7 +2507,7 @@
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.54464287" sideWeight="0.67803836" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.23987207" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23987207" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Device File Explorer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
@@ -2455,58 +2533,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/app/src/main/cpp/CursorWindow.cpp" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/cpp/net_sqlcipher_database_SQLiteDebug.cpp" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/cpp/shell.c" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/cpp/sqlite3.c" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/jni/net_sqlcipher_database_SQLiteDatabase.cpp" />
-    <entry file="file://$PROJECT_DIR$/app/src/main/jni/CursorWindow.cpp" />
-    <entry file="file://$PROJECT_DIR$/app/Application64.mk">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="2" column="26" lean-forward="false" selection-start-line="2" selection-start-column="26" selection-end-line="2" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.cpp">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../ProtocolJni/app/Android.mk" />
-    <entry file="file://$PROJECT_DIR$/app/.externalNativeBuild/cmake/debug/mips64/CMakeFiles/3.6.0-rc2/CMakeCCompiler.cmake" />
-    <entry file="file://$PROJECT_DIR$/local.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/settings.gradle" />
-    <entry file="file://$PROJECT_DIR$/gradle.properties" />
-    <entry file="file://$PROJECT_DIR$/app/proguard-rules.pro">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://D:/Android/Sdk/ndk-bundle/build/core/setup-app.mk">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="80" column="0" lean-forward="false" selection-start-line="80" selection-start-column="0" selection-end-line="80" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/Application32.mk">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="19">
@@ -2601,20 +2627,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/Application.mk">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" column="18" lean-forward="false" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app/external/sqlcipher/sqlite3session.h">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -2626,31 +2638,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="446">
           <caret line="57" column="24" lean-forward="false" selection-start-line="57" selection-start-column="8" selection-end-line="57" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/Android.mk">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="133">
-          <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/build.gradle">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="76">
-          <caret line="4" column="30" lean-forward="true" selection-start-line="4" selection-start-column="30" selection-end-line="4" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
-      <provider editor-type-id="android-manifest">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="57">
-          <caret line="3" column="11" lean-forward="false" selection-start-line="3" selection-start-column="11" selection-end-line="3" selection-end-column="11" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2689,9 +2676,184 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+      <provider editor-type-id="android-manifest">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="2" column="32" lean-forward="false" selection-start-line="2" selection-start-column="23" selection-end-line="2" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-200">
+          <caret line="4" column="18" lean-forward="false" selection-start-line="4" selection-start-column="18" selection-end-line="4" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/build.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-722">
+          <caret line="5" column="19" lean-forward="false" selection-start-line="5" selection-start-column="19" selection-end-line="5" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradle/wrapper/gradle-wrapper.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/gradle.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/settings.gradle">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/local.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Android.mk">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="7" column="16" lean-forward="false" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/Application.mk">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/test/java/net/sqlcipher/testjniapplication/ExampleUnitTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="8" lean-forward="true" selection-start-line="0" selection-start-column="8" selection-end-line="0" selection-end-column="41" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/ExampleInstrumentedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/FrameworkSingleThreadedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="20" column="8" lean-forward="false" selection-start-line="20" selection-start-column="8" selection-end-line="20" selection-end-column="48" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/FrameworkWalSingleThreadedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SingleThreadedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SQLCipherEncryptedSingleThreadedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/single/SQLCipherSingleThreadedTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="38">
+          <caret line="20" column="48" lean-forward="false" selection-start-line="20" selection-start-column="48" selection-end-line="20" selection-end-column="48" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/ConcurrentTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="51" lean-forward="false" selection-start-line="0" selection-start-column="41" selection-end-line="0" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/FrameworkWalConcurrentTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="31">
+          <caret line="20" column="51" lean-forward="false" selection-start-line="20" selection-start-column="51" selection-end-line="20" selection-end-column="51" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/SQLCipherEncryptedConcurrentTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="26" column="22" lean-forward="true" selection-start-line="26" selection-start-column="22" selection-end-line="26" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/SQLCipherConcurrentTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="133">
+          <caret line="25" column="40" lean-forward="false" selection-start-line="25" selection-start-column="40" selection-end-line="25" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/src/androidTest/java/net/sqlcipher/testjniapplication/concurrent/FrameworkConcurrentTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="26" column="40" lean-forward="false" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/net/sqlcipher/IBulkCursor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="126">
+        <state relative-caret-position="411">
           <caret line="64" column="23" lean-forward="false" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="23" />
           <folding />
         </state>
