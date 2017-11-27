@@ -24,6 +24,8 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/ioctl.h>
+#include <memory.h>
+#include <malloc.h>
 
 #include "log.h"
 #include "jni_elements.h"

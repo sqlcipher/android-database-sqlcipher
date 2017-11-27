@@ -1,10 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
     defaultConfig {
-        applicationId "com.roiland.testjniapplication"
+        //applicationId "com.roiland.testjniapplication"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
@@ -16,10 +16,10 @@ android {
                 arguments '-DANDROID_STL=stlport_static'
             }
         }
-        // ÉèÖÃ abi
+        // è®¾ç½® abi
         ndk {
             moduleName "libSqlcipher"
-            abiFilters "armeabi-v7a","arm64-v8a","x86","x86_64"
+            abiFilters "armeabi","armeabi-v7a","arm64-v8a","x86","x86_64"
         }
 
     }

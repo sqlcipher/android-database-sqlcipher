@@ -111,7 +111,7 @@ public class SQLiteStatement extends SQLiteProgram
      *
      * @return The result of the query.
      *
-     * @throws android.database.sqlite.SQLiteDoneException if the query returns zero rows
+     * @throws net.sqlcipher.database.SQLiteDoneException if the query returns zero rows
      */
     public long simpleQueryForLong() {
         if (!mDatabase.isOpen()) {
@@ -136,7 +136,7 @@ public class SQLiteStatement extends SQLiteProgram
      *
      * @return The result of the query.
      *
-     * @throws android.database.sqlite.SQLiteDoneException if the query returns zero rows
+     * @throws net.sqlcipher.database.SQLiteDoneException if the query returns zero rows
      */
     public String simpleQueryForString() {
         if (!mDatabase.isOpen()) {

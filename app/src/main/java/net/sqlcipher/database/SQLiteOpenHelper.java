@@ -21,7 +21,6 @@ import java.io.File;
 import android.content.Context;
 import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.DefaultDatabaseErrorHandler;
-import net.sqlcipher.database.SQLiteDatabaseHook;
 import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
 import android.util.Log;
 
@@ -39,6 +38,7 @@ public abstract class SQLiteOpenHelper {
 
     private final Context mContext;
     private final String mName;
+    private final String mPassword;
     private final CursorFactory mFactory;
     private final int mNewVersion;
     private final SQLiteDatabaseHook mHook;
@@ -59,8 +59,8 @@ public abstract class SQLiteOpenHelper {
      * @param version number of the database (starting at 1); if the database is older,
      *     {@link #onUpgrade} will be used to upgrade the database
      */
-    public SQLiteOpenHelper(Context context, String name, CursorFactory factory, int version) {
-        this(context, name, factory, version, null, new DefaultDatabaseErrorHandler());
+    public SQLiteOpenHelper(Context context, String name, String password, CursorFactory factory, int version) {
+        this(context, name, password, factory, version, null, new DefaultDatabaseErrorHandler());
     }
 
     /**
@@ -75,9 +75,9 @@ public abstract class SQLiteOpenHelper {
      *     {@link #onUpgrade} will be used to upgrade the database
      * @param hook to run on pre/post key events
      */
-    public SQLiteOpenHelper(Context context, String name, CursorFactory factory,
+    public SQLiteOpenHelper(Context context, String name, String password, CursorFactory factory,
                             int version, SQLiteDatabaseHook hook) {
-        this(context, name, factory, version, hook, new DefaultDatabaseErrorHandler());
+        this(context, name, password, factory, version, hook, new DefaultDatabaseErrorHandler());
     }
     
     /**
@@ -97,19 +97,19 @@ public abstract class SQLiteOpenHelper {
      * @param errorHandler the {@link DatabaseErrorHandler} to be used when sqlite reports database
      *     corruption.
      */
-    public SQLiteOpenHelper(Context context, String name, CursorFactory factory,
+    public SQLiteOpenHelper(Context context, String name, String password, CursorFactory factory,
                             int version, SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
         if (version < 1) throw new IllegalArgumentException("Version must be >= 1, was " + version);
         if (errorHandler == null) {
             throw new IllegalArgumentException("DatabaseErrorHandler param value can't be null.");
         }
-
         mContext = context;
         mName = name;
         mFactory = factory;
         mNewVersion = version;
         mHook = hook;
         mErrorHandler = errorHandler;
+        mPassword = password;
     }
 
     /**
@@ -124,6 +124,10 @@ public abstract class SQLiteOpenHelper {
      * @throws SQLiteException if the database cannot be opened for writing
      * @return a read/write database object valid until {@link #close} is called
      */
+
+    public synchronized SQLiteDatabase getWritableDatabase() {
+        return getWritableDatabase(mPassword == null ? null : mPassword.toCharArray());
+    }
 
     public synchronized SQLiteDatabase getWritableDatabase(String password) {
       return getWritableDatabase(password == null ? null : password.toCharArray());
@@ -146,22 +150,23 @@ public abstract class SQLiteOpenHelper {
 
         boolean success = false;
         SQLiteDatabase db = null;
-        if (mDatabase != null) mDatabase.lock();
+        if (mDatabase != null) {
+            mDatabase.lock();
+        }else{
+            mDatabase.loadLibs(mContext);
+        }
         try {
             mIsInitializing = true;
             if (mName == null) {
                 db = SQLiteDatabase.create(null, password);
-                
             } else {
                 String path = mContext.getDatabasePath(mName).getPath();
-                
                 File dbPathFile = new File (path);
-                if (!dbPathFile.exists())
-                	dbPathFile.getParentFile().mkdirs();
-
+                if (!dbPathFile.exists()) {
+                    dbPathFile.getParentFile().mkdirs();
+                }
                 db = SQLiteDatabase.openOrCreateDatabase(path, password, mFactory, mHook, mErrorHandler);
             }
-            
 
             int version = db.getVersion();
             if (version != mNewVersion) {

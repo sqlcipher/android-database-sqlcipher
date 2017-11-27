@@ -37,8 +37,6 @@
 /*
 ** Make sure we can call this stuff from C++.
 */
-//namespace sqlcipher {
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -67,9 +65,6 @@ extern "C" {
 #endif
 #ifndef SQLITE_SYSAPI
 # define SQLITE_SYSAPI
-#endif
-#ifndef SQLITE_HAS_CODEC
-# define SQLITE_HAS_CODEC
 #endif
 
 /*
@@ -8386,10 +8381,10 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_cmp(
 # undef double
 #endif
 
-//#ifdef __cplusplus
-//}  /* End of the 'extern "C"' block */
-//#endif
-//#endif /* SQLITE3_H */
+#ifdef __cplusplus
+}  /* End of the 'extern "C"' block */
+#endif
+#endif /* SQLITE3_H */
 
 /******** Begin file sqlite3rtree.h *********/
 /*
@@ -8405,13 +8400,13 @@ SQLITE_API SQLITE_EXPERIMENTAL int sqlite3_snapshot_cmp(
 *************************************************************************
 */
 
-//#ifndef _SQLITE3RTREE_H_
-//#define _SQLITE3RTREE_H_
+#ifndef _SQLITE3RTREE_H_
+#define _SQLITE3RTREE_H_
 
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef struct sqlite3_rtree_geometry sqlite3_rtree_geometry;
 typedef struct sqlite3_rtree_query_info sqlite3_rtree_query_info;
@@ -8503,24 +8498,24 @@ struct sqlite3_rtree_query_info {
 #define FULLY_WITHIN     2   /* Object fully contained within query region */
 
 
-//#ifdef __cplusplus
-//}  /* end of the 'extern "C"' block */
-//#endif
+#ifdef __cplusplus
+}  /* end of the 'extern "C"' block */
+#endif
 
-//#endif  /* ifndef _SQLITE3RTREE_H_ */
+#endif  /* ifndef _SQLITE3RTREE_H_ */
 
 /******** End of sqlite3rtree.h *********/
 /******** Begin file sqlite3session.h *********/
 
-//#if !defined(__SQLITESESSION_H_) && defined(SQLITE_ENABLE_SESSION)
-//#define __SQLITESESSION_H_ 1
+#if !defined(__SQLITESESSION_H_) && defined(SQLITE_ENABLE_SESSION)
+#define __SQLITESESSION_H_ 1
 
 /*
 ** Make sure we can call this stuff from C++.
 */
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 
 /*
@@ -9786,11 +9781,11 @@ int sqlite3changegroup_output_strm(sqlite3_changegroup*,
 /*
 ** Make sure we can call this stuff from C++.
 */
-//#ifdef __cplusplus
-//}
-//#endif
+#ifdef __cplusplus
+}
+#endif
 
-//#endif  /* !defined(__SQLITESESSION_H_) && defined(SQLITE_ENABLE_SESSION) */
+#endif  /* !defined(__SQLITESESSION_H_) && defined(SQLITE_ENABLE_SESSION) */
 
 /******** End of sqlite3session.h *********/
 /******** Begin file fts5.h *********/
@@ -9814,13 +9809,13 @@ int sqlite3changegroup_output_strm(sqlite3_changegroup*,
 */
 
 
-//#ifndef _FTS5_H
-//#define _FTS5_H
+#ifndef _FTS5_H
+#define _FTS5_H
 
 
-//#ifdef __cplusplus
-//extern "C" {
-//#endif
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /*************************************************************************
 ** CUSTOM AUXILIARY FUNCTIONS
@@ -9834,16 +9829,16 @@ typedef struct Fts5Context Fts5Context;
 typedef struct Fts5PhraseIter Fts5PhraseIter;
 
 typedef void (*fts5_extension_function)(
-        const Fts5ExtensionApi *pApi,   /* API offered by current FTS version */
-        Fts5Context *pFts,              /* First arg to pass to pApi functions */
-        sqlite3_context *pCtx,          /* Context for returning result/error */
-        int nVal,                       /* Number of values in apVal[] array */
-        sqlite3_value **apVal           /* Array of trailing arguments */
+  const Fts5ExtensionApi *pApi,   /* API offered by current FTS version */
+  Fts5Context *pFts,              /* First arg to pass to pApi functions */
+  sqlite3_context *pCtx,          /* Context for returning result/error */
+  int nVal,                       /* Number of values in apVal[] array */
+  sqlite3_value **apVal           /* Array of trailing arguments */
 );
 
 struct Fts5PhraseIter {
-    const unsigned char *a;
-    const unsigned char *b;
+  const unsigned char *a;
+  const unsigned char *b;
 };
 
 /*
@@ -10062,51 +10057,41 @@ struct Fts5PhraseIter {
 **   See xPhraseFirstColumn above.
 */
 struct Fts5ExtensionApi {
-    int iVersion;                   /* Currently always set to 3 */
+  int iVersion;                   /* Currently always set to 3 */
 
-    void *(*xUserData)(Fts5Context *);
+  void *(*xUserData)(Fts5Context*);
 
-    int (*xColumnCount)(Fts5Context *);
+  int (*xColumnCount)(Fts5Context*);
+  int (*xRowCount)(Fts5Context*, sqlite3_int64 *pnRow);
+  int (*xColumnTotalSize)(Fts5Context*, int iCol, sqlite3_int64 *pnToken);
 
-    int (*xRowCount)(Fts5Context *, sqlite3_int64 *pnRow);
+  int (*xTokenize)(Fts5Context*, 
+    const char *pText, int nText, /* Text to tokenize */
+    void *pCtx,                   /* Context passed to xToken() */
+    int (*xToken)(void*, int, const char*, int, int, int)       /* Callback */
+  );
 
-    int (*xColumnTotalSize)(Fts5Context *, int iCol, sqlite3_int64 *pnToken);
+  int (*xPhraseCount)(Fts5Context*);
+  int (*xPhraseSize)(Fts5Context*, int iPhrase);
 
-    int (*xTokenize)(Fts5Context *,
-                     const char *pText, int nText, /* Text to tokenize */
-                     void *pCtx,                   /* Context passed to xToken() */
-                     int (*xToken)(void *, int, const char *, int, int, int)       /* Callback */
-    );
+  int (*xInstCount)(Fts5Context*, int *pnInst);
+  int (*xInst)(Fts5Context*, int iIdx, int *piPhrase, int *piCol, int *piOff);
 
-    int (*xPhraseCount)(Fts5Context *);
+  sqlite3_int64 (*xRowid)(Fts5Context*);
+  int (*xColumnText)(Fts5Context*, int iCol, const char **pz, int *pn);
+  int (*xColumnSize)(Fts5Context*, int iCol, int *pnToken);
 
-    int (*xPhraseSize)(Fts5Context *, int iPhrase);
+  int (*xQueryPhrase)(Fts5Context*, int iPhrase, void *pUserData,
+    int(*)(const Fts5ExtensionApi*,Fts5Context*,void*)
+  );
+  int (*xSetAuxdata)(Fts5Context*, void *pAux, void(*xDelete)(void*));
+  void *(*xGetAuxdata)(Fts5Context*, int bClear);
 
-    int (*xInstCount)(Fts5Context *, int *pnInst);
+  int (*xPhraseFirst)(Fts5Context*, int iPhrase, Fts5PhraseIter*, int*, int*);
+  void (*xPhraseNext)(Fts5Context*, Fts5PhraseIter*, int *piCol, int *piOff);
 
-    int (*xInst)(Fts5Context *, int iIdx, int *piPhrase, int *piCol, int *piOff);
-
-    sqlite3_int64 (*xRowid)(Fts5Context *);
-
-    int (*xColumnText)(Fts5Context *, int iCol, const char **pz, int *pn);
-
-    int (*xColumnSize)(Fts5Context *, int iCol, int *pnToken);
-
-    int (*xQueryPhrase)(Fts5Context *, int iPhrase, void *pUserData,
-                        int(*)(const Fts5ExtensionApi *, Fts5Context *, void *)
-    );
-
-    int (*xSetAuxdata)(Fts5Context *, void *pAux, void(*xDelete)(void *));
-
-    void *(*xGetAuxdata)(Fts5Context *, int bClear);
-
-    int (*xPhraseFirst)(Fts5Context *, int iPhrase, Fts5PhraseIter *, int *, int *);
-
-    void (*xPhraseNext)(Fts5Context *, Fts5PhraseIter *, int *piCol, int *piOff);
-
-    int (*xPhraseFirstColumn)(Fts5Context *, int iPhrase, Fts5PhraseIter *, int *);
-
-    void (*xPhraseNextColumn)(Fts5Context *, Fts5PhraseIter *, int *piCol);
+  int (*xPhraseFirstColumn)(Fts5Context*, int iPhrase, Fts5PhraseIter*, int*);
+  void (*xPhraseNextColumn)(Fts5Context*, Fts5PhraseIter*, int *piCol);
 };
 
 /* 
@@ -10308,23 +10293,21 @@ struct Fts5ExtensionApi {
 typedef struct Fts5Tokenizer Fts5Tokenizer;
 typedef struct fts5_tokenizer fts5_tokenizer;
 struct fts5_tokenizer {
-    int (*xCreate)(void *, const char **azArg, int nArg, Fts5Tokenizer **ppOut);
-
-    void (*xDelete)(Fts5Tokenizer *);
-
-    int (*xTokenize)(Fts5Tokenizer *,
-                     void *pCtx,
-                     int flags,            /* Mask of FTS5_TOKENIZE_* flags */
-                     const char *pText, int nText,
-                     int (*xToken)(
-                             void *pCtx,         /* Copy of 2nd argument to xTokenize() */
-                             int tflags,         /* Mask of FTS5_TOKEN_* flags */
-                             const char *pToken, /* Pointer to buffer containing token */
-                             int nToken,         /* Size of token in bytes */
-                             int iStart,         /* Byte offset of token within input text */
-                             int iEnd            /* Byte offset of end of token within input text */
-                     )
-    );
+  int (*xCreate)(void*, const char **azArg, int nArg, Fts5Tokenizer **ppOut);
+  void (*xDelete)(Fts5Tokenizer*);
+  int (*xTokenize)(Fts5Tokenizer*, 
+      void *pCtx,
+      int flags,            /* Mask of FTS5_TOKENIZE_* flags */
+      const char *pText, int nText, 
+      int (*xToken)(
+        void *pCtx,         /* Copy of 2nd argument to xTokenize() */
+        int tflags,         /* Mask of FTS5_TOKEN_* flags */
+        const char *pToken, /* Pointer to buffer containing token */
+        int nToken,         /* Size of token in bytes */
+        int iStart,         /* Byte offset of token within input text */
+        int iEnd            /* Byte offset of end of token within input text */
+      )
+  );
 };
 
 /* Flags that may be passed as the third argument to xTokenize() */
@@ -10346,33 +10329,33 @@ struct fts5_tokenizer {
 */
 typedef struct fts5_api fts5_api;
 struct fts5_api {
-    int iVersion;                   /* Currently always set to 2 */
+  int iVersion;                   /* Currently always set to 2 */
 
-    /* Create a new tokenizer */
-    int (*xCreateTokenizer)(
-            fts5_api *pApi,
-            const char *zName,
-            void *pContext,
-            fts5_tokenizer *pTokenizer,
-            void (*xDestroy)(void *)
-    );
+  /* Create a new tokenizer */
+  int (*xCreateTokenizer)(
+    fts5_api *pApi,
+    const char *zName,
+    void *pContext,
+    fts5_tokenizer *pTokenizer,
+    void (*xDestroy)(void*)
+  );
 
-    /* Find an existing tokenizer */
-    int (*xFindTokenizer)(
-            fts5_api *pApi,
-            const char *zName,
-            void **ppContext,
-            fts5_tokenizer *pTokenizer
-    );
+  /* Find an existing tokenizer */
+  int (*xFindTokenizer)(
+    fts5_api *pApi,
+    const char *zName,
+    void **ppContext,
+    fts5_tokenizer *pTokenizer
+  );
 
-    /* Create a new auxiliary function */
-    int (*xCreateFunction)(
-            fts5_api *pApi,
-            const char *zName,
-            void *pContext,
-            fts5_extension_function xFunction,
-            void (*xDestroy)(void *)
-    );
+  /* Create a new auxiliary function */
+  int (*xCreateFunction)(
+    fts5_api *pApi,
+    const char *zName,
+    void *pContext,
+    fts5_extension_function xFunction,
+    void (*xDestroy)(void*)
+  );
 };
 
 /*
@@ -10383,10 +10366,6 @@ struct fts5_api {
 }  /* end of the 'extern "C"' block */
 #endif
 
-//#endif /* _FTS5_H */
+#endif /* _FTS5_H */
 
 /******** End of fts5.h *********/
-
-//}
-
-#endif /* SQLITE3_H */
