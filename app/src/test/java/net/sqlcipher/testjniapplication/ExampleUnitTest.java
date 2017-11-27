@@ -1,4 +1,4 @@
-package com.roiland.testjniapplication;
+package net.sqlcipher.testjniapplication;
 
 import org.junit.Test;
 

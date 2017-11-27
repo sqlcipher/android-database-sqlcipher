@@ -1,4 +1,4 @@
-package com.roiland.testjniapplication;
+package net.sqlcipher.testjniapplication;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
