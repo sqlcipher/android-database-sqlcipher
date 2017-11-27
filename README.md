@@ -1,4 +1,5 @@
-TODO
+﻿TODO
 后续有时间，写一个测试协议的app
 目前直接用gradle的externalNativeBuildRelease命令编译出结果拷贝到roibox使用
-目前有两种编译方式，cmake和ndk-make，均支持，根据需要打开build.gradle的配置项即可。
+目前有两种编译方式，cmake和ndk-make，只支持ndkBuild，cmake可根据个人需求自行修改，根据需要打开build.gradle的配置项即可。
+
