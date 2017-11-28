@@ -1,10 +1,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>net.zetetic</groupId>
   <artifactId>android-database-sqlcipher</artifactId>
   <version>3.5.7</version>
-  <packaging>aar</packaging>
+  <packaging>jar</packaging>
   <name>android-database-sqlcipher</name>
   <description>
     SQLCipher for Android is a plugin to SQLite that provides full database encryption.
@@ -39,85 +39,39 @@
     </repository>
   </distributionManagement>
   <build>
+  <defaultGoal>compile</defaultGoal>
     <directory>bin/</directory>
     <plugins>
       <plugin>
         <groupId>com.simpligility.maven.plugins</groupId>
         <artifactId>android-maven-plugin</artifactId>
-        <version>4.3.0</version>
-        <extensions>true</extensions>
-        <configuration>
-          <sdk>
-            <platform>23</platform>
-          </sdk>
-          <sign>
-            <debug>false</debug>
-          </sign>
-          <androidManifestFile>AndroidManifest.xml</androidManifestFile>
-          <resourceDirectory>res</resourceDirectory>
-          <assetsDirectory>assets</assetsDirectory>
-          <nativeLibrariesDirectory>libs</nativeLibrariesDirectory>
-          <release>true</release>
-        </configuration>
+        <version>4.5.0</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>2.2.1</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar-no-fork</goal>
-            </goals>
-          </execution>
-        </executions>
+        <version>3.0.1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>2.9.1</version>
-        <executions>
-          <execution>
-            <id>attach-javadocs</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
+        <version>3.0.0-M1</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-            <configuration>
-              <keyname>97ED25C2</keyname>
-            </configuration>
-          </execution>
-        </executions>
+        <version>1.6</version>
       </plugin>
       <plugin>
         <groupId>org.sonatype.plugins</groupId>
         <artifactId>nexus-staging-maven-plugin</artifactId>
-        <version>1.6.3</version>
+        <version>1.6.8</version>
         <extensions>true</extensions>
-        <configuration>
-          <serverId>ossrh</serverId>
-          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-          <autoReleaseAfterClose>false</autoReleaseAfterClose>
-        </configuration>
         <dependencies>
           <dependency>
             <groupId>com.thoughtworks.xstream</groupId>
             <artifactId>xstream</artifactId>
-            <version>1.4.7</version>
+            <version>1.4.10</version>
           </dependency>
         </dependencies>
       </plugin>
@@ -127,7 +81,7 @@
     <dependency>
       <groupId>com.google.android</groupId>
       <artifactId>android</artifactId>
-      <version>4.0.1.2</version>
+      <version>7.1.1</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
