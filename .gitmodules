@@ -3,5 +3,5 @@
 	url = https://github.com/openssl/openssl.git
 [submodule "android-database-sqlcipher/src/main/external/sqlcipher"]
 	path = android-database-sqlcipher/src/main/external/sqlcipher
-	url = git@git.zetetic.net:/sqlcipher.git
+	url = https://github.com/sqlcipher/sqlcipher.git
 	ignore = untracked
