@@ -7,12 +7,8 @@ def isReleaseBuild() {
 }
 
 def getReleaseRepositoryUrl() {
-  if(hasProperty('mavenLocalRepositoryPrefix')) {
-    return "${mavenLocalRepositoryPrefix}${buildDir}/${mavenReleaseRepositoryUrl}"
-  } else {
-    return hasProperty('mavenReleaseRepositoryUrl') ? mavenReleaseRepositoryUrl
-    : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-  }
+  return hasProperty('mavenReleaseRepositoryUrl') ? mavenReleaseRepositoryUrl
+  : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 }
 
 def getSnapshotRepositoryUrl() {

@@ -25,6 +25,7 @@ ext {
     mavenSnapshotRepositoryUrl = "outputs/snapshot"
     mavenReleaseRepositoryUrl = "outputs/release"
   } else {
+    mavenLocalRepositoryPrefix = ""
     mavenSnapshotRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots"
     mavenReleaseRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
   }
