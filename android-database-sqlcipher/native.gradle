@@ -32,10 +32,25 @@ task buildNative() {
   description "Build the native SQLCipher binaries"
   doLast {
     executeNdkBuild(
-      "${nativeRootOutputDir}/libs",
+      "${nativeRootOutputDir}/libs32",
       file("src/main/cpp").absolutePath,
-      file("src/main/cpp/Application.mk").absolutePath,
+      file("src/main/cpp/Application32.mk").absolutePath,
       "${sqlcipherCFlags}")
+    executeNdkBuild(
+      "${nativeRootOutputDir}/libs64",
+      file("src/main/cpp").absolutePath,
+      file("src/main/cpp/Application64.mk").absolutePath,
+      "${sqlcipherCFlags}")
+    exec {
+      workingDir "${nativeRootOutputDir}"
+      commandLine "mkdir", "-p", "libs"
+    }
+    copy {
+      from fileTree("${nativeRootOutputDir}/libs32").include("*/*")
+      into "${nativeRootOutputDir}/libs"
+      from fileTree("${nativeRootOutputDir}/libs64").include("*/*")
+      into "${nativeRootOutputDir}/libs"
+    }
   }
 }
 
@@ -59,7 +74,7 @@ task cleanNative() {
   description "Clean the native (JNI) build artifacts"
   doLast {
     logger.info "Cleaning native build artifacts"
-    ["libs", "obj"].each {
+    ["libs", "libs32", "libs64", "obj"].each {
       File file = new File("${projectDir}/src/main/${it}")
       if(file.exists()){
         file.deleteDir()

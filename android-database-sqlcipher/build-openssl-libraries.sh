@@ -50,7 +50,6 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
  esac
 
  rm -rf ${ANDROID_LIB_ROOT}
- #git clean -dfx && git checkout -f
  ./Configure dist
 
  for SQLCIPHER_TARGET_PLATFORM in armeabi armeabi-v7a x86 x86_64 arm64-v8a
@@ -63,6 +62,7 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
              CONFIGURE_ARCH=android
              PLATFORM_OUTPUT_DIR=armeabi
              ANDROID_API_VERSION=${MINIMUM_ANDROID_SDK_VERSION}
+             OFFSET_BITS=32
              ;;
          armeabi-v7a)
              TOOLCHAIN_ARCH=arm
@@ -70,6 +70,7 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
              CONFIGURE_ARCH=android -march=armv7-a
              PLATFORM_OUTPUT_DIR=armeabi-v7a
              ANDROID_API_VERSION=${MINIMUM_ANDROID_SDK_VERSION}
+             OFFSET_BITS=32
              ;;
          x86)
              TOOLCHAIN_ARCH=x86
@@ -77,6 +78,7 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
              CONFIGURE_ARCH=android-x86
              PLATFORM_OUTPUT_DIR=x86
              ANDROID_API_VERSION=${MINIMUM_ANDROID_SDK_VERSION}
+             OFFSET_BITS=32
              ;;
          x86_64)
              TOOLCHAIN_ARCH=x86_64
@@ -84,6 +86,7 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
              CONFIGURE_ARCH=android64
              PLATFORM_OUTPUT_DIR=x86_64
              ANDROID_API_VERSION=${MINIMUM_ANDROID_64_BIT_SDK_VERSION}
+             OFFSET_BITS=64
              ;;
          arm64-v8a)
              TOOLCHAIN_ARCH=arm64
@@ -91,6 +94,7 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
              CONFIGURE_ARCH=android64-aarch64
              PLATFORM_OUTPUT_DIR=arm64-v8a
              ANDROID_API_VERSION=${MINIMUM_ANDROID_64_BIT_SDK_VERSION}
+             OFFSET_BITS=64
              ;;
          *)
              echo "Unsupported build platform:${SQLCIPHER_TARGET_PLATFORM}"
@@ -118,6 +122,7 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
            CC=${TOOLCHAIN_PREFIX}-gcc \
            ./Configure "${CONFIGURE_ARCH}" \
            -D__ANDROID_API__=${ANDROID_API_VERSION} \
+           -D_FILE_OFFSET_BITS=${OFFSET_BITS} \
            "${OPENSSL_CONFIGURE_OPTIONS}"
 
      if [ $? -ne 0 ]; then
