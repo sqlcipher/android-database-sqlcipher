@@ -8,6 +8,7 @@ android {
   buildToolsVersion "26.0.1"
 
   defaultConfig {
+    versionName "${clientVersionNumber}"
     minSdkVersion "${minimumAndroidSdkVersion}"
     targetSdkVersion "${targetAndroidSdkVersion}"
     versionCode 1
