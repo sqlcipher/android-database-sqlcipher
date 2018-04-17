@@ -130,7 +130,7 @@ LOG_WINDOW("Allocated row %u, rowSlot is at offset %u, fieldDir is %d bytes at o
 
 uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
 {
-    size_t size = 0, new_allocation_sz = 0;
+    size_t size = 0;
     uint32_t padding;
     void *tempData = NULL;
     if (aligned) {
@@ -139,17 +139,28 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
     } else {
         padding = 0;
     }
+
     size = requestedSize + padding;
+
     if (size > freeSpace()) {
         LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d",
              mSize, size, freeSpace(), mHeader->numRows);
-        new_allocation_sz = mSize + size - freeSpace() + GROW_WINDOW_SIZE_EXTRA;
-        tempData = realloc((void *)mData, new_allocation_sz);
+
+        int allocated = mSize - freeSpace();
+        int newSize = mSize + WINDOW_ALLOCATION_SIZE;
+        while (size > (newSize - allocated)) {
+            newSize += WINDOW_ALLOCATION_SIZE;
+            if (newSize > mMaxSize) {
+                LOGE("Attempting to grow window beyond max size (%d)", mMaxSize);
+                return 0;
+            }
+        }
+        tempData = realloc((void *)mData, newSize);
         if(tempData == NULL) return 0;
         mData = (uint8_t *)tempData;
         mHeader = (window_header_t *)mData;
-        LOGE("allocation grew to:%d", new_allocation_sz);
-        mSize = new_allocation_sz;
+        LOGE("allocation grew to:%d", newSize);
+        mSize = newSize;
     }
     uint32_t offset = mFreeOffset + padding;
     mFreeOffset += size;
