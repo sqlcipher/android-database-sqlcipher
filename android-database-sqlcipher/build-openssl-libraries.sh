@@ -106,8 +106,7 @@ MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
      python ${ANDROID_NDK_ROOT}/build/tools/make_standalone_toolchain.py \
             --arch ${TOOLCHAIN_ARCH} \
             --api ${ANDROID_API_VERSION} \
-            --install-dir ${ANDROID_TOOLCHAIN_DIR} \
-            --unified-headers
+            --install-dir ${ANDROID_TOOLCHAIN_DIR}
 
      if [ $? -ne 0 ]; then
          echo "Error executing make_standalone_toolchain.py for ${TOOLCHAIN_ARCH}"
