@@ -52,7 +52,7 @@ ext {
   mavenDeveloperUrl = "https://www.zetetic.net"
   minimumAndroidSdkVersion = 14
   minimumAndroid64BitSdkVersion = 21
-  targetAndroidSdkVersion = 26
+  targetAndroidSdkVersion = 24
   nativeRootOutputDir = "${projectDir}/${name}/src/main"
   androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
   sqlcipherDir = "${projectDir}/${name}/src/main/external/sqlcipher"
