@@ -25,22 +25,15 @@
 #include <jni.h>
 #include "log.h"
 
-// #include <cutils/log.h>
-// #include <binder/IMemory.h>
-// #include <utils/RefBase.h>
+#define ROW_SLOT_CHUNK_NUM_ROWS 512
+#define INITIAL_WINDOW_SIZE (1024 * 1024)
+#define GROW_WINDOW_SIZE_EXTRA INITIAL_WINDOW_SIZE
+#define WINDOW_ALLOCATION_UNBOUNDED 0
 
-#define DEFAULT_WINDOW_SIZE 4096
-#define MAX_WINDOW_SIZE (1024 * 1024)
-#define WINDOW_ALLOCATION_SIZE 4096
-
-#define ROW_SLOT_CHUNK_NUM_ROWS 16
-
-#define GROW_WINDOW_SIZE_EXTRA MAX_WINDOW_SIZE / 10
 
 // Row slots are allocated in chunks of ROW_SLOT_CHUNK_NUM_ROWS,
 // with an offset after the rows that points to the next chunk
 #define ROW_SLOT_CHUNK_SIZE ((ROW_SLOT_CHUNK_NUM_ROWS * sizeof(row_slot_t)) + sizeof(uint32_t))
-
 
 #if LOG_NDEBUG
 
@@ -58,7 +51,8 @@
 // When defined to true strings are stored as UTF8, otherwise they're UTF16
 #define WINDOW_STORAGE_UTF8 0
 
-// When defined to true numberic values are stored inline in the field_slot_t, otherwise they're allocated in the window
+// When defined to true numberic values are stored inline in the field_slot_t,
+// otherwise they're allocated in the window
 #define WINDOW_STORAGE_INLINE_NUMERICS 1
 
 namespace sqlcipher {
@@ -104,14 +98,11 @@ typedef struct
 class CursorWindow
 {
 public:
-                        CursorWindow(size_t maxSize);
+                        CursorWindow(size_t initialSize, size_t fixedAllocationSize);
                         CursorWindow(){}
-    /* bool                setMemory(const android::sp<android::IMemory>&); */
                         ~CursorWindow();
 
     bool                initBuffer(bool localOnly);
-    /* android::sp<android::IMemory>         getMemory() {return mMemory;} */
-
     size_t              size() {return mSize;}
     uint8_t *           data() {return mData;}
     uint32_t            getNumRows() {return mHeader->numRows;}
@@ -192,10 +183,9 @@ public:
 private:
     uint8_t * mData;
     size_t mSize;
-    size_t mMaxSize;
+    size_t mInitialSize;
+    size_t mFixedAllocationSize;
     window_header_t * mHeader;
-    /* android::sp<android::IMemory> mMemory; */
-
     /**
      * Offset of the lowest unused data byte in the array.
      */

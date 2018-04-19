@@ -31,6 +31,9 @@ import android.util.SparseIntArray;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
+import net.sqlcipher.CursorWindowAllocation;
+import net.sqlcipher.DefaultCursorWindowAllocation;
+
 /**
  * A buffer containing multiple cursor rows.
  */
@@ -42,10 +45,19 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      * android_database_CursorWindow.cpp
      */
     private long nWindow;
-
     private int mStartPos;
 
-    /**
+    private static CursorWindowAllocation allocation = new DefaultCursorWindowAllocation();
+
+    public static void setCursorWindowAllocation(CursorWindowAllocation value){
+      allocation = value;
+    }
+
+    public static CursorWindowAllocation getCursorWindowAllocation() {
+      return allocation;
+    }
+
+  /**
      * Creates a new empty window.
      *
      * @param localWindow true if this window will be used in this process only
@@ -53,7 +65,10 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     public CursorWindow(boolean localWindow) {
     	super(localWindow);
         mStartPos = 0;
-        native_init(localWindow);
+        if(allocation == null){
+          allocation = new DefaultCursorWindowAllocation();
+        }
+        native_init(localWindow, allocation.getAllocationSize());
     }
 
     /**
@@ -620,7 +635,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     private native IBinder native_getBinder();
 
     /** Does the native side initialization for an empty window */
-    private native void native_init(boolean localOnly);
+    private native void native_init(boolean localOnly, long fixedAllocationSize);
 
     /** Does the native side initialization with an existing binder from another process */
     private native void native_init(IBinder nativeBinder);

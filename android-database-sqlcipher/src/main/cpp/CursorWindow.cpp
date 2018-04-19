@@ -33,39 +33,27 @@
 
 namespace sqlcipher {
 
-CursorWindow::CursorWindow(size_t maxSize) :
-    mMaxSize(maxSize)
+CursorWindow::CursorWindow(size_t initialSize, size_t fixedAllocationSize)
 {
+  mInitialSize = initialSize;
+  mFixedAllocationSize = fixedAllocationSize;
+  LOG_WINDOW("CursorWindow::CursorWindow initialSize:%d fixedAllocationSize:%d",
+             initialSize, fixedAllocationSize);
 }
-
-// bool CursorWindow::setMemory(const android::sp<android::IMemory>& memory)
-// {
-//     mMemory = memory;
-//     mData = (uint8_t *) memory->pointer();
-//     if (mData == NULL) {
-//         return false;
-
-//     }
-//     mHeader = (window_header_t *) mData;
-
-//     // Make the window read-only
-//     ssize_t size = memory->size();
-//     mSize = size;
-//     mMaxSize = size;
-//     mFreeOffset = size;
-// LOG_WINDOW("Created CursorWindow from existing IMemory: mFreeOffset = %d, numRows = %d, numColumns = %d, mSize = %d, mMaxSize = %d, mData = %p", mFreeOffset, mHeader->numRows, mHeader->numColumns, mSize, mMaxSize, mData);
-//     return true;
-// }
 
 bool CursorWindow::initBuffer(bool localOnly)
 {
-  void* data = malloc(mMaxSize);
+  size_t size = mFixedAllocationSize == WINDOW_ALLOCATION_UNBOUNDED
+    ? mInitialSize
+    : mFixedAllocationSize;
+  void* data = malloc(size);
   if(data){
     mData = (uint8_t *) data;
     mHeader = (window_header_t *) mData;
-    mSize = mMaxSize;
+    mSize = size;
     clear();
-    LOG_WINDOW("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mMaxSize = %d, mData = %p", mFreeOffset, mSize, mMaxSize, mData);
+    LOG_WINDOW("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mInitialSize = %d, mFixedAllocationSize = %d, mData = %p",
+               mFreeOffset, mSize, mInitialSize, mFixedAllocationSize, mData);
     return true;
   }
   return false;
@@ -141,8 +129,9 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
     }
     size = requestedSize + padding;
     if (size > freeSpace()) {
-        LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d",
+      LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d",
              mSize, size, freeSpace(), mHeader->numRows);
+      if(mFixedAllocationSize == WINDOW_ALLOCATION_UNBOUNDED) {
         new_allocation_sz = mSize + size - freeSpace() + GROW_WINDOW_SIZE_EXTRA;
         tempData = realloc((void *)mData, new_allocation_sz);
         if(tempData == NULL) return 0;
@@ -150,6 +139,9 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
         mHeader = (window_header_t *)mData;
         LOGE("allocation grew to:%d", new_allocation_sz);
         mSize = new_allocation_sz;
+      } else {
+        return 0;
+      }
     }
     uint32_t offset = mFreeOffset + padding;
     mFreeOffset += size;
