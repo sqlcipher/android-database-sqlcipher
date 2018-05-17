@@ -14,6 +14,10 @@ task buildOpenSSL () {
 }
 
 task buildAmalgamation () {
+  onlyIf {
+    def amalgamation = new File("${projectDir}/src/main/external/sqlcipher/sqlite3.c")
+    return !amalgamation.exists()
+  }
   doLast {
     exec {
       workingDir "${projectDir}/src/main/external/sqlcipher"
