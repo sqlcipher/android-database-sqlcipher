@@ -24,12 +24,12 @@
 #include <stdint.h>
 #include <jni.h>
 #include "log.h"
+#include <unordered_map>
 
-#define ROW_SLOT_CHUNK_NUM_ROWS 512
+#define ROW_SLOT_CHUNK_NUM_ROWS 8
 #define INITIAL_WINDOW_SIZE (1024 * 1024)
 #define GROW_WINDOW_SIZE_EXTRA INITIAL_WINDOW_SIZE
 #define WINDOW_ALLOCATION_UNBOUNDED 0
-
 
 // Row slots are allocated in chunks of ROW_SLOT_CHUNK_NUM_ROWS,
 // with an offset after the rows that points to the next chunk
@@ -47,13 +47,15 @@
 
 #endif
 
-
 // When defined to true strings are stored as UTF8, otherwise they're UTF16
 #define WINDOW_STORAGE_UTF8 0
 
 // When defined to true numberic values are stored inline in the field_slot_t,
 // otherwise they're allocated in the window
 #define WINDOW_STORAGE_INLINE_NUMERICS 1
+
+using std::make_pair;
+using std::tr1::unordered_map;
 
 namespace sqlcipher {
 
@@ -190,6 +192,8 @@ private:
      * Offset of the lowest unused data byte in the array.
      */
     uint32_t mFreeOffset;
+    unordered_map<int, uint32_t> mChunkNumToNextChunkOffset;
+    int mLastChunkPtrOffset;
 };
 
 }; // namespace sqlcipher

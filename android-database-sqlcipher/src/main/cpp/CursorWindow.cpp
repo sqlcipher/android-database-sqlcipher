@@ -17,18 +17,11 @@
 #undef LOG_TAG
 #define LOG_TAG "CursorWindow"
 
-// #include <utils/Log.h>
-// #include <binder/MemoryHeapBase.h>
-// #include <binder/MemoryBase.h>
-
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-
 #include <jni.h>
-// #include <JNIHelp.h>
-
 #include "CursorWindow.h"
 
 namespace sqlcipher {
@@ -73,6 +66,8 @@ void CursorWindow::clear()
     mFreeOffset = sizeof(window_header_t) + ROW_SLOT_CHUNK_SIZE;
     // Mark the first chunk's next 'pointer' as null
     *((uint32_t *)(mData + mFreeOffset - sizeof(uint32_t))) = 0;
+    mChunkNumToNextChunkOffset.clear();
+    mLastChunkPtrOffset = 0;
 }
 
 int32_t CursorWindow::freeSpace()
@@ -110,7 +105,7 @@ field_slot_t * CursorWindow::allocRow()
     // If the last alloc relocated mData this will be rowSlot's new address, otherwise the value will not change
     rowSlot = (row_slot_t*)(mData + rowSlotOffset);
 
-LOG_WINDOW("Allocated row %u, rowSlot is at offset %u, fieldDir is %d bytes at offset %u\n", (mHeader->numRows - 1), ((uint8_t *)rowSlot) - mData, fieldDirSize, fieldDirOffset);
+    LOG_WINDOW("Allocated row %u, rowSlot is at offset %u, fieldDir is %d bytes at offset %u\n", (mHeader->numRows - 1), ((uint8_t *)rowSlot) - mData, fieldDirSize, fieldDirOffset);
     rowSlot->offset = fieldDirOffset;
 
     return fieldDir;
@@ -150,11 +145,23 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
 
 row_slot_t * CursorWindow::getRowSlot(int row)
 {
-    LOG_WINDOW("enter getRowSlot current row num %d, this row %d", mHeader->numRows, row);
+  LOG_WINDOW("getRowSlot entered: requesting row:%d, current row num:%d", row, mHeader->numRows);
+    unordered_map<int, uint32_t>::iterator result;
     int chunkNum = row / ROW_SLOT_CHUNK_NUM_ROWS;
     int chunkPos = row % ROW_SLOT_CHUNK_NUM_ROWS;
     int chunkPtrOffset = sizeof(window_header_t) + ROW_SLOT_CHUNK_SIZE - sizeof(uint32_t);
     uint8_t * rowChunk = mData + sizeof(window_header_t);
+
+    // check for chunkNum in cache
+    result = mChunkNumToNextChunkOffset.find(chunkNum);
+    if(result != mChunkNumToNextChunkOffset.end()){
+      rowChunk = offsetToPtr(result->second);
+      LOG_WINDOW("Retrieved chunk offset from cache for row:%d", row);
+      return (row_slot_t *)(rowChunk + (chunkPos * sizeof(row_slot_t)));
+    }
+
+    // walk the list, this shouldn't occur
+    LOG_WINDOW("getRowSlot walking list %d times to find rowslot for row:%d", chunkNum, row);
     for (int i = 0; i < chunkNum; i++) {
         rowChunk = offsetToPtr(*((uint32_t *)(mData + chunkPtrOffset)));
         chunkPtrOffset = rowChunk - mData + (ROW_SLOT_CHUNK_NUM_ROWS * sizeof(row_slot_t));
@@ -169,34 +176,45 @@ row_slot_t * CursorWindow::allocRowSlot()
     int chunkPos = mHeader->numRows % ROW_SLOT_CHUNK_NUM_ROWS;
     int chunkPtrOffset = sizeof(window_header_t) + ROW_SLOT_CHUNK_SIZE - sizeof(uint32_t);
     uint8_t * rowChunk = mData + sizeof(window_header_t);
-LOG_WINDOW("Allocating row slot, mHeader->numRows is %d, chunkNum is %d, chunkPos is %d", mHeader->numRows, chunkNum, chunkPos);
-    for (int i = 0; i < chunkNum; i++) {
+    LOG_WINDOW("allocRowSlot entered: Allocating row slot, mHeader->numRows is %d, chunkNum is %d, chunkPos is %d",
+           mHeader->numRows, chunkNum, chunkPos);
+
+    if(mLastChunkPtrOffset != 0){
+      chunkPtrOffset = mLastChunkPtrOffset;
+    }
+    if(chunkNum > 0) {
         uint32_t nextChunkOffset = *((uint32_t *)(mData + chunkPtrOffset));
-LOG_WINDOW("nextChunkOffset is %d", nextChunkOffset);
+        LOG_WINDOW("nextChunkOffset is %d", nextChunkOffset);
         if (nextChunkOffset == 0) {
+            mLastChunkPtrOffset = chunkPtrOffset;
             // Allocate a new row chunk
             nextChunkOffset = alloc(ROW_SLOT_CHUNK_SIZE, true);
+            mChunkNumToNextChunkOffset.insert(make_pair(chunkNum, nextChunkOffset));
             if (nextChunkOffset == 0) {
                 return NULL;
             }
             rowChunk = offsetToPtr(nextChunkOffset);
-LOG_WINDOW("allocated new chunk at %d, rowChunk = %p", nextChunkOffset, rowChunk);
+            LOG_WINDOW("allocated new chunk at %d, rowChunk = %p", nextChunkOffset, rowChunk);
             *((uint32_t *)(mData + chunkPtrOffset)) = rowChunk - mData;
             // Mark the new chunk's next 'pointer' as null
             *((uint32_t *)(rowChunk + ROW_SLOT_CHUNK_SIZE - sizeof(uint32_t))) = 0;
         } else {
-LOG_WINDOW("follwing 'pointer' to next chunk, offset of next pointer is %d", chunkPtrOffset);
+          LOG_WINDOW("follwing 'pointer' to next chunk, offset of next pointer is %d", chunkPtrOffset);
             rowChunk = offsetToPtr(nextChunkOffset);
             chunkPtrOffset = rowChunk - mData + (ROW_SLOT_CHUNK_NUM_ROWS * sizeof(row_slot_t));
+            if(chunkPos == ROW_SLOT_CHUNK_NUM_ROWS - 1){
+              // prepare to allocate new rowslot_t now at end of row
+              mLastChunkPtrOffset = chunkPtrOffset;
+            }
         }
     }
     mHeader->numRows++;
-
     return (row_slot_t *)(rowChunk + (chunkPos * sizeof(row_slot_t)));
 }
 
 field_slot_t * CursorWindow::getFieldSlotWithCheck(int row, int column)
 {
+  LOG_WINDOW("getFieldSlotWithCheck entered: row:%d column:%d", row, column);
   if (row < 0 || row >= mHeader->numRows || column < 0 || column >= mHeader->numColumns) {
       LOGE("Bad request for field slot %d,%d. numRows = %d, numColumns = %d", row, column, mHeader->numRows, mHeader->numColumns);
       return NULL;
@@ -216,6 +234,7 @@ field_slot_t * CursorWindow::getFieldSlotWithCheck(int row, int column)
 
 uint32_t CursorWindow::read_field_slot(int row, int column, field_slot_t * slotOut)
 {
+    LOG_WINDOW("read_field_slot entered: row:%d, column:%d, slotOut:%p", row, column, slotOut);
     if (row < 0 || row >= mHeader->numRows || column < 0 || column >= mHeader->numColumns) {
         LOGE("Bad request for field slot %d,%d. numRows = %d, numColumns = %d", row, column, mHeader->numRows, mHeader->numColumns);
         return -1;
@@ -229,9 +248,9 @@ uint32_t CursorWindow::read_field_slot(int row, int column, field_slot_t * slotO
         LOGE("Invalid rowSlot, offset = %d", rowSlot->offset);
         return -1;
     }
-LOG_WINDOW("Found field directory for %d,%d at rowSlot %d, offset %d", row, column, (uint8_t *)rowSlot - mData, rowSlot->offset);
+    LOG_WINDOW("Found field directory for %d,%d at rowSlot %d, offset %d", row, column, (uint8_t *)rowSlot - mData, rowSlot->offset);
     field_slot_t * fieldDir = (field_slot_t *)offsetToPtr(rowSlot->offset);
-LOG_WINDOW("Read field_slot_t %d,%d: offset = %d, size = %d, type = %d", row, column, fieldDir[column].data.buffer.offset, fieldDir[column].data.buffer.size, fieldDir[column].type);
+    LOG_WINDOW("Read field_slot_t %d,%d: offset = %d, size = %d, type = %d", row, column, fieldDir[column].data.buffer.offset, fieldDir[column].data.buffer.size, fieldDir[column].type);
 
     // Copy the data to the out param
     slotOut->data.buffer.offset = fieldDir[column].data.buffer.offset;
