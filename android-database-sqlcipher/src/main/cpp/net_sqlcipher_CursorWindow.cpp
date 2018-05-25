@@ -51,13 +51,14 @@ namespace sqlcipher {
   }
 
   static void native_init_empty(JNIEnv * env, jobject object,
-                                jboolean localOnly, jlong fixedAllocationSize)
+                                jboolean localOnly, jlong initialSize,
+                                jlong growthPaddingSize, jlong maxSize)
   {
     uint8_t * data;
     size_t size;
     CursorWindow * window;
 
-    window = new CursorWindow(INITIAL_WINDOW_SIZE, fixedAllocationSize);
+    window = new CursorWindow(initialSize, growthPaddingSize, maxSize);
     if (!window) {
       jniThrowException(env, "java/lang/RuntimeException", "No memory for native window object");
       return;
@@ -617,7 +618,7 @@ namespace sqlcipher {
   static JNINativeMethod sMethods[] =
     {
       /* name, signature, funcPtr */
-      {"native_init", "(ZJ)V", (void *)native_init_empty},
+      {"native_init", "(ZJJJ)V", (void *)native_init_empty},
       // {"native_init", "(Landroid/os/IBinder;)V", (void *)native_init_memory},
       // {"native_getBinder", "()Landroid/os/IBinder;", (void *)native_getBinder},
       {"native_clear", "()V", (void *)native_clear},

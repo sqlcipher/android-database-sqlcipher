@@ -64,6 +64,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     /** The number of rows in the cursor */
     private int mCount = NO_COUNT;
 
+    private int mCursorWindowCapacity = 0;
+
+    private boolean fillWindowForwardOnly = false;
+
     /** A mapping of column names to column indices, to speed up lookups */
     private Map<String, Integer> mColumnNameMap;
 
@@ -79,7 +83,11 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     private int mCursorState = 0;
     private ReentrantLock mLock = null;
     private boolean mPendingData = false;
-    
+
+    public void setFillWindowForwardOnly(boolean value) {
+      fillWindowForwardOnly = value;
+    }
+
     /**
      *  support for a cursor variant that doesn't always read all results
      *  initialRead is the initial number of items that cursor window reads 
@@ -132,6 +140,9 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             Process.setThreadPriority(Process.myTid(), Process.THREAD_PRIORITY_BACKGROUND);
             // the cursor's state doesn't change
             while (true) {
+                if(mLock == null){
+                  mLock = new ReentrantLock(true);
+                }
                 mLock.lock();
                 if (mCursorState != mThreadState) {
                     mLock.unlock();
@@ -282,7 +293,8 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         return mCount;
     }
 
-    private void fillWindow (int startPos) {
+    private void fillWindow (int requiredPos) {
+        int startPos = 0;
         if (mWindow == null) {
             // If there isn't a window set already it will only be accessed locally
             mWindow = new CursorWindow(true /* the window is local only */);
@@ -295,8 +307,21 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                     queryThreadUnlock();
                 }
         }
+        if(fillWindowForwardOnly) {
+          startPos = requiredPos;
+        } else {
+          startPos = mCount == NO_COUNT
+            ? cursorPickFillWindowStartPosition(requiredPos, 0)
+            : cursorPickFillWindowStartPosition(requiredPos, mCursorWindowCapacity);
+        }
         mWindow.setStartPosition(startPos);
+        mWindow.setRequiredPosition(requiredPos);
+        Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
+                                 startPos, requiredPos));
         mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
+        if(mCursorWindowCapacity == 0) {
+          mCursorWindowCapacity = mWindow.getNumRows();
+        }
         // return -1 means not finished
         if (mCount == NO_COUNT){
             mCount = startPos + mInitialRead;
@@ -617,40 +642,46 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 
 	
 	@Override
-	public void fillWindow(int startPos, android.database.CursorWindow window) {
-	
-		/*
-		window.setStartPosition(startPos);
-        mCount = mQuery.fillWindow((net.sqlcipher.database.CursorWindow)window, mInitialRead, 0);
-        // return -1 means not finished
-        if (mCount == NO_COUNT){
-            mCount = startPos + mInitialRead;
-            Thread t = new Thread(new QueryThread(mCursorState), "query thread");
-            t.start();
-        } */
-        
-        if (mWindow == null) {
-            // If there isn't a window set already it will only be accessed locally
-            mWindow = new CursorWindow(true /* the window is local only */);
-        } else {
-            mCursorState++;
-                queryThreadLock();
-                try {
-                    mWindow.clear();
-                } finally {
-                    queryThreadUnlock();
-                }
+	public void fillWindow(int requiredPos, android.database.CursorWindow window) {
+      int startPos = 0;
+      if (mWindow == null) {
+      // If there isn't a window set already it will only be accessed locally
+        mWindow = new CursorWindow(true /* the window is local only */);
+      } else {
+        mCursorState++;
+        queryThreadLock();
+        try {
+          mWindow.clear();
+        } finally {
+          queryThreadUnlock();
         }
-        mWindow.setStartPosition(startPos);
-        mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
-        // return -1 means not finished
-        if (mCount == NO_COUNT){
-            mCount = startPos + mInitialRead;
-            Thread t = new Thread(new QueryThread(mCursorState), "query thread");
-            t.start();
-        }
-
-		
+      }
+      if(fillWindowForwardOnly) {
+        startPos = requiredPos;
+      } else {
+        startPos = mCount == NO_COUNT
+          ? cursorPickFillWindowStartPosition(requiredPos, 0)
+          : cursorPickFillWindowStartPosition(requiredPos, mCursorWindowCapacity);
+      }
+      mWindow.setStartPosition(startPos);
+      mWindow.setRequiredPosition(requiredPos);
+      Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
+                               startPos, requiredPos));
+      mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
+      if(mCursorWindowCapacity == 0) {
+        mCursorWindowCapacity = mWindow.getNumRows();
+      }
+      // return -1 means not finished
+      if (mCount == NO_COUNT){
+        mCount = startPos + mInitialRead;
+        Thread t = new Thread(new QueryThread(mCursorState), "query thread");
+        t.start();
+      }
 	}
+
+  public int cursorPickFillWindowStartPosition(
+            int cursorPosition, int cursorWindowCapacity) {
+    return Math.max(cursorPosition - cursorWindowCapacity / 3, 0);
+  }
 
 }

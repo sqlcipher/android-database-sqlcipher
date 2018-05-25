@@ -46,6 +46,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      */
     private long nWindow;
     private int mStartPos;
+    private int mRequiredPos;
 
     private static CursorWindowAllocation allocation = new DefaultCursorWindowAllocation();
 
@@ -68,7 +69,10 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         if(allocation == null){
           allocation = new DefaultCursorWindowAllocation();
         }
-        native_init(localWindow, allocation.getAllocationSize());
+        native_init(localWindow,
+                    allocation.getInitialAllocationSize(),
+                    allocation.getGrowthPaddingSize(),
+                    allocation.getMaxAllocationSize());
     }
 
     /**
@@ -88,8 +92,16 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
      */
     public void setStartPosition(int pos) {
         mStartPos = pos;
-    }    
- 
+    }
+
+    public int getRequiredPosition(){
+        return mRequiredPos;
+    }
+
+    public void setRequiredPosition(int pos) {
+        mRequiredPos = pos;
+    }
+  
     /**
      * Returns the number of rows in this window.
      * 
@@ -635,7 +647,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     private native IBinder native_getBinder();
 
     /** Does the native side initialization for an empty window */
-    private native void native_init(boolean localOnly, long fixedAllocationSize);
+    private native void native_init(boolean localOnly, long initialSize,
+                                    long growthPaddingSize, long maxSize);
 
     /** Does the native side initialization with an existing binder from another process */
     private native void native_init(IBinder nativeBinder);

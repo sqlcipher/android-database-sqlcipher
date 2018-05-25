@@ -100,7 +100,7 @@ typedef struct
 class CursorWindow
 {
 public:
-                        CursorWindow(size_t initialSize, size_t fixedAllocationSize);
+                        CursorWindow(size_t initialSize, size_t growthPaddingSize, size_t maxSize);
                         CursorWindow(){}
                         ~CursorWindow();
 
@@ -186,7 +186,8 @@ private:
     uint8_t * mData;
     size_t mSize;
     size_t mInitialSize;
-    size_t mFixedAllocationSize;
+    size_t mGrowthPaddingSize;
+    size_t mMaxSize;
     window_header_t * mHeader;
     /**
      * Offset of the lowest unused data byte in the array.

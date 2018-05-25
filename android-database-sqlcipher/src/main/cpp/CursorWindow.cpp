@@ -26,24 +26,22 @@
 
 namespace sqlcipher {
 
-CursorWindow::CursorWindow(size_t initialSize, size_t fixedAllocationSize)
+CursorWindow::CursorWindow(size_t initialSize, size_t growthPaddingSize, size_t maxSize)
 {
   mInitialSize = initialSize;
-  mFixedAllocationSize = fixedAllocationSize;
-  LOG_WINDOW("CursorWindow::CursorWindow initialSize:%d fixedAllocationSize:%d",
-             initialSize, fixedAllocationSize);
+  mGrowthPaddingSize = growthPaddingSize;
+  mMaxSize = maxSize;
+  LOG_WINDOW("CursorWindow::CursorWindow initialSize:%d growBySize:%d maxSize:%d",
+             initialSize, growBySize, maxSize);
 }
 
 bool CursorWindow::initBuffer(bool localOnly)
 {
-  size_t size = mFixedAllocationSize == WINDOW_ALLOCATION_UNBOUNDED
-    ? mInitialSize
-    : mFixedAllocationSize;
-  void* data = malloc(size);
+  void* data = malloc(mInitialSize);
   if(data){
     mData = (uint8_t *) data;
     mHeader = (window_header_t *) mData;
-    mSize = size;
+    mSize = mInitialSize;
     clear();
     LOG_WINDOW("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mInitialSize = %d, mFixedAllocationSize = %d, mData = %p",
                mFreeOffset, mSize, mInitialSize, mFixedAllocationSize, mData);
@@ -126,8 +124,8 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
     if (size > freeSpace()) {
       LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d",
              mSize, size, freeSpace(), mHeader->numRows);
-      if(mFixedAllocationSize == WINDOW_ALLOCATION_UNBOUNDED) {
-        new_allocation_sz = mSize + size - freeSpace() + GROW_WINDOW_SIZE_EXTRA;
+      new_allocation_sz = mSize + size - freeSpace() + mGrowthPaddingSize;
+      if(mMaxSize == 0 || mMaxSize < new_allocation_sz) {
         tempData = realloc((void *)mData, new_allocation_sz);
         if(tempData == NULL) return 0;
         mData = (uint8_t *)tempData;
