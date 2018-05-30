@@ -31,7 +31,7 @@ CursorWindow::CursorWindow(size_t initialSize, size_t growthPaddingSize, size_t 
   mInitialSize = initialSize;
   mGrowthPaddingSize = growthPaddingSize;
   mMaxSize = maxSize;
-  LOG_TRACE("CursorWindow::CursorWindow initialSize:%d growBySize:%d maxSize:%d\n",
+  LOG_WINDOW("CursorWindow::CursorWindow initialSize:%d growBySize:%d maxSize:%d\n",
              initialSize, growthPaddingSize, maxSize);
 }
 
@@ -43,7 +43,7 @@ bool CursorWindow::initBuffer(bool localOnly)
     mHeader = (window_header_t *) mData;
     mSize = mInitialSize;
     clear();
-    LOG_TRACE("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mInitialSize = %d, mGrowthPaddingSize = %d, mMaxSize = %d, mData = %p\n",
+    LOG_WINDOW("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mInitialSize = %d, mGrowthPaddingSize = %d, mMaxSize = %d, mData = %p\n",
                mFreeOffset, mSize, mInitialSize, mGrowthPaddingSize, mMaxSize, mData);
     return true;
   }
