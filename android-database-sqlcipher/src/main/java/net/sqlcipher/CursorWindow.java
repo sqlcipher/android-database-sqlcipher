@@ -69,10 +69,6 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         if(allocation == null){
           allocation = new DefaultCursorWindowAllocation();
         }
-        Log.i(getClass().getSimpleName(), String.format("Calling native_init with initialAllocationSize:%d, growthPaddingSize:%d, maxAllocationSize:%d",
-                                                        allocation.getInitialAllocationSize(),
-                                                        allocation.getGrowthPaddingSize(),
-                                                        allocation.getMaxAllocationSize()));
         native_init(localWindow,
                     allocation.getInitialAllocationSize(),
                     allocation.getGrowthPaddingSize(),

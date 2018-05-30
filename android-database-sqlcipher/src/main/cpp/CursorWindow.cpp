@@ -31,7 +31,7 @@ CursorWindow::CursorWindow(size_t initialSize, size_t growthPaddingSize, size_t 
   mInitialSize = initialSize;
   mGrowthPaddingSize = growthPaddingSize;
   mMaxSize = maxSize;
-  LOG_WINDOW("CursorWindow::CursorWindow initialSize:%d growBySize:%d maxSize:%d",
+  LOG_TRACE("CursorWindow::CursorWindow initialSize:%d growBySize:%d maxSize:%d\n",
              initialSize, growthPaddingSize, maxSize);
 }
 
@@ -43,7 +43,7 @@ bool CursorWindow::initBuffer(bool localOnly)
     mHeader = (window_header_t *) mData;
     mSize = mInitialSize;
     clear();
-    LOG_WINDOW("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mInitialSize = %d, mGrowthPaddingSize = %d, mMaxSize = %d, mData = %p",
+    LOG_TRACE("Created CursorWindow with new MemoryDealer: mFreeOffset = %d, mSize = %d, mInitialSize = %d, mGrowthPaddingSize = %d, mMaxSize = %d, mData = %p\n",
                mFreeOffset, mSize, mInitialSize, mGrowthPaddingSize, mMaxSize, mData);
     return true;
   }
@@ -122,10 +122,10 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
     }
     size = requestedSize + padding;
     if (size > freeSpace()) {
-      LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d",
+      LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d\n",
              mSize, size, freeSpace(), mHeader->numRows);
       new_allocation_sz = mSize + size - freeSpace() + mGrowthPaddingSize;
-      if(mMaxSize == 0 || mMaxSize < new_allocation_sz) {
+      if(mMaxSize == 0 || new_allocation_sz < mMaxSize) {
         tempData = realloc((void *)mData, new_allocation_sz);
         if(tempData == NULL) return 0;
         mData = (uint8_t *)tempData;
