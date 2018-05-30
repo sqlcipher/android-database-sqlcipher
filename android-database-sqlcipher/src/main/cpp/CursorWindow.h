@@ -26,7 +26,7 @@
 #include "log.h"
 #include <unordered_map>
 
-#define ROW_SLOT_CHUNK_NUM_ROWS 8
+#define ROW_SLOT_CHUNK_NUM_ROWS 128
 #define INITIAL_WINDOW_SIZE (1024 * 1024)
 #define GROW_WINDOW_SIZE_EXTRA INITIAL_WINDOW_SIZE
 #define WINDOW_ALLOCATION_UNBOUNDED 0
