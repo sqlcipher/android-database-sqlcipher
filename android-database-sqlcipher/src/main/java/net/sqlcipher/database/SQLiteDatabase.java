@@ -651,11 +651,11 @@ public class SQLiteDatabase extends SQLiteClosable {
       return result.first ? result.second.equals("ok") : result.first;
     }
 
-    /**
-     * Returns a list of attached databases including the main database
-     * by executing PRAGMA database_list
-     * @return a list of pairs of database name and filename
-     */
+   /**
+    * Returns a list of attached databases including the main database
+    * by executing PRAGMA database_list
+    * @return a list of pairs of database name and filename
+    */
     public List<Pair<String, String>> getAttachedDbs() {
       return getAttachedDbs(this);
     }
@@ -677,7 +677,7 @@ public class SQLiteDatabase extends SQLiteClosable {
       return true;
     }
 
-   /**
+  /**
    * Sets the journal mode of the database to DELETE (the default mode)
    */
     public void disableWriteAheadLogging() {
@@ -689,15 +689,15 @@ public class SQLiteDatabase extends SQLiteClosable {
       rawExecSQL(command);
     }
 
-   /**
-   * Sets the journal mode of the database to DELETE (the default mode)
+  /**
+   * @return true if the journal mode is set to WAL, otherwise false
    */
     public boolean isWriteAheadLoggingEnabled() {
       Pair<Boolean, String> result = getResultFromPragma("PRAGMA journal_mode;");
       return result.first ? result.second.equals("wal") : result.first;
     }
 
-   /**
+  /**
    * Enables or disables foreign key constraints
    * @param enable used to determine whether or not foreign key constraints are on
    */
