@@ -43,6 +43,7 @@ public abstract class SQLiteOpenHelper {
     private final int mNewVersion;
     private final SQLiteDatabaseHook mHook;
     private final DatabaseErrorHandler mErrorHandler;
+    private boolean mEnableWriteAheadLogging;
 
     private SQLiteDatabase mDatabase = null;
     private boolean mIsInitializing = false;
@@ -161,8 +162,7 @@ public abstract class SQLiteOpenHelper {
 
                 db = SQLiteDatabase.openOrCreateDatabase(path, password, mFactory, mHook, mErrorHandler);
             }
-            
-
+            onConfigure(db);
             int version = db.getVersion();
             if (version != mNewVersion) {
                 db.beginTransaction();
@@ -170,7 +170,11 @@ public abstract class SQLiteOpenHelper {
                     if (version == 0) {
                         onCreate(db);
                     } else {
+                      if(version > mNewVersion) {
+                        onDowngrade(db, version, mNewVersion);
+                      } else {
                         onUpgrade(db, version, mNewVersion);
+                      }
                     }
                     db.setVersion(mNewVersion);
                     db.setTransactionSuccessful();
@@ -273,6 +277,79 @@ public abstract class SQLiteOpenHelper {
             mDatabase = null;
         }
     }
+
+    /**
+     * Return the name of the SQLite database being opened, as given to
+     * the constructor.
+     */
+    public String getDatabaseName() {
+        return mName;
+    }
+
+    /**
+     * Enables or disables the use of write-ahead logging for the database.
+     *
+     * Write-ahead logging cannot be used with read-only databases so the value of
+     * this flag is ignored if the database is opened read-only.
+     *
+     * @param enabled True if write-ahead logging should be enabled, false if it
+     * should be disabled.
+     *
+     * @see SQLiteDatabase#enableWriteAheadLogging()
+     */
+    public void setWriteAheadLoggingEnabled(boolean enabled) {
+        synchronized (this) {
+            if (mEnableWriteAheadLogging != enabled) {
+                if (mDatabase != null && mDatabase.isOpen() && !mDatabase.isReadOnly()) {
+                    if (enabled) {
+                        mDatabase.enableWriteAheadLogging();
+                    } else {
+                        mDatabase.disableWriteAheadLogging();
+                    }
+                }
+                mEnableWriteAheadLogging = enabled;
+            }
+        }
+    }
+
+    /**
+     * Called when the database needs to be downgraded. This is strictly similar to
+     * {@link #onUpgrade} method, but is called whenever current version is newer than requested one.
+     * However, this method is not abstract, so it is not mandatory for a customer to
+     * implement it. If not overridden, default implementation will reject downgrade and
+     * throws SQLiteException
+     *
+     * <p>
+     * This method executes within a transaction.  If an exception is thrown, all changes
+     * will automatically be rolled back.
+     * </p>
+     *
+     * @param db The database.
+     * @param oldVersion The old database version.
+     * @param newVersion The new database version.
+     */
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        throw new SQLiteException("Can't downgrade database from version " +
+                oldVersion + " to " + newVersion);
+    }
+
+    /**
+     * Called when the database connection is being configured, to enable features
+     * such as write-ahead logging or foreign key support.
+     * <p>
+     * This method is called before {@link #onCreate}, {@link #onUpgrade},
+     * {@link #onDowngrade}, or {@link #onOpen} are called.  It should not modify
+     * the database except to configure the database connection as required.
+     * </p><p>
+     * This method should only call methods that configure the parameters of the
+     * database connection, such as {@link SQLiteDatabase#enableWriteAheadLogging}
+     * {@link SQLiteDatabase#setForeignKeyConstraintsEnabled},
+     * {@link SQLiteDatabase#setLocale}, or executing PRAGMA statements.
+     * </p>
+     *
+     * @param db The database.
+     */
+    public void onConfigure(SQLiteDatabase db) {}
 
     /**
      * Called when the database is created for the first time. This is where the

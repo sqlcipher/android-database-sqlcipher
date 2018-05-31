@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -75,6 +76,12 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final int EVENT_DB_OPERATION = 52000;
     private static final int EVENT_DB_CORRUPT = 75004;
     private static final String KEY_ENCODING = "UTF-8";
+
+  private enum SQLiteDatabaseTransactionType {
+    Deferred,
+    Immediate,
+    Exclusive,
+  }
 
   /**
    * The version number of the SQLCipher for Android Java client library.
@@ -636,6 +643,75 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     /**
+     * Performs a PRAGMA integrity_check; command against the database.
+     * @return true if the integrity check is ok, otherwise false
+     */
+    public boolean isDatabaseIntegrityOk() {
+      Pair<Boolean, String> result = getResultFromPragma("PRAGMA integrity_check;");
+      return result.first ? result.second.equals("ok") : result.first;
+    }
+
+    /**
+     * Returns a list of attached databases including the main database
+     * by executing PRAGMA database_list
+     * @return a list of pairs of database name and filename
+     */
+    public List<Pair<String, String>> getAttachedDbs() {
+      return getAttachedDbs(this);
+    }
+
+   /**
+   * Sets the journal mode of the database to WAL
+   * @return true if successful, false otherwise
+   */
+    public boolean enableWriteAheadLogging() {
+      if(inTransaction()) {
+        String message = "Write Ahead Logging cannot be enabled while in a transaction";
+        throw new IllegalStateException(message);
+      }
+      List<Pair<String, String>> attachedDbs = getAttachedDbs(this);
+      if(attachedDbs != null && attachedDbs.size() > 1) return false;
+      if(isReadOnly() || getPath().equals(MEMORY)) return false;
+      String command = "PRAGMA journal_mode = WAL;";
+      rawExecSQL(command);
+      return true;
+    }
+
+   /**
+   * Sets the journal mode of the database to DELETE (the default mode)
+   */
+    public void disableWriteAheadLogging() {
+      if(inTransaction()) {
+        String message = "Write Ahead Logging cannot be disabled while in a transaction";
+        throw new IllegalStateException(message);
+      }
+      String command = "PRAGMA journal_mode = DELETE;";
+      rawExecSQL(command);
+    }
+
+   /**
+   * Sets the journal mode of the database to DELETE (the default mode)
+   */
+    public boolean isWriteAheadLoggingEnabled() {
+      Pair<Boolean, String> result = getResultFromPragma("PRAGMA journal_mode;");
+      return result.first ? result.second.equals("wal") : result.first;
+    }
+
+   /**
+   * Enables or disables foreign key constraints
+   * @param enable used to determine whether or not foreign key constraints are on
+   */
+    public void setForeignKeyConstraintsEnabled(boolean enable) {
+      if(inTransaction()) {
+        String message = "Foreign key constraints may not be changed while in a transaction";
+        throw new IllegalStateException(message);
+      }
+      String command = String.format("PRAGMA foreign_keys = %s;",
+                                     enable ? "ON" : "OFF");
+      execSQL(command);
+    }
+
+    /**
      * Begins a transaction. Transactions can be nested. When the outer transaction is ended all of
      * the work done in that transaction and all of the nested transactions will be committed or
      * rolled back. The changes will be rolled back if any transaction is ended without being
@@ -660,10 +736,12 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     /**
-     * Begins a transaction. Transactions can be nested. When the outer transaction is ended all of
-     * the work done in that transaction and all of the nested transactions will be committed or
-     * rolled back. The changes will be rolled back if any transaction is ended without being
-     * marked as clean (by calling setTransactionSuccessful). Otherwise they will be committed.
+     * Begins a transaction in Exlcusive mode. Transactions can be nested. When
+     * the outer transaction is ended all of the work done in that transaction
+     * and all of the nested transactions will be committed or rolled back. The
+     * changes will be rolled back if any transaction is ended without being
+     * marked as clean (by calling setTransactionSuccessful). Otherwise they
+     * will be committed.
      *
      * <p>Here is the standard idiom for transactions:
      *
@@ -683,47 +761,25 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalStateException if the database is not open
      */
     public void beginTransactionWithListener(SQLiteTransactionListener transactionListener) {
-        lockForced();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
-        boolean ok = false;
-        try {
-            // If this thread already had the lock then get out
-            if (mLock.getHoldCount() > 1) {
-                if (mInnerTransactionIsSuccessful) {
-                    String msg = "Cannot call beginTransaction between "
-                        + "calling setTransactionSuccessful and endTransaction";
-                    IllegalStateException e = new IllegalStateException(msg);
-                    Log.e(TAG, "beginTransaction() failed", e);
-                    throw e;
-                }
-                ok = true;
-                return;
-            }
+      beginTransactionWithListenerInternal(transactionListener,
+                                           SQLiteDatabaseTransactionType.Exclusive);
+    }
 
-            // This thread didn't already have the lock, so begin a database
-            // transaction now.
-            execSQL("BEGIN EXCLUSIVE;");
-            mTransactionListener = transactionListener;
-            mTransactionIsSuccessful = true;
-            mInnerTransactionIsSuccessful = false;
-            if (transactionListener != null) {
-                try {
-                    transactionListener.onBegin();
-                } catch (RuntimeException e) {
-                    execSQL("ROLLBACK;");
-                    throw e;
-                }
-            }
-            ok = true;
-        } finally {
-            if (!ok) {
-                // beginTransaction is called before the try block so we must release the lock in
-                // the case of failure.
-                unlockForced();
-            }
-        }
+  /**
+   * Begins a transaction in Immediate mode
+   */
+    public void beginTransactionNonExclusive() {
+      beginTransactionWithListenerInternal(null,
+                                           SQLiteDatabaseTransactionType.Immediate);
+    }
+
+  /**
+   * Begins a transaction in Immediate mode
+   * @param transactionListener is the listener used to report transaction events
+   */
+    public void beginTransactionWithListenerNonExclusive(SQLiteTransactionListener transactionListener) {
+      beginTransactionWithListenerInternal(transactionListener,
+                                           SQLiteDatabaseTransactionType.Immediate);
     }
 
     /**
@@ -2729,6 +2785,60 @@ public class SQLiteDatabase extends SQLiteClosable {
         mMaxSqlCacheSize = cacheSize;
     }
 
+    private void beginTransactionWithListenerInternal(SQLiteTransactionListener transactionListener,
+                                                      SQLiteDatabaseTransactionType transactionType) {
+        lockForced();
+        if (!isOpen()) {
+            throw new IllegalStateException("database not open");
+        }
+        boolean ok = false;
+        try {
+            // If this thread already had the lock then get out
+            if (mLock.getHoldCount() > 1) {
+                if (mInnerTransactionIsSuccessful) {
+                    String msg = "Cannot call beginTransaction between "
+                        + "calling setTransactionSuccessful and endTransaction";
+                    IllegalStateException e = new IllegalStateException(msg);
+                    Log.e(TAG, "beginTransaction() failed", e);
+                    throw e;
+                }
+                ok = true;
+                return;
+            }
+            // This thread didn't already have the lock, so begin a database
+            // transaction now.
+            if(transactionType == SQLiteDatabaseTransactionType.Exclusive) {
+              execSQL("BEGIN EXCLUSIVE;");
+            } else if(transactionType == SQLiteDatabaseTransactionType.Immediate) {
+              execSQL("BEGIN IMMEDIATE;");
+            } else if(transactionType == SQLiteDatabaseTransactionType.Deferred) {
+              execSQL("BEGIN DEFERRED;");
+            } else {
+              String message = String.format("%s is an unsupported transaction type",
+                                             transactionType);
+              throw new IllegalArgumentException(message);
+            }
+            mTransactionListener = transactionListener;
+            mTransactionIsSuccessful = true;
+            mInnerTransactionIsSuccessful = false;
+            if (transactionListener != null) {
+                try {
+                    transactionListener.onBegin();
+                } catch (RuntimeException e) {
+                    execSQL("ROLLBACK;");
+                    throw e;
+                }
+            }
+            ok = true;
+        } finally {
+            if (!ok) {
+                // beginTransaction is called before the try block so we must release the lock in
+                // the case of failure.
+                unlockForced();
+            }
+        }
+    }
+
     /**
      * this method is used to collect data about ALL open databases in the current process.
      * bugreport is a user of this data.
@@ -2836,6 +2946,16 @@ public class SQLiteDatabase extends SQLiteClosable {
       byteBuffer.get(result);
       return result;
     }
+
+    private Pair<Boolean, String> getResultFromPragma(String command) {
+      Cursor cursor = rawQuery(command, new Object[]{});
+      if(cursor == null) return new Pair(false, "");
+      cursor.moveToFirst();
+      String value = cursor.getString(0);
+      cursor.close();
+      return new Pair(true, value);
+    }
+
 
     /**
      * Sets the root directory to search for the ICU data file
