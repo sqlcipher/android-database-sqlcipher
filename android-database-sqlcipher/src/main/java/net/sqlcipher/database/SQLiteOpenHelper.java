@@ -44,6 +44,7 @@ public abstract class SQLiteOpenHelper {
     private final SQLiteDatabaseHook mHook;
     private final DatabaseErrorHandler mErrorHandler;
     private boolean mEnableWriteAheadLogging;
+    private boolean mDeferSetWriteAheadLoggingEnabled;
 
     private SQLiteDatabase mDatabase = null;
     private boolean mIsInitializing = false;
@@ -152,15 +153,16 @@ public abstract class SQLiteOpenHelper {
             mIsInitializing = true;
             if (mName == null) {
                 db = SQLiteDatabase.create(null, password);
-                
             } else {
                 String path = mContext.getDatabasePath(mName).getPath();
-                
                 File dbPathFile = new File (path);
-                if (!dbPathFile.exists())
+                if (!dbPathFile.exists()) {
                 	dbPathFile.getParentFile().mkdirs();
-
+                }
                 db = SQLiteDatabase.openOrCreateDatabase(path, password, mFactory, mHook, mErrorHandler);
+            }
+            if(mDeferSetWriteAheadLoggingEnabled) {
+              mEnableWriteAheadLogging = db.enableWriteAheadLogging();
             }
             onConfigure(db);
             int version = db.getVersion();
@@ -306,8 +308,10 @@ public abstract class SQLiteOpenHelper {
                     } else {
                         mDatabase.disableWriteAheadLogging();
                     }
+                    mEnableWriteAheadLogging = enabled;
+                } else {
+                    mDeferSetWriteAheadLoggingEnabled = enabled;
                 }
-                mEnableWriteAheadLogging = enabled;
             }
         }
     }
