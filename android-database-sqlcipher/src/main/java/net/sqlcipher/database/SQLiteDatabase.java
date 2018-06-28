@@ -25,6 +25,7 @@ import net.sqlcipher.DefaultDatabaseErrorHandler;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDebug.DbStats;
 import net.sqlcipher.database.SQLiteDatabaseHook;
+import net.sqlcipher.database.SQLiteQueryStats;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -1842,6 +1843,38 @@ public class SQLiteDatabase extends SQLiteClosable {
         return rawQueryWithFactory(null, sql, selectionArgs, null);
     }
 
+  /**
+   * Determines the total size in bytes of the query results, and the largest
+   * single row in bytes for the query.
+   *
+   * @param sql the SQL query. The SQL string must a SELECT statement
+   * @param args the argments to bind to the query
+   *
+   * @return A {@link SQLiteQueryStats} based the provided SQL query.
+   */
+  public SQLiteQueryStats getQueryStats(String sql, Object[] args){
+    long totalPayload = 0L;
+    long largestIndividualPayload = 0L;
+    try {
+      String query = String.format("CREATE TABLE tempstat AS %s", sql);
+      execSQL(query, args);
+      Cursor cursor = rawQuery("SELECT sum(payload) FROM dbstat WHERE name = 'tempstat';", new Object[]{});
+      if(cursor == null) return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
+      cursor.moveToFirst();
+      totalPayload = cursor.getLong(0);
+      cursor.close();
+      cursor = rawQuery("SELECT max(mx_payload) FROM dbstat WHERE name = 'tempstat';", new Object[]{});
+      if(cursor == null) return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
+      cursor.moveToFirst();
+      largestIndividualPayload = cursor.getLong(0);
+      cursor.close();
+      execSQL("DROP TABLE tempstat;");
+    } catch(Exception ex) {
+      execSQL("DROP TABLE IF EXISTS tempstat;");
+      throw ex;
+    }
+    return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
+  }
 
       /**
      * Runs the provided SQL and returns a {@link Cursor} over the result set.
