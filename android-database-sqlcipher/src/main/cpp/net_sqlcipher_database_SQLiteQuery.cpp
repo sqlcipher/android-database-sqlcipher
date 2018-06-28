@@ -210,7 +210,8 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
                     field_slot_t * fieldDir = window->allocRow();
                     if(!fieldDir) {
                       LOG_WINDOW("Failed to allocate row in reset, bailing\n");
-                      return startPos + numRows + finish_program_and_get_row_count(statement) + 1;
+                      jniThrowException(env, "net/sqlcipher/RowAllocationException",
+                          "Failed to allocate row in reset within native_fill_window");
                     } else {
                       LOG_WINDOW("Allocated row in reset set\n");
                     }

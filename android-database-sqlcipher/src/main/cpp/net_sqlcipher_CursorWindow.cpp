@@ -98,14 +98,14 @@ namespace sqlcipher {
   {
     char buf[100];
     snprintf(buf, sizeof(buf), "get field slot from row %d col %d failed", row, column);
-    jniThrowException(env, "java/lang/IllegalStateException", buf);
+    jniThrowException(env, "net/sqlcipher/InvalidRowColumnException", buf);
   }
 
   static void throwUnknowTypeException(JNIEnv * env, jint type)
   {
     char buf[80];
     snprintf(buf, sizeof(buf), "UNKNOWN type %d", type);
-    jniThrowException(env, "java/lang/IllegalStateException", buf);
+    jniThrowException(env, "net/sqlcipher/UnknownTypeException", buf);
   }
 
   static jlong getLong_native(JNIEnv * env, jobject object, jint row, jint column)
