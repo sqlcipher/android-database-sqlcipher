@@ -122,10 +122,10 @@ uint32_t CursorWindow::alloc(size_t requestedSize, bool aligned)
     }
     size = requestedSize + padding;
     if (size > freeSpace()) {
-      LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d\n",
-             mSize, size, freeSpace(), mHeader->numRows);
       new_allocation_sz = mSize + size - freeSpace() + mGrowthPaddingSize;
-      if(mMaxSize == 0 || new_allocation_sz < mMaxSize) {
+      LOGE("need to grow: mSize = %d, size = %d, freeSpace() = %d, numRows = %d new_allocation_sz:%d\n",
+           mSize, size, freeSpace(), mHeader->numRows, new_allocation_sz);
+      if(mMaxSize == 0 || new_allocation_sz <= mMaxSize) {
         tempData = realloc((void *)mData, new_allocation_sz);
         if(tempData == NULL) return 0;
         mData = (uint8_t *)tempData;
