@@ -13,6 +13,10 @@ android {
     targetSdkVersion "${targetAndroidSdkVersion}"
     versionCode 1
     versionName "${clientVersionNumber}"
+
+    defaultConfig {
+      consumerProguardFiles 'proguard-project.txt'
+    }
   }
 
   buildTypes {
