@@ -5,7 +5,6 @@ apply from: "maven.gradle"
 android {
 
   compileSdkVersion 26
-  buildToolsVersion "26.0.1"
 
   defaultConfig {
     versionName "${clientVersionNumber}"
@@ -37,8 +36,8 @@ android {
       variant.outputs.each { output ->
         def outputFile = output.outputFile
         if (outputFile != null && outputFile.name.endsWith(".aar")) {
-          def fileName = "${archivesBaseName}-${clientVersionNumber}.aar"
-          output.outputFile = new File(outputFile.parent, fileName)
+          def versionFileName = "${archivesBaseName}-${clientVersionNumber}.aar"
+          output.outputFileName = versionFileName
         }
       }
     }
