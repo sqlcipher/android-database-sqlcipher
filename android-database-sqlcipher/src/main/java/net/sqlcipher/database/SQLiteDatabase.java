@@ -37,6 +37,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -118,9 +119,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (password != null) {
           byte[] keyMaterial = getBytes(password.toCharArray());
           rekey(keyMaterial);
-          for(byte data : keyMaterial) {
-            data = 0;
-          }
+          Arrays.fill(keyMaterial, (byte) 0);
         }
     }
 
@@ -143,9 +142,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         if (password != null) {
           byte[] keyMaterial = getBytes(password);
           rekey(keyMaterial);
-          for(byte data : keyMaterial) {
-            data = 0;
-          }
+          Arrays.fill(keyMaterial, (byte) 0);
         }     
     }
   
@@ -2537,9 +2534,7 @@ public class SQLiteDatabase extends SQLiteClosable {
         }
       }
       if(keyMaterial != null && keyMaterial.length > 0) {
-        for(byte data : keyMaterial) {
-          data = 0;
-        }
+        Arrays.fill(keyMaterial, (byte) 0);
       }
     }
     
