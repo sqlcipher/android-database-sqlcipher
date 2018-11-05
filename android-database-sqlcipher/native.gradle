@@ -114,7 +114,11 @@ def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile, cflags) {
   exec {
     def outputDirectory = "NDK_LIBS_OUT=${outputDir}"
     def applicationFile = "NDK_APPLICATION_MK=${applicationMkFile}"
-    environment("SQLCIPHER_CFLAGS", "${cflags}")
+    def environmentVariables = ["SQLCIPHER_CFLAGS": "${cflags}",
+                                "OPENSSL_DIR": "${opensslDir}",
+                                "SQLCIPHER_DIR": "${sqlcipherDir}",
+                                "ANDROID_NATIVE_ROOT_DIR": "${androidNativeRootDir}"]
+    environment(environmentVariables)
     commandLine "ndk-build",
     "--environment-overrides", outputDirectory,
     "-C", androidMkDirectory, applicationFile
