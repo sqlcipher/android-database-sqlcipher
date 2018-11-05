@@ -58,7 +58,8 @@ ext {
   nativeRootOutputDir = "${projectDir}/${name}/src/main"
   androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
   sqlcipherDir = "${projectDir}/${name}/src/main/external/sqlcipher"
-  opensslDir = "${projectDir}/${name}/src/main/external/openssl"
+  opensslVersion = "1.1.1"
+  opensslDir = "${projectDir}/${name}/src/main/external/openssl-${opensslVersion}"
   sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +
     "-DSQLITE_SOUNDEX " +
     "-DHAVE_USLEEP=1 " +

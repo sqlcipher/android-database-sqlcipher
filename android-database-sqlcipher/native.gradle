@@ -62,7 +62,10 @@ task cleanOpenSSL() {
   description "Clean the OpenSSL source"
   doLast {
     logger.info "Cleaning OpenSSL source"
-    gitClean("${opensslDir}")
+    File file = new File("${opensslDir}")
+    if(file.exists()){
+      file.deleteDir()
+    }
   }
 }
 
