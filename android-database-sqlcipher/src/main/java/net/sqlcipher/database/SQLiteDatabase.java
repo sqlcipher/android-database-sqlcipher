@@ -1866,7 +1866,7 @@ public class SQLiteDatabase extends SQLiteClosable {
       largestIndividualPayload = cursor.getLong(0);
       cursor.close();
       execSQL("DROP TABLE tempstat;");
-    } catch(Exception ex) {
+    } catch(SQLiteException ex) {
       execSQL("DROP TABLE IF EXISTS tempstat;");
       throw ex;
     }
