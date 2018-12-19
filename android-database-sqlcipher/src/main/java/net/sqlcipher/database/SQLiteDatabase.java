@@ -79,22 +79,22 @@ public class SQLiteDatabase extends SQLiteClosable {
     private static final int EVENT_DB_CORRUPT = 75004;
     private static final String KEY_ENCODING = "UTF-8";
 
-  private enum SQLiteDatabaseTransactionType {
-    Deferred,
-    Immediate,
-    Exclusive,
-  }
+    private enum SQLiteDatabaseTransactionType {
+        Deferred,
+        Immediate,
+        Exclusive,
+    }
 
-  /**
-   * The version number of the SQLCipher for Android Java client library.
-   */
-  public static final String SQLCIPHER_ANDROID_VERSION = BuildConfig.VERSION_NAME;
+    /**
+     * The version number of the SQLCipher for Android Java client library.
+     */
+    public static final String SQLCIPHER_ANDROID_VERSION = BuildConfig.VERSION_NAME;
 
     // Stores reference to all databases opened in the current process.
     // (The referent Object is not used at this time.)
     // INVARIANT: Guarded by sActiveDatabases.
     private static WeakHashMap<SQLiteDatabase, Object> sActiveDatabases =
-            new WeakHashMap<SQLiteDatabase, Object>();
+        new WeakHashMap<SQLiteDatabase, Object>();
 
     public int status(int operation, boolean reset){
         return native_status(operation, reset);
@@ -117,9 +117,9 @@ public class SQLiteDatabase extends SQLiteClosable {
             throw new SQLiteException("database not open");
         }
         if (password != null) {
-          byte[] keyMaterial = getBytes(password.toCharArray());
-          rekey(keyMaterial);
-          Arrays.fill(keyMaterial, (byte) 0);
+            byte[] keyMaterial = getBytes(password.toCharArray());
+            rekey(keyMaterial);
+            Arrays.fill(keyMaterial, (byte) 0);
         }
     }
 
@@ -140,51 +140,51 @@ public class SQLiteDatabase extends SQLiteClosable {
             throw new SQLiteException("database not open");
         }
         if (password != null) {
-          byte[] keyMaterial = getBytes(password);
-          rekey(keyMaterial);
-          Arrays.fill(keyMaterial, (byte) 0);
-        }     
+            byte[] keyMaterial = getBytes(password);
+            rekey(keyMaterial);
+            Arrays.fill(keyMaterial, (byte) 0);
+        }
     }
-  
+
     private static void loadICUData(Context context, File workingDir) {
-      OutputStream out = null;
-      ZipInputStream in = null;
-      File icuDir = new File(workingDir, "icu");
-      File icuDataFile = new File(icuDir, "icudt46l.dat");
-      try {
-        if(!icuDir.exists()) icuDir.mkdirs();
-        if(!icuDataFile.exists()) {
-          in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
-          in.getNextEntry();
-          out =  new FileOutputStream(icuDataFile);
-          byte[] buf = new byte[1024];
-          int len;
-          while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
-          }
-        }
-      }
-      catch (Exception ex) {
-          Log.e(TAG, "Error copying icu dat file", ex);
-          if(icuDataFile.exists()){
-            icuDataFile.delete();
-          }
-          throw new RuntimeException(ex);
-      }
-      finally {
+        OutputStream out = null;
+        ZipInputStream in = null;
+        File icuDir = new File(workingDir, "icu");
+        File icuDataFile = new File(icuDir, "icudt46l.dat");
         try {
-          if(in != null){
-            in.close();
-          }
-          if(out != null){
-            out.flush();
-            out.close();
-          }
-        } catch (IOException ioe){
-          Log.e(TAG, "Error in closing streams IO streams after expanding ICU dat file", ioe);
-          throw new RuntimeException(ioe);
+            if(!icuDir.exists()) icuDir.mkdirs();
+            if(!icuDataFile.exists()) {
+                in = new ZipInputStream(context.getAssets().open("icudt46l.zip"));
+                in.getNextEntry();
+                out =  new FileOutputStream(icuDataFile);
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
         }
-      }
+        catch (Exception ex) {
+            Log.e(TAG, "Error copying icu dat file", ex);
+            if(icuDataFile.exists()){
+                icuDataFile.delete();
+            }
+            throw new RuntimeException(ex);
+        }
+        finally {
+            try {
+                if(in != null){
+                    in.close();
+                }
+                if(out != null){
+                    out.flush();
+                    out.close();
+                }
+            } catch (IOException ioe){
+                Log.e(TAG, "Error in closing streams IO streams after expanding ICU dat file", ioe);
+                throw new RuntimeException(ioe);
+            }
+        }
     }
 
     /**
@@ -213,13 +213,13 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public static synchronized void loadLibs (Context context, File workingDir) {
         loadLibs(context, workingDir, new LibraryLoader() {
-            @Override
-            public void loadLibraries(String... libNames) {
-                for (String libName : libNames) {
-                    System.loadLibrary(libName);
+                @Override
+                public void loadLibraries(String... libNames) {
+                    for (String libName : libNames) {
+                        System.loadLibrary(libName);
+                    }
                 }
-            }
-        });
+            });
     }
 
     /**
@@ -645,68 +645,68 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @return true if the integrity check is ok, otherwise false
      */
     public boolean isDatabaseIntegrityOk() {
-      Pair<Boolean, String> result = getResultFromPragma("PRAGMA integrity_check;");
-      return result.first ? result.second.equals("ok") : result.first;
+        Pair<Boolean, String> result = getResultFromPragma("PRAGMA integrity_check;");
+        return result.first ? result.second.equals("ok") : result.first;
     }
 
-   /**
-    * Returns a list of attached databases including the main database
-    * by executing PRAGMA database_list
-    * @return a list of pairs of database name and filename
-    */
+    /**
+     * Returns a list of attached databases including the main database
+     * by executing PRAGMA database_list
+     * @return a list of pairs of database name and filename
+     */
     public List<Pair<String, String>> getAttachedDbs() {
-      return getAttachedDbs(this);
+        return getAttachedDbs(this);
     }
 
-   /**
-   * Sets the journal mode of the database to WAL
-   * @return true if successful, false otherwise
-   */
+    /**
+     * Sets the journal mode of the database to WAL
+     * @return true if successful, false otherwise
+     */
     public boolean enableWriteAheadLogging() {
-      if(inTransaction()) {
-        String message = "Write Ahead Logging cannot be enabled while in a transaction";
-        throw new IllegalStateException(message);
-      }
-      List<Pair<String, String>> attachedDbs = getAttachedDbs(this);
-      if(attachedDbs != null && attachedDbs.size() > 1) return false;
-      if(isReadOnly() || getPath().equals(MEMORY)) return false;
-      String command = "PRAGMA journal_mode = WAL;";
-      rawExecSQL(command);
-      return true;
+        if(inTransaction()) {
+            String message = "Write Ahead Logging cannot be enabled while in a transaction";
+            throw new IllegalStateException(message);
+        }
+        List<Pair<String, String>> attachedDbs = getAttachedDbs(this);
+        if(attachedDbs != null && attachedDbs.size() > 1) return false;
+        if(isReadOnly() || getPath().equals(MEMORY)) return false;
+        String command = "PRAGMA journal_mode = WAL;";
+        rawExecSQL(command);
+        return true;
     }
 
-  /**
-   * Sets the journal mode of the database to DELETE (the default mode)
-   */
+    /**
+     * Sets the journal mode of the database to DELETE (the default mode)
+     */
     public void disableWriteAheadLogging() {
-      if(inTransaction()) {
-        String message = "Write Ahead Logging cannot be disabled while in a transaction";
-        throw new IllegalStateException(message);
-      }
-      String command = "PRAGMA journal_mode = DELETE;";
-      rawExecSQL(command);
+        if(inTransaction()) {
+            String message = "Write Ahead Logging cannot be disabled while in a transaction";
+            throw new IllegalStateException(message);
+        }
+        String command = "PRAGMA journal_mode = DELETE;";
+        rawExecSQL(command);
     }
 
-  /**
-   * @return true if the journal mode is set to WAL, otherwise false
-   */
+    /**
+     * @return true if the journal mode is set to WAL, otherwise false
+     */
     public boolean isWriteAheadLoggingEnabled() {
-      Pair<Boolean, String> result = getResultFromPragma("PRAGMA journal_mode;");
-      return result.first ? result.second.equals("wal") : result.first;
+        Pair<Boolean, String> result = getResultFromPragma("PRAGMA journal_mode;");
+        return result.first ? result.second.equals("wal") : result.first;
     }
 
-  /**
-   * Enables or disables foreign key constraints
-   * @param enable used to determine whether or not foreign key constraints are on
-   */
+    /**
+     * Enables or disables foreign key constraints
+     * @param enable used to determine whether or not foreign key constraints are on
+     */
     public void setForeignKeyConstraintsEnabled(boolean enable) {
-      if(inTransaction()) {
-        String message = "Foreign key constraints may not be changed while in a transaction";
-        throw new IllegalStateException(message);
-      }
-      String command = String.format("PRAGMA foreign_keys = %s;",
-                                     enable ? "ON" : "OFF");
-      execSQL(command);
+        if(inTransaction()) {
+            String message = "Foreign key constraints may not be changed while in a transaction";
+            throw new IllegalStateException(message);
+        }
+        String command = String.format("PRAGMA foreign_keys = %s;",
+                                       enable ? "ON" : "OFF");
+        execSQL(command);
     }
 
     /**
@@ -759,25 +759,25 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalStateException if the database is not open
      */
     public void beginTransactionWithListener(SQLiteTransactionListener transactionListener) {
-      beginTransactionWithListenerInternal(transactionListener,
-                                           SQLiteDatabaseTransactionType.Exclusive);
+        beginTransactionWithListenerInternal(transactionListener,
+                                             SQLiteDatabaseTransactionType.Exclusive);
     }
 
-  /**
-   * Begins a transaction in Immediate mode
-   */
+    /**
+     * Begins a transaction in Immediate mode
+     */
     public void beginTransactionNonExclusive() {
-      beginTransactionWithListenerInternal(null,
-                                           SQLiteDatabaseTransactionType.Immediate);
+        beginTransactionWithListenerInternal(null,
+                                             SQLiteDatabaseTransactionType.Immediate);
     }
 
-  /**
-   * Begins a transaction in Immediate mode
-   * @param transactionListener is the listener used to report transaction events
-   */
+    /**
+     * Begins a transaction in Immediate mode
+     * @param transactionListener is the listener used to report transaction events
+     */
     public void beginTransactionWithListenerNonExclusive(SQLiteTransactionListener transactionListener) {
-      beginTransactionWithListenerInternal(transactionListener,
-                                           SQLiteDatabaseTransactionType.Immediate);
+        beginTransactionWithListenerInternal(transactionListener,
+                                             SQLiteDatabaseTransactionType.Immediate);
     }
 
     /**
@@ -1071,7 +1071,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags) {
-      return openDatabase(path, password, factory, flags, null);
+        return openDatabase(path, password, factory, flags, null);
     }
 
     /**
@@ -1093,7 +1093,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags) {
-      return openDatabase(path, password, factory, flags, null, null);
+        return openDatabase(path, password, factory, flags, null, null);
     }
 
     /**
@@ -1117,7 +1117,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalArgumentException if the database path is null
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags, SQLiteDatabaseHook hook) {
-      return openDatabase(path, password, factory, flags, hook, null);
+        return openDatabase(path, password, factory, flags, hook, null);
     }
 
     /**
@@ -1168,7 +1168,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public static SQLiteDatabase openDatabase(String path, String password, CursorFactory factory, int flags,
                                               SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
-      return openDatabase(path, password == null ? null : password.toCharArray(), factory, flags, hook, errorHandler);
+        return openDatabase(path, password == null ? null : password.toCharArray(), factory, flags, hook, errorHandler);
     }
 
     /**
@@ -1259,7 +1259,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
-      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
     }
 
     public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
@@ -1278,14 +1278,14 @@ public class SQLiteDatabase extends SQLiteClosable {
      * Equivalent to openDatabase(path, password, factory, CREATE_IF_NECESSARY).
      */
     public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory) {
-      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
 
     /**
      * Equivalent to openDatabase(path, password, factory, CREATE_IF_NECESSARY).
      */
     public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory) {
-      return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
+        return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
     }
 
     /**
@@ -1301,11 +1301,11 @@ public class SQLiteDatabase extends SQLiteClosable {
      *
      * @return a SQLiteDatabase object, or null if the database can't be created
      *
-     * @throws SQLiteException if the database cannot be opened 
+     * @throws SQLiteException if the database cannot be opened
      */
     public static SQLiteDatabase create(CursorFactory factory, String password) {
         // This is a magic string with special meaning for SQLite.
-      return openDatabase(MEMORY, password == null ? null : password.toCharArray(), factory, CREATE_IF_NECESSARY);
+        return openDatabase(MEMORY, password == null ? null : password.toCharArray(), factory, CREATE_IF_NECESSARY);
     }
 
     /**
@@ -1321,7 +1321,7 @@ public class SQLiteDatabase extends SQLiteClosable {
      *
      * @return a SQLiteDatabase object, or null if the database can't be created
      *
-     * @throws SQLiteException if the database cannot be opened 
+     * @throws SQLiteException if the database cannot be opened
      */
     public static SQLiteDatabase create(CursorFactory factory, char[] password) {
         return openDatabase(MEMORY, password, factory, CREATE_IF_NECESSARY);
@@ -1381,10 +1381,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public int getVersion() {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             prog = new SQLiteStatement(this, "PRAGMA user_version;");
             long version = prog.simpleQueryForLong();
             return (int) version;
@@ -1414,10 +1414,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public long getMaximumSize() {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             prog = new SQLiteStatement(this,
                                        "PRAGMA max_page_count;");
             long pageCount = prog.simpleQueryForLong();
@@ -1438,10 +1438,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public long setMaximumSize(long numBytes) {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             long pageSize = getPageSize();
             long numPages = numBytes / pageSize;
             // If numBytes isn't a multiple of pageSize, bump up a page
@@ -1466,10 +1466,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public long getPageSize() {
         SQLiteStatement prog = null;
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             prog = new SQLiteStatement(this,
                                        "PRAGMA page_size;");
             long size = prog.simpleQueryForLong();
@@ -1637,10 +1637,10 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public SQLiteStatement compileStatement(String sql) throws SQLException {
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             return new SQLiteStatement(this, sql);
         } finally {
             unlock();
@@ -1840,40 +1840,40 @@ public class SQLiteDatabase extends SQLiteClosable {
         return rawQueryWithFactory(null, sql, selectionArgs, null);
     }
 
-  /**
-   * Determines the total size in bytes of the query results, and the largest
-   * single row in bytes for the query.
-   *
-   * @param sql the SQL query. The SQL string must a SELECT statement
-   * @param args the argments to bind to the query
-   *
-   * @return A {@link SQLiteQueryStats} based the provided SQL query.
-   */
-  public SQLiteQueryStats getQueryStats(String sql, Object[] args){
-    long totalPayload = 0L;
-    long largestIndividualPayload = 0L;
-    try {
-      String query = String.format("CREATE TABLE tempstat AS %s", sql);
-      execSQL(query, args);
-      Cursor cursor = rawQuery("SELECT sum(payload) FROM dbstat WHERE name = 'tempstat';", new Object[]{});
-      if(cursor == null) return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
-      cursor.moveToFirst();
-      totalPayload = cursor.getLong(0);
-      cursor.close();
-      cursor = rawQuery("SELECT max(mx_payload) FROM dbstat WHERE name = 'tempstat';", new Object[]{});
-      if(cursor == null) return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
-      cursor.moveToFirst();
-      largestIndividualPayload = cursor.getLong(0);
-      cursor.close();
-      execSQL("DROP TABLE tempstat;");
-    } catch(SQLiteException ex) {
-      execSQL("DROP TABLE IF EXISTS tempstat;");
-      throw ex;
+    /**
+     * Determines the total size in bytes of the query results, and the largest
+     * single row in bytes for the query.
+     *
+     * @param sql the SQL query. The SQL string must a SELECT statement
+     * @param args the argments to bind to the query
+     *
+     * @return A {@link SQLiteQueryStats} based the provided SQL query.
+     */
+    public SQLiteQueryStats getQueryStats(String sql, Object[] args){
+        long totalPayload = 0L;
+        long largestIndividualPayload = 0L;
+        try {
+            String query = String.format("CREATE TABLE tempstat AS %s", sql);
+            execSQL(query, args);
+            Cursor cursor = rawQuery("SELECT sum(payload) FROM dbstat WHERE name = 'tempstat';", new Object[]{});
+            if(cursor == null) return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
+            cursor.moveToFirst();
+            totalPayload = cursor.getLong(0);
+            cursor.close();
+            cursor = rawQuery("SELECT max(mx_payload) FROM dbstat WHERE name = 'tempstat';", new Object[]{});
+            if(cursor == null) return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
+            cursor.moveToFirst();
+            largestIndividualPayload = cursor.getLong(0);
+            cursor.close();
+            execSQL("DROP TABLE tempstat;");
+        } catch(SQLiteException ex) {
+            execSQL("DROP TABLE IF EXISTS tempstat;");
+            throw ex;
+        }
+        return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
     }
-    return new SQLiteQueryStats(totalPayload, largestIndividualPayload);
-  }
 
-      /**
+    /**
      * Runs the provided SQL and returns a {@link Cursor} over the result set.
      *
      * @param sql the SQL query. The SQL string must not be ; terminated
@@ -1995,9 +1995,9 @@ public class SQLiteDatabase extends SQLiteClosable {
      */
     public Cursor rawQuery(String sql, String[] selectionArgs,
                            int initialRead, int maxRead) {
-      net.sqlcipher.CursorWrapper cursorWrapper = (net.sqlcipher.CursorWrapper)rawQueryWithFactory(null, sql, selectionArgs, null);
-      ((SQLiteCursor)cursorWrapper.getWrappedCursor()).setLoadStyle(initialRead, maxRead);
-      return cursorWrapper;
+        net.sqlcipher.CursorWrapper cursorWrapper = (net.sqlcipher.CursorWrapper)rawQueryWithFactory(null, sql, selectionArgs, null);
+        ((SQLiteCursor)cursorWrapper.getWrappedCursor()).setLoadStyle(initialRead, maxRead);
+        return cursorWrapper;
     }
 
     /**
@@ -2166,7 +2166,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             } else {
                 if (Config.LOGD && Log.isLoggable(TAG, Log.VERBOSE)) {
                     Log.v(TAG, "Inserting row " + insertedRowId +
-                        " from <redacted values> using <redacted sql> into " + table);
+                          " from <redacted values> using <redacted sql> into " + table);
                 }
             }
             return insertedRowId;
@@ -2196,12 +2196,12 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalStateException if the database is not open
      */
     public int delete(String table, String whereClause, String[] whereArgs) {
-        lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         SQLiteStatement statement = null;
+        lock();
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             statement = compileStatement("DELETE FROM " + table
                                          + (!TextUtils.isEmpty(whereClause)
                                             ? " WHERE " + whereClause : ""));
@@ -2285,13 +2285,12 @@ public class SQLiteDatabase extends SQLiteClosable {
             sql.append(" WHERE ");
             sql.append(whereClause);
         }
-
-        lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         SQLiteStatement statement = null;
+        lock();
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             statement = compileStatement(sql.toString());
 
             // Bind the values
@@ -2317,7 +2316,7 @@ public class SQLiteDatabase extends SQLiteClosable {
             int numChangedRows = lastChangeCount();
             if (Config.LOGD && Log.isLoggable(TAG, Log.VERBOSE)) {
                 Log.v(TAG, "Updated " + numChangedRows +
-                    " rows using <redacted values> and <redacted sql> for " + table);
+                      " rows using <redacted values> and <redacted sql> for " + table);
             }
             return numChangedRows;
         } catch (SQLiteDatabaseCorruptException e) {
@@ -2345,10 +2344,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public void execSQL(String sql) throws SQLException {
         long timeStart = SystemClock.uptimeMillis();
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             native_execSQL(sql);
         } catch (SQLiteDatabaseCorruptException e) {
             onCorruption();
@@ -2361,10 +2360,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     public void rawExecSQL(String sql){
         long timeStart = SystemClock.uptimeMillis();
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             native_rawExecSQL(sql);
         } catch (SQLiteDatabaseCorruptException e) {
             onCorruption();
@@ -2386,16 +2385,16 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalStateException if the database is not open
      */
     public void execSQL(String sql, Object[] bindArgs) throws SQLException {
+        SQLiteStatement statement = null;
         if (bindArgs == null) {
             throw new IllegalArgumentException("Empty bindArgs");
         }
         long timeStart = SystemClock.uptimeMillis();
         lock();
-        if (!isOpen()) {
-            throw new IllegalStateException("database not open");
-        }
-        SQLiteStatement statement = null;
         try {
+            if (!isOpen()) {
+                throw new IllegalStateException("database not open");
+            }
             statement = compileStatement(sql);
             if (bindArgs != null) {
                 int numArgs = bindArgs.length;
@@ -2493,92 +2492,92 @@ public class SQLiteDatabase extends SQLiteClosable {
         mErrorHandler = errorHandler;
     }
 
-  private void openDatabaseInternal(final char[] password, SQLiteDatabaseHook hook) {
-    boolean shouldCloseConnection = true;
-    final byte[] keyMaterial = getBytes(password);
-    dbopen(mPath, mFlags);
-    try {
-      
-      keyDatabase(hook, new Runnable() {
-          public void run() {
+    private void openDatabaseInternal(final char[] password, SQLiteDatabaseHook hook) {
+        boolean shouldCloseConnection = true;
+        final byte[] keyMaterial = getBytes(password);
+        dbopen(mPath, mFlags);
+        try {
+
+            keyDatabase(hook, new Runnable() {
+                    public void run() {
+                        if(keyMaterial != null && keyMaterial.length > 0) {
+                            key(keyMaterial);
+                        }
+                    }
+                });
+            shouldCloseConnection = false;
+
+        } catch(RuntimeException ex) {
+
+            if(containsNull(password)) {
+                keyDatabase(hook, new Runnable() {
+                        public void run() {
+                            if(password != null) {
+                                key_mutf8(password);
+                            }
+                        }
+                    });
+                if(keyMaterial != null && keyMaterial.length > 0) {
+                    rekey(keyMaterial);
+                }
+                shouldCloseConnection = false;
+            } else {
+                throw ex;
+            }
+
+        } finally {
+            if(shouldCloseConnection) {
+                dbclose();
+                if (SQLiteDebug.DEBUG_SQL_CACHE) {
+                    mTimeClosed = getTime();
+                }
+            }
             if(keyMaterial != null && keyMaterial.length > 0) {
-              key(keyMaterial);
+                Arrays.fill(keyMaterial, (byte) 0);
             }
-          }
-        });
-      shouldCloseConnection = false;
-      
-    } catch(RuntimeException ex) {
-
-      if(containsNull(password)) {
-        keyDatabase(hook, new Runnable() {
-            public void run() {
-              if(password != null) {
-                key_mutf8(password);
-              }
-            }
-          });
-        if(keyMaterial != null && keyMaterial.length > 0) {
-          rekey(keyMaterial);
         }
-        shouldCloseConnection = false;
-      } else {
-        throw ex;
-      }
 
-    } finally {
-      if(shouldCloseConnection) {
-        dbclose();
+    }
+
+    private boolean containsNull(char[] data) {
+        char defaultValue = '\u0000';
+        boolean status = false;
+        if(data != null && data.length > 0) {
+            for(char datum : data) {
+                if(datum == defaultValue) {
+                    status = true;
+                    break;
+                }
+            }
+        }
+        return status;
+    }
+
+    private void keyDatabase(SQLiteDatabaseHook databaseHook, Runnable keyOperation) {
+        if(databaseHook != null) {
+            databaseHook.preKey(this);
+        }
+        if(keyOperation != null){
+            keyOperation.run();
+        }
+        if(databaseHook != null){
+            databaseHook.postKey(this);
+        }
         if (SQLiteDebug.DEBUG_SQL_CACHE) {
-          mTimeClosed = getTime();
+            mTimeOpened = getTime();
         }
-      }
-      if(keyMaterial != null && keyMaterial.length > 0) {
-        Arrays.fill(keyMaterial, (byte) 0);
-      }
-    }
-    
-  }
-
-  private boolean containsNull(char[] data) {
-    char defaultValue = '\u0000';
-    boolean status = false;
-    if(data != null && data.length > 0) {
-      for(char datum : data) {
-        if(datum == defaultValue) {
-          status = true;
-          break;
+        try {
+            Cursor cursor = rawQuery("select count(*) from sqlite_master;", new String[]{});
+            if(cursor != null){
+                cursor.moveToFirst();
+                int count = cursor.getInt(0);
+                cursor.close();
+            }
+        } catch (RuntimeException e) {
+            Log.e(TAG, e.getMessage(), e);
+            throw e;
         }
-      }
     }
-    return status;
-  }
-  
-  private void keyDatabase(SQLiteDatabaseHook databaseHook, Runnable keyOperation) {
-    if(databaseHook != null) {
-      databaseHook.preKey(this);
-    }
-    if(keyOperation != null){
-      keyOperation.run();
-    }
-    if(databaseHook != null){
-      databaseHook.postKey(this);
-    }
-    if (SQLiteDebug.DEBUG_SQL_CACHE) {
-      mTimeOpened = getTime();
-    }
-    try {
-      Cursor cursor = rawQuery("select count(*) from sqlite_master;", new String[]{});
-      if(cursor != null){
-        cursor.moveToFirst();
-        int count = cursor.getInt(0);
-        cursor.close();
-      }
-    } catch (RuntimeException e) {
-      Log.e(TAG, e.getMessage(), e);
-      throw e;
-    }
-  }
 
     private String getTime() {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ", Locale.US).format(System.currentTimeMillis());
@@ -2836,15 +2835,15 @@ public class SQLiteDatabase extends SQLiteClosable {
             // This thread didn't already have the lock, so begin a database
             // transaction now.
             if(transactionType == SQLiteDatabaseTransactionType.Exclusive) {
-              execSQL("BEGIN EXCLUSIVE;");
+                execSQL("BEGIN EXCLUSIVE;");
             } else if(transactionType == SQLiteDatabaseTransactionType.Immediate) {
-              execSQL("BEGIN IMMEDIATE;");
+                execSQL("BEGIN IMMEDIATE;");
             } else if(transactionType == SQLiteDatabaseTransactionType.Deferred) {
-              execSQL("BEGIN DEFERRED;");
+                execSQL("BEGIN DEFERRED;");
             } else {
-              String message = String.format("%s is an unsupported transaction type",
-                                             transactionType);
-              throw new IllegalArgumentException(message);
+                String message = String.format("%s is an unsupported transaction type",
+                                               transactionType);
+                throw new IllegalArgumentException(message);
             }
             mTransactionListener = transactionListener;
             mTransactionIsSuccessful = true;
@@ -2967,21 +2966,21 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     private byte[] getBytes(char[] data) {
-      if(data == null || data.length == 0) return null;
-      CharBuffer charBuffer = CharBuffer.wrap(data);
-      ByteBuffer byteBuffer = Charset.forName(KEY_ENCODING).encode(charBuffer);
-      byte[] result =  new byte[byteBuffer.limit()];
-      byteBuffer.get(result);
-      return result;
+        if(data == null || data.length == 0) return null;
+        CharBuffer charBuffer = CharBuffer.wrap(data);
+        ByteBuffer byteBuffer = Charset.forName(KEY_ENCODING).encode(charBuffer);
+        byte[] result =  new byte[byteBuffer.limit()];
+        byteBuffer.get(result);
+        return result;
     }
 
     private Pair<Boolean, String> getResultFromPragma(String command) {
-      Cursor cursor = rawQuery(command, new Object[]{});
-      if(cursor == null) return new Pair(false, "");
-      cursor.moveToFirst();
-      String value = cursor.getString(0);
-      cursor.close();
-      return new Pair(true, value);
+        Cursor cursor = rawQuery(command, new Object[]{});
+        if(cursor == null) return new Pair(false, "");
+        cursor.moveToFirst();
+        String value = cursor.getString(0);
+        cursor.close();
+        return new Pair(true, value);
     }
 
 
@@ -3058,10 +3057,10 @@ public class SQLiteDatabase extends SQLiteClosable {
     private native int native_status(int operation, boolean reset);
 
     private native void native_key(char[] key) throws SQLException;
-  
+
     private native void native_rekey(String key) throws SQLException;
 
-  private native void key(byte[] key) throws SQLException;
-  private native void key_mutf8(char[] key) throws SQLException;
-  private native void rekey(byte[] key) throws SQLException;
+    private native void key(byte[] key) throws SQLException;
+    private native void key_mutf8(char[] key) throws SQLException;
+    private native void rekey(byte[] key) throws SQLException;
 }
