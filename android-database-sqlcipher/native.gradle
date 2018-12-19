@@ -74,6 +74,10 @@ task cleanSQLCipher() {
   doLast {
     logger.info "Cleaning SQLCipher source"
     gitClean("${sqlcipherDir}")
+    File amalgamationSource = new File("${sqlcipherDir}/sqlite3.c")
+    File amalgamationHeader = new File("${sqlcipherDir}/sqlite3.h")
+    if(amalgamationSource.exists()) amalgamationSource.delete()
+    if(amalgamationHeader.exists()) amalgamationHeader.delete()
   }
 }
 
