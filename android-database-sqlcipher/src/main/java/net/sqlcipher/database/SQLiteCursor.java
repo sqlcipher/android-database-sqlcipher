@@ -316,8 +316,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         }
         mWindow.setStartPosition(startPos);
         mWindow.setRequiredPosition(requiredPos);
-        Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
+        if (Config.LOGV) {
+          Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
                                  startPos, requiredPos));
+        }
         mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
         if(mCursorWindowCapacity == 0) {
           mCursorWindowCapacity = mWindow.getNumRows();
@@ -665,8 +667,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
       }
       mWindow.setStartPosition(startPos);
       mWindow.setRequiredPosition(requiredPos);
-      Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
+      if (Config.LOGV) {
+        Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
                                startPos, requiredPos));
+      }
       mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
       if(mCursorWindowCapacity == 0) {
         mCursorWindowCapacity = mWindow.getNumRows();
