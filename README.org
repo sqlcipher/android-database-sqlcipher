@@ -60,8 +60,10 @@ In order to build android-database-sqlcipher from source you will need both the 
 :  # this only needs to be done once
 :  make init
 
-:  # to build the source
-:  make build
+:  # to build the source for debug:
+:  make build-debug
+:  # or for a release build:
+:  make build-release
 
 *** License
 

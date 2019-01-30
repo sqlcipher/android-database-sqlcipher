@@ -15,7 +15,11 @@ android {
   }
 
   buildTypes {
+    debug {
+      debuggable true
+    }
     release {
+      debuggable false
       minifyEnabled false
     }
   }
@@ -36,7 +40,8 @@ android {
       variant.outputs.each { output ->
         def outputFile = output.outputFile
         if (outputFile != null && outputFile.name.endsWith(".aar")) {
-          def versionFileName = "${archivesBaseName}-${clientVersionNumber}.aar"
+          def buildSuffix = variant.buildType.debuggable ? "-debug" : ""
+          def versionFileName = "${archivesBaseName}-${clientVersionNumber}${buildSuffix}.aar"
           output.outputFileName = versionFileName
         }
       }

@@ -1,7 +1,7 @@
 .POSIX:
 .PHONY: init clean distclean build-openssl build publish-local-snapshot \
 	publish-local-release publish-remote-snapshot public-remote-release
-GRADLE = ./gradlew
+GRADLE = @./gradlew
 
 init:
 	git submodule update --init
@@ -15,8 +15,13 @@ distclean:
 build-openssl:
 	$(GRADLE) buildOpenSSL
 
-build:
-	$(GRADLE) android-database-sqlcipher:bundleRelease
+build-debug:
+	$(GRADLE) android-database-sqlcipher:bundleDebugAar \
+	-PdebugBuild=true
+
+build-release:
+	$(GRADLE) android-database-sqlcipher:bundleReleaseAar \
+	-PdebugBuild=false
 
 publish-local-snapshot:
 	@ $(collect-signing-info) \

@@ -61,6 +61,13 @@ ext {
   sqlcipherDir = "${projectDir}/${mainProjectName}/src/main/external/sqlcipher"
   opensslVersion = "1.1.1"
   opensslDir = "${projectDir}/${mainProjectName}/src/main/external/openssl-${opensslVersion}"
+  if(project.hasProperty('debugBuild') && debugBuild.toBoolean()) {
+    otherSqlcipherCFlags = ""
+    ndkBuildType="NDK_DEBUG=1"
+  } else {
+    otherSqlcipherCFlags = "-DLOG_NDEBUG"
+    ndkBuildType="NDK_DEBUG=0"
+  }
   sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +
     "-DSQLITE_SOUNDEX " +
     "-DHAVE_USLEEP=1 " +

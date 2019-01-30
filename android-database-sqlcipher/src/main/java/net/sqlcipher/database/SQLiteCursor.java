@@ -17,6 +17,7 @@
 package net.sqlcipher.database;
 
 import net.sqlcipher.AbstractWindowedCursor;
+import net.sqlcipher.BuildConfig;
 import net.sqlcipher.CursorWindow;
 import net.sqlcipher.SQLException;
 
@@ -252,7 +253,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             for (int i = 0; i < columnCount; i++) {
                 String columnName = mQuery.columnNameLocked(i);
                 mColumns[i] = columnName;
-                if (Config.LOGV) {
+                if(BuildConfig.DEBUG){
                     Log.v("DatabaseWindow", "mColumns[" + i + "] is "
                             + mColumns[i]);
                 }
@@ -316,8 +317,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         }
         mWindow.setStartPosition(startPos);
         mWindow.setRequiredPosition(requiredPos);
-        Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
-                                 startPos, requiredPos));
+        if(BuildConfig.DEBUG){
+          Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
+                                   startPos, requiredPos));
+        }
         mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
         if(mCursorWindowCapacity == 0) {
           mCursorWindowCapacity = mWindow.getNumRows();
@@ -347,8 +350,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         final int periodIndex = columnName.lastIndexOf('.');
         if (periodIndex != -1) {
             Exception e = new Exception();
-            Log.e(TAG, "requesting column name with table name -- " + columnName, e);
-            columnName = columnName.substring(periodIndex + 1);
+            if(BuildConfig.DEBUG){
+              Log.e(TAG, "requesting column name with table name -- " + columnName, e);
+              columnName = columnName.substring(periodIndex + 1);
+            }
         }
 
         Integer i = mColumnNameMap.get(columnName);
@@ -369,10 +374,12 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 
         // Only allow deletes if there is an ID column, and the ID has been read from it
         if (mRowIdColumnIndex == -1 || mCurrentRowID == null) {
+          if(BuildConfig.DEBUG){
             Log.e(TAG,
-                    "Could not delete row because either the row ID column is not available or it" +
-                    "has not been read.");
-            return false;
+                  "Could not delete row because either the row ID column is not available or it" +
+                  "has not been read.");
+          }
+          return false;
         }
 
         boolean success;
@@ -436,9 +443,11 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     public boolean commitUpdates(Map<? extends Long,
             ? extends Map<String, Object>> additionalValues) {
         if (!supportsUpdates()) {
+          if(BuildConfig.DEBUG){
             Log.e(TAG, "commitUpdates not supported on this cursor, did you "
-                    + "include the _id column?");
-            return false;
+                  + "include the _id column?");
+          }
+          return false;
         }
 
         /*
@@ -521,13 +530,13 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     }
 
     private void deactivateCommon() {
-        if (Config.LOGV) Log.v(TAG, "<<< Releasing cursor " + this);
+        if(BuildConfig.DEBUG) Log.v(TAG, "<<< Releasing cursor " + this);
         mCursorState = 0;
         if (mWindow != null) {
             mWindow.close();
             mWindow = null;
         }
-        if (Config.LOGV) Log.v("DatabaseWindow", "closing window in release()");
+        if(BuildConfig.DEBUG) Log.v("DatabaseWindow", "closing window in release()");
     }
 
     @Override
@@ -578,15 +587,15 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             mDatabase.unlock();
         }
 
-        if (Config.LOGV) {
-            Log.v("DatabaseWindow", "closing window in requery()");
-            Log.v(TAG, "--- Requery()ed cursor " + this + ": " + mQuery);
+        if(BuildConfig.DEBUG){
+          Log.v("DatabaseWindow", "closing window in requery()");
+          Log.v(TAG, "--- Requery()ed cursor " + this + ": " + mQuery);
         }
 
         boolean result = super.requery();
-        if (Config.LOGV) {
-            long timeEnd = System.currentTimeMillis();
-            Log.v(TAG, "requery (" + (timeEnd - timeStart) + " ms): " + mDriver.toString());
+        if(BuildConfig.DEBUG){
+          long timeEnd = System.currentTimeMillis();
+          Log.v(TAG, "requery (" + (timeEnd - timeStart) + " ms): " + mDriver.toString());
         }
         return result;
     }
@@ -622,16 +631,18 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             // if the cursor hasn't been closed yet, close it first
             if (mWindow != null) {
                 int len = mQuery.mSql.length();
-                Log.e(TAG, "Finalizing a Cursor that has not been deactivated or closed. " +
+                if(BuildConfig.DEBUG){
+                  Log.e(TAG, "Finalizing a Cursor that has not been deactivated or closed. " +
                         "database = " + mDatabase.getPath() + ", table = " + mEditTable +
                         ", query = " + mQuery.mSql.substring(0, (len > 100) ? 100 : len),
                         mStackTrace);
+                }
                 close();
                 SQLiteDebug.notifyActiveCursorFinalized();
             } else {
-                if (Config.LOGV) {
-                    Log.v(TAG, "Finalizing cursor on database = " + mDatabase.getPath() +
-                            ", table = " + mEditTable + ", query = " + mQuery.mSql);
+                if(BuildConfig.DEBUG) {
+                  Log.v(TAG, "Finalizing cursor on database = " + mDatabase.getPath() +
+                        ", table = " + mEditTable + ", query = " + mQuery.mSql);
                 }
             }
         } finally {
@@ -665,8 +676,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
       }
       mWindow.setStartPosition(startPos);
       mWindow.setRequiredPosition(requiredPos);
-      Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
-                               startPos, requiredPos));
+      if(BuildConfig.DEBUG) {
+        Log.v(TAG, String.format("Filling cursor window with start position:%d required position:%d",
+                                 startPos, requiredPos));
+      }
       mCount = mQuery.fillWindow(mWindow, mInitialRead, 0);
       if(mCursorWindowCapacity == 0) {
         mCursorWindowCapacity = mWindow.getNumRows();

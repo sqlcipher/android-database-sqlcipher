@@ -39,12 +39,12 @@ task buildNative() {
       "${nativeRootOutputDir}/libs32",
       file("src/main/cpp").absolutePath,
       file("src/main/cpp/Application32.mk").absolutePath,
-      "${sqlcipherCFlags}")
+      "${sqlcipherCFlags}", "${otherSqlcipherCFlags}")
     executeNdkBuild(
       "${nativeRootOutputDir}/libs64",
       file("src/main/cpp").absolutePath,
       file("src/main/cpp/Application64.mk").absolutePath,
-      "${sqlcipherCFlags}")
+      "${sqlcipherCFlags}", "${otherSqlcipherCFlags}")
     exec {
       workingDir "${nativeRootOutputDir}"
       commandLine "mkdir", "-p", "libs"
@@ -113,7 +113,8 @@ def gitClean(directory) {
   }
 }
 
-def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile, cflags) {
+def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile,
+                    cflags, otherSqlcipherCFlags) {
   logger.info "Executing NDK build command"
   exec {
     def outputDirectory = "NDK_LIBS_OUT=${outputDir}"
@@ -121,9 +122,10 @@ def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile, cflags) {
     def environmentVariables = ["SQLCIPHER_CFLAGS": "${cflags}",
                                 "OPENSSL_DIR": "${opensslDir}",
                                 "SQLCIPHER_DIR": "${sqlcipherDir}",
+                                "SQLCIPHER_OTHER_CFLAGS" : "${otherSqlcipherCFlags}",
                                 "ANDROID_NATIVE_ROOT_DIR": "${androidNativeRootDir}"]
     environment(environmentVariables)
-    commandLine "ndk-build",
+    commandLine "ndk-build", "${ndkBuildType}",
     "--environment-overrides", outputDirectory,
     "-C", androidMkDirectory, applicationFile
   }
