@@ -130,8 +130,12 @@ public abstract class SQLiteOpenHelper {
     public synchronized SQLiteDatabase getWritableDatabase(String password) {
       return getWritableDatabase(password == null ? null : password.toCharArray());
     }
-  
+
     public synchronized SQLiteDatabase getWritableDatabase(char[] password) {
+      return getWritableDatabase(password == null ? null : SQLiteDatabase.getBytes(password));
+    }
+
+    public synchronized SQLiteDatabase getWritableDatabase(byte[] password) {
         if (mDatabase != null && mDatabase.isOpen() && !mDatabase.isReadOnly()) {
             return mDatabase;  // The database is already open for business
         }
@@ -152,7 +156,7 @@ public abstract class SQLiteOpenHelper {
         try {
             mIsInitializing = true;
             if (mName == null) {
-                db = SQLiteDatabase.create(null, password);
+                db = SQLiteDatabase.create(null, "");
             } else {
                 String path = mContext.getDatabasePath(mName).getPath();
                 File dbPathFile = new File (path);
@@ -219,8 +223,12 @@ public abstract class SQLiteOpenHelper {
     public synchronized SQLiteDatabase getReadableDatabase(String password) {
       return getReadableDatabase(password == null ? null : password.toCharArray());
     }
-  
+
     public synchronized SQLiteDatabase getReadableDatabase(char[] password) {
+      return getReadableDatabase(password == null ? null : SQLiteDatabase.getBytes(password));
+    }
+
+    public synchronized SQLiteDatabase getReadableDatabase(byte[] password) {
         if (mDatabase != null && mDatabase.isOpen()) {
             return mDatabase;  // The database is already open for business
         }
@@ -252,7 +260,7 @@ public abstract class SQLiteOpenHelper {
                 mIsInitializing = true;
                 db.close();
             }
-            db = SQLiteDatabase.openDatabase(path, password, mFactory, SQLiteDatabase.OPEN_READONLY);
+            db = SQLiteDatabase.openDatabase(path, password, mFactory, SQLiteDatabase.OPEN_READONLY, mHook, mErrorHandler);
             if (db.getVersion() != mNewVersion) {
                 throw new SQLiteException("Can't upgrade read-only database from version " +
                         db.getVersion() + " to " + mNewVersion + ": " + path);

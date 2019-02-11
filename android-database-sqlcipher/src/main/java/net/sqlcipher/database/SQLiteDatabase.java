@@ -1182,7 +1182,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     return openDatabase(path, password == null ? null : password.toCharArray(), factory, flags, hook, errorHandler);
   }
 
-  /**
+/**
    * Open the database according to the flags {@link #OPEN_READWRITE}
    * {@link #OPEN_READONLY} {@link #CREATE_IF_NECESSARY} and/or {@link #NO_LOCALIZED_COLLATORS}
    * with optional hook to run on pre/post key events.
@@ -1205,6 +1205,34 @@ public class SQLiteDatabase extends SQLiteClosable {
    * @throws IllegalArgumentException if the database path is null
    */
   public static SQLiteDatabase openDatabase(String path, char[] password, CursorFactory factory, int flags,
+                                            SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
+    byte[] keyMaterial = getBytes(password);
+    return openDatabase(path, keyMaterial, factory, flags, hook, errorHandler);
+  }
+
+  /**
+   * Open the database according to the flags {@link #OPEN_READWRITE}
+   * {@link #OPEN_READONLY} {@link #CREATE_IF_NECESSARY} and/or {@link #NO_LOCALIZED_COLLATORS}
+   * with optional hook to run on pre/post key events.
+   *
+   * <p>Sets the locale of the database to the  the system's current locale.
+   * Call {@link #setLocale} if you would like something else.</p>
+   *
+   * @param path to database file to open and/or create
+   * @param password to use to open and/or create database file (byte array)
+   * @param factory an optional factory class that is called to instantiate a
+   *            cursor when query is called, or null for default
+   * @param flags to control database access mode and other options
+   * @param hook to run on pre/post key events (may be null)
+   * @param errorHandler The {@link DatabaseErrorHandler} to be used when sqlite reports database
+   * corruption (or null for default).
+   *
+   * @return the newly opened database
+   *
+   * @throws SQLiteException if the database cannot be opened
+   * @throws IllegalArgumentException if the database path is null
+   */
+  public static SQLiteDatabase openDatabase(String path, byte[] password, CursorFactory factory, int flags,
                                             SQLiteDatabaseHook hook, DatabaseErrorHandler errorHandler) {
     SQLiteDatabase sqliteDatabase = null;
     DatabaseErrorHandler myErrorHandler = (errorHandler != null) ? errorHandler : new DefaultDatabaseErrorHandler();
@@ -1255,16 +1283,16 @@ public class SQLiteDatabase extends SQLiteClosable {
   /**
    * Equivalent to openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook).
    */
-  public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
-    return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
+  public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
+                                                    DatabaseErrorHandler errorHandler) {
+    return openOrCreateDatabase(file == null ? null : file.getPath(), password, factory, databaseHook, errorHandler);
   }
 
   /**
    * Equivalent to openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook).
    */
-  public static SQLiteDatabase openOrCreateDatabase(File file, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
-                                                    DatabaseErrorHandler errorHandler) {
-    return openOrCreateDatabase(file == null ? null : file.getPath(), password, factory, databaseHook, errorHandler);
+  public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
+    return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook);
   }
 
   public static SQLiteDatabase openOrCreateDatabase(String path, String password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
@@ -1277,6 +1305,15 @@ public class SQLiteDatabase extends SQLiteClosable {
   }
 
   public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
+                                                    DatabaseErrorHandler errorHandler) {
+    return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
+  }
+
+  public static SQLiteDatabase openOrCreateDatabase(String path, byte[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook) {
+    return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook, null);
+  }
+
+  public static SQLiteDatabase openOrCreateDatabase(String path, byte[] password, CursorFactory factory, SQLiteDatabaseHook databaseHook,
                                                     DatabaseErrorHandler errorHandler) {
     return openDatabase(path, password, factory, CREATE_IF_NECESSARY, databaseHook, errorHandler);
   }
@@ -1300,6 +1337,13 @@ public class SQLiteDatabase extends SQLiteClosable {
    */
   public static SQLiteDatabase openOrCreateDatabase(String path, char[] password, CursorFactory factory) {
     return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null);
+  }
+
+  /**
+   * Equivalent to openDatabase(path, password, factory, CREATE_IF_NECESSARY).
+   */
+  public static SQLiteDatabase openOrCreateDatabase(String path, byte[] password, CursorFactory factory) {
+    return openDatabase(path, password, factory, CREATE_IF_NECESSARY, null, null);
   }
 
   /**
@@ -2489,6 +2533,11 @@ public class SQLiteDatabase extends SQLiteClosable {
         this.openDatabaseInternal(password, databaseHook);
     }
 
+    public SQLiteDatabase(String path, byte[] password, CursorFactory factory, int flags, SQLiteDatabaseHook databaseHook) {
+        this(path, factory, flags, null);
+        this.openDatabaseInternal(password, databaseHook);
+    }
+
     /**
      * Private constructor (without database password) which DOES NOT attempt to open the database.
      *
@@ -2517,15 +2566,18 @@ public class SQLiteDatabase extends SQLiteClosable {
     }
 
     private void openDatabaseInternal(final char[] password, SQLiteDatabaseHook hook) {
-        boolean shouldCloseConnection = true;
         final byte[] keyMaterial = getBytes(password);
+        openDatabaseInternal(keyMaterial, hook);
+    }
+
+    private void openDatabaseInternal(final byte[] password, SQLiteDatabaseHook hook) {
+        boolean shouldCloseConnection = true;
         dbopen(mPath, mFlags);
         try {
-
             keyDatabase(hook, new Runnable() {
                     public void run() {
-                        if(keyMaterial != null && keyMaterial.length > 0) {
-                            key(keyMaterial);
+                        if(password != null && password.length > 0) {
+                            key(password);
                         }
                     }
                 });
@@ -2533,20 +2585,24 @@ public class SQLiteDatabase extends SQLiteClosable {
 
         } catch(RuntimeException ex) {
 
-            if(containsNull(password)) {
+            final char[] keyMaterial = getChars(password);
+            if(containsNull(keyMaterial)) {
                 keyDatabase(hook, new Runnable() {
                         public void run() {
                             if(password != null) {
-                                key_mutf8(password);
+                                key_mutf8(keyMaterial);
                             }
                         }
                     });
-                if(keyMaterial != null && keyMaterial.length > 0) {
-                    rekey(keyMaterial);
+                if(password != null && password.length > 0) {
+                    rekey(password);
                 }
                 shouldCloseConnection = false;
             } else {
                 throw ex;
+            }
+            if(keyMaterial != null && keyMaterial.length > 0) {
+                Arrays.fill(keyMaterial, (char)0);
             }
 
         } finally {
@@ -2555,9 +2611,6 @@ public class SQLiteDatabase extends SQLiteClosable {
                 if (SQLiteDebug.DEBUG_SQL_CACHE) {
                     mTimeClosed = getTime();
                 }
-            }
-            if(keyMaterial != null && keyMaterial.length > 0) {
-                Arrays.fill(keyMaterial, (byte) 0);
             }
         }
 
@@ -2838,6 +2891,24 @@ public class SQLiteDatabase extends SQLiteClosable {
         mMaxSqlCacheSize = cacheSize;
     }
 
+    public static byte[] getBytes(char[] data) {
+        if(data == null || data.length == 0) return null;
+        CharBuffer charBuffer = CharBuffer.wrap(data);
+        ByteBuffer byteBuffer = Charset.forName(KEY_ENCODING).encode(charBuffer);
+        byte[] result =  new byte[byteBuffer.limit()];
+        byteBuffer.get(result);
+        return result;
+    }
+
+    public static char[] getChars(byte[] data){
+        if(data == null || data.length == 0) return null;
+        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+        CharBuffer charBuffer = Charset.forName(KEY_ENCODING).decode(byteBuffer);
+        char[] result = new char[charBuffer.limit()];
+        charBuffer.get(result);
+        return result;
+    }
+
     private void beginTransactionWithListenerInternal(SQLiteTransactionListener transactionListener,
                                                       SQLiteDatabaseTransactionType transactionType) {
         lockForced();
@@ -2993,15 +3064,6 @@ public class SQLiteDatabase extends SQLiteClosable {
         return attachedDbs;
     }
 
-    private byte[] getBytes(char[] data) {
-        if(data == null || data.length == 0) return null;
-        CharBuffer charBuffer = CharBuffer.wrap(data);
-        ByteBuffer byteBuffer = Charset.forName(KEY_ENCODING).encode(charBuffer);
-        byte[] result =  new byte[byteBuffer.limit()];
-        byteBuffer.get(result);
-        return result;
-    }
-
     private Pair<Boolean, String> getResultFromPragma(String command) {
         Cursor cursor = rawQuery(command, new Object[]{});
         if(cursor == null) return new Pair(false, "");
@@ -3083,10 +3145,6 @@ public class SQLiteDatabase extends SQLiteClosable {
     private native void native_rawExecSQL(String sql);
 
     private native int native_status(int operation, boolean reset);
-
-    private native void native_key(char[] key) throws SQLException;
-
-    private native void native_rekey(String key) throws SQLException;
 
     private native void key(byte[] key) throws SQLException;
     private native void key_mutf8(char[] key) throws SQLException;
