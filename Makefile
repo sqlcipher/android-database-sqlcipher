@@ -19,12 +19,12 @@ check:
 	$(GRADLE) check
 
 build-debug: check
-	$(GRADLE) android-database-sqlcipher:bundleDebugAar \
-	-PdebugBuild=true
+	TERM=dumb $(GRADLE) android-database-sqlcipher:bundleDebugAar \
+	-PdebugBuild=true --stacktrace
 
 build-release: check
 	$(GRADLE) android-database-sqlcipher:bundleReleaseAar \
-	-PdebugBuild=false
+	-PdebugBuild=false --stacktrace
 
 publish-local-snapshot:
 	@ $(collect-signing-info) \
