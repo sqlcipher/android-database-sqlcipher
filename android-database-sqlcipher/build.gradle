@@ -1,4 +1,5 @@
 apply plugin: "com.android.library"
+apply plugin: "org.ec4j.editorconfig"
 apply from: "native.gradle"
 apply from: "maven.gradle"
 
@@ -12,6 +13,11 @@ android {
     targetSdkVersion "${targetAndroidSdkVersion}"
     versionCode 1
     versionName "${clientVersionNumber}"
+  }
+
+  editorconfig {
+   includes = ["src/**", "build.gradle"]
+   excludes = ["src/main/external/sqlcipher/**", "src/main/external/openssl-*/**"]
   }
 
   buildTypes {
@@ -30,8 +36,8 @@ android {
     }
   }
 
+  check.dependsOn editorconfigCheck
   clean.dependsOn cleanNative
-
   preBuild.dependsOn([buildOpenSSL, buildAmalgamation])
 
   afterEvaluate {
