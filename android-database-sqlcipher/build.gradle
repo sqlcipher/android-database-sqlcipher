@@ -5,7 +5,7 @@ apply from: "maven.gradle"
 
 android {
 
-  compileSdkVersion 26
+  compileSdkVersion "${compileAndroidSdkVersion}" as Integer
 
   defaultConfig {
     versionName "${clientVersionNumber}"
