@@ -108,7 +108,7 @@ static int read_mapinfo(FILE *fp,
 
 again:
     skip = 0;
-    
+
     if(fgets(line, 1024, fp) == 0) return 0;
 
     len = strlen(line);
@@ -138,7 +138,7 @@ again:
     if (sscanf(line, "Private_Dirty: %d kB", &private_dirty) != 1) return 0;
     if (fgets(line, 1024, fp) == 0) return 0;
     if (sscanf(line, "Referenced: %d kB", &referenced) != 1) return 0;
-    
+
     if (skip) {
         goto again;
     }
@@ -154,11 +154,11 @@ static void load_maps(int pid, int *sharedPages, int *privatePages)
 {
     char tmp[128];
     FILE *fp;
-    
+
     sprintf(tmp, "/proc/%d/smaps", pid);
     fp = fopen(tmp, "r");
     if (fp == 0) return;
-    
+
     while (read_mapinfo(fp, sharedPages, privatePages) != 0) {
         // Do nothing
     }

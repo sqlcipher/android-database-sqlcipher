@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * Native implementation of the bulk cursor. This is only for use in implementing
  * IPC, application code should use the Cursor interface.
- * 
+ *
  * {@hide}
  */
 public abstract class BulkCursorNative extends Binder implements IBulkCursor
@@ -54,7 +54,7 @@ public abstract class BulkCursorNative extends Binder implements IBulkCursor
 
         return new BulkCursorProxy(obj);
     }
-    
+
     @Override
     public boolean onTransact(int code, Parcel data, Parcel reply, int flags)
             throws RemoteException {
@@ -100,7 +100,7 @@ public abstract class BulkCursorNative extends Binder implements IBulkCursor
                     reply.writeNoException();
                     return true;
                 }
-                
+
                 case CLOSE_TRANSACTION: {
                     data.enforceInterface(IBulkCursor.descriptor);
                     close();
@@ -215,7 +215,7 @@ final class BulkCursorProxy implements IBulkCursor {
         mRemote.transact(GET_CURSOR_WINDOW_TRANSACTION, data, reply, 0);
 
         DatabaseUtils.readExceptionFromParcel(reply);
-        
+
         CursorWindow window = null;
         if (reply.readInt() == 1) {
             window = CursorWindow.newFromParcel(reply);
@@ -253,7 +253,7 @@ final class BulkCursorProxy implements IBulkCursor {
         boolean result = mRemote.transact(COUNT_TRANSACTION, data, reply, 0);
 
         DatabaseUtils.readExceptionFromParcel(reply);
-        
+
         int count;
         if (result == false) {
             count = -1;
@@ -275,14 +275,14 @@ final class BulkCursorProxy implements IBulkCursor {
         mRemote.transact(GET_COLUMN_NAMES_TRANSACTION, data, reply, 0);
 
         DatabaseUtils.readExceptionFromParcel(reply);
-        
+
         String[] columnNames = null;
         int numColumns = reply.readInt();
         columnNames = new String[numColumns];
         for (int i = 0; i < numColumns; i++) {
             columnNames[i] = reply.readString();
         }
-        
+
         data.recycle();
         reply.recycle();
         return columnNames;
@@ -315,7 +315,7 @@ final class BulkCursorProxy implements IBulkCursor {
         data.recycle();
         reply.recycle();
     }
-    
+
     public int requery(IContentObserver observer, CursorWindow window) throws RemoteException {
         Parcel data = Parcel.obtain();
         Parcel reply = Parcel.obtain();
@@ -326,7 +326,7 @@ final class BulkCursorProxy implements IBulkCursor {
         window.writeToParcel(data, 0);
 
         boolean result = mRemote.transact(REQUERY_TRANSACTION, data, reply, 0);
-        
+
         DatabaseUtils.readExceptionFromParcel(reply);
 
         int count;
@@ -355,7 +355,7 @@ final class BulkCursorProxy implements IBulkCursor {
         mRemote.transact(UPDATE_ROWS_TRANSACTION, data, reply, 0);
 
         DatabaseUtils.readExceptionFromParcel(reply);
-        
+
         boolean result = (reply.readInt() == 1 ? true : false);
 
         data.recycle();
@@ -376,7 +376,7 @@ final class BulkCursorProxy implements IBulkCursor {
         mRemote.transact(DELETE_ROW_TRANSACTION, data, reply, 0);
 
         DatabaseUtils.readExceptionFromParcel(reply);
-        
+
         boolean result = (reply.readInt() == 1 ? true : false);
 
         data.recycle();

@@ -101,10 +101,10 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     public void setRequiredPosition(int pos) {
         mRequiredPos = pos;
     }
-  
+
     /**
      * Returns the number of rows in this window.
-     * 
+     *
      * @return the number of rows in this window.
      */
     public int getNumRows() {
@@ -115,10 +115,10 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     private native int getNumRows_native();
     /**
-     * Set number of Columns 
+     * Set number of Columns
      * @param columnNum
      * @return true if success
      */
@@ -130,9 +130,9 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     private native boolean setNumColumns_native(int columnNum);
-    
+
     /**
      * Allocate a row in cursor window
      * @return false if cursor window is out of memory
@@ -145,9 +145,9 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
-    private native boolean allocRow_native();    
-    
+
+    private native boolean allocRow_native();
+
     /**
      * Free the last row
      */
@@ -159,7 +159,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     private native void freeLastRow_native();
 
     /**
@@ -177,8 +177,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
-    private native boolean putBlob_native(byte[] value, int row, int col);    
+
+    private native boolean putBlob_native(byte[] value, int row, int col);
 
     /**
      * Copy String to cursor window
@@ -195,9 +195,9 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
-    private native boolean putString_native(String value, int row, int col);    
-    
+
+    private native boolean putString_native(String value, int row, int col);
+
     /**
      * Copy integer to cursor window
      * @param value
@@ -213,12 +213,12 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     private native boolean putLong_native(long value, int row, int col);
-    
+
 
     /**
-     * Copy double to cursor window 
+     * Copy double to cursor window
      * @param value
      * @param row
      * @param col
@@ -232,8 +232,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
-    private native boolean putDouble_native(double value, int row, int col);    
+
+    private native boolean putDouble_native(double value, int row, int col);
 
     /**
      * Set the [row, col] value to NULL
@@ -249,13 +249,13 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     private native boolean putNull_native(int row, int col);
-    
+
 
     /**
      * Returns {@code true} if given field is {@code NULL}.
-     * 
+     *
      * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return {@code true} if given field is {@code NULL}
@@ -401,8 +401,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
 
     /**
      * Returns a String for the given field.
-     * 
-     * @param row the row to read from, row - getStartPosition() being the actual row in the window 
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return a String value for the given field
      */
@@ -414,7 +414,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     /**
      * Returns the value at (<code>row</code>, <code>col</code>) as a <code>String</code>.
      *
@@ -433,11 +433,11 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
 
     /**
      * copy the text for the given field in the provided char array.
-     * 
-     * @param row the row to read from, row - getStartPosition() being the actual row in the window 
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
-     * @param buffer the CharArrayBuffer to copy the text into,      
-     * If the requested string is larger than the buffer 
+     * @param buffer the CharArrayBuffer to copy the text into,
+     * If the requested string is larger than the buffer
      * a new char buffer will be created to hold the string. and assigne to
      * CharArrayBuffer.data
       */
@@ -459,15 +459,15 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     private native char[] copyStringToBuffer_native(
             int row, int col, int bufferSize, CharArrayBuffer buffer);
-    
+
     /**
      * Returns a long for the given field.
      * row is 0 based
-     * 
-     * @param row the row to read from, row - getStartPosition() being the actual row in the window 
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return a long value for the given field
      */
@@ -479,7 +479,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     /**
      * Returns the value at (<code>row</code>, <code>col</code>) as a <code>long</code>.
      *
@@ -496,8 +496,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     /**
      * Returns a double for the given field.
      * row is 0 based
-     * 
-     * @param row the row to read from, row - getStartPosition() being the actual row in the window 
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return a double value for the given field
      */
@@ -509,7 +509,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     /**
      * Returns the value at (<code>row</code>, <code>col</code>) as a <code>double</code>.
      *
@@ -526,8 +526,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     /**
      * Returns a short for the given field.
      * row is 0 based
-     * 
-     * @param row the row to read from, row - getStartPosition() being the actual row in the window 
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return a short value for the given field
      */
@@ -542,8 +542,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
 
     /**
      * Returns an int for the given field.
-     * 
-     * @param row the row to read from, row - getStartPosition() being the actual row in the window 
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return an int value for the given field
      */
@@ -555,12 +555,12 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
             releaseReference();
         }
     }
-    
+
     /**
      * Returns a float for the given field.
      * row is 0 based
-     * 
-     * @param row the row to read from, row - getStartPosition() being the actual row in the window 
+     *
+     * @param row the row to read from, row - getStartPosition() being the actual row in the window
      * @param col the column to read from
      * @return a float value for the given field
      */
@@ -571,8 +571,8 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         } finally {
             releaseReference();
         }
-    } 
-    
+    }
+
     /**
      * Clears out the existing contents of the window, making it safe to reuse
      * for new data. Note that the number of columns in the window may NOT
@@ -581,7 +581,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     public void clear() {
         acquireReference();
         try {
-            mStartPos = 0;        
+            mStartPos = 0;
             native_clear();
         } finally {
             releaseReference();
@@ -597,7 +597,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     public void close() {
         releaseReference();
     }
-    
+
     private native void close_native();
 
     @Override
@@ -608,7 +608,7 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
         }
         close_native();
     }
-    
+
     public static final Parcelable.Creator<CursorWindow> CREATOR
             = new Parcelable.Creator<CursorWindow>() {
         public CursorWindow createFromParcel(Parcel source) {
@@ -634,9 +634,9 @@ public class CursorWindow extends android.database.CursorWindow implements Parce
     }
 
     public CursorWindow(Parcel source,int foo) {
-    	
+
     	super(true);
-    	
+
         IBinder nativeBinder = source.readStrongBinder();
         mStartPos = source.readInt();
 

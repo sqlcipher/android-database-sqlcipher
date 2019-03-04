@@ -74,9 +74,9 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 
     /** Used to find out where a cursor was allocated in case it never got released. */
     private Throwable mStackTrace;
-    
-    /** 
-     *  mMaxRead is the max items that each cursor window reads 
+
+    /**
+     *  mMaxRead is the max items that each cursor window reads
      *  default to a very high value
      */
     private int mMaxRead = Integer.MAX_VALUE;
@@ -91,10 +91,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 
     /**
      *  support for a cursor variant that doesn't always read all results
-     *  initialRead is the initial number of items that cursor window reads 
+     *  initialRead is the initial number of items that cursor window reads
      *  if query contains more than this number of items, a thread will be
-     *  created and handle the left over items so that caller can show 
-     *  results as soon as possible 
+     *  created and handle the left over items so that caller can show
+     *  results as soon as possible
      * @param initialRead initial number of items that cursor read
      * @param maxRead leftover items read at maxRead items per time
      * @hide
@@ -104,20 +104,20 @@ public class SQLiteCursor extends AbstractWindowedCursor {
         mInitialRead = initialRead;
         mLock = new ReentrantLock(true);
     }
-    
+
     private void queryThreadLock() {
         if (mLock != null) {
-            mLock.lock();            
+            mLock.lock();
         }
     }
-    
+
     private void queryThreadUnlock() {
         if (mLock != null) {
-            mLock.unlock();            
+            mLock.unlock();
         }
     }
-    
-    
+
+
     /**
      * @hide
      */
@@ -133,7 +133,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             } else {
                 mPendingData = true;
             }
-            
+
         }
         public void run() {
              // use cached mWindow, to avoid get null mWindow
@@ -156,7 +156,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                         if (count == NO_COUNT){
                             mCount += mMaxRead;
                             sendMessage();
-                        } else {                                
+                        } else {
                             mCount = count;
                             sendMessage();
                             break;
@@ -171,13 +171,13 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                     mLock.unlock();
                 }
             }
-        }        
+        }
     }
-    
-    
+
+
     /**
      * @hide
-     */   
+     */
     protected static class MainThreadNotificationHandler extends Handler {
 
         private final WeakReference<SQLiteCursor> wrappedCursor;
@@ -193,15 +193,15 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             }
         }
     }
-    
+
     /**
      * @hide
      */
-    protected MainThreadNotificationHandler mNotificationHandler;    
-    
+    protected MainThreadNotificationHandler mNotificationHandler;
+
     public void registerDataSetObserver(DataSetObserver observer) {
         super.registerDataSetObserver(observer);
-        if ((Integer.MAX_VALUE != mMaxRead || Integer.MAX_VALUE != mInitialRead) && 
+        if ((Integer.MAX_VALUE != mMaxRead || Integer.MAX_VALUE != mInitialRead) &&
                 mNotificationHandler == null) {
             queryThreadLock();
             try {
@@ -214,9 +214,9 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                 queryThreadUnlock();
             }
         }
-        
+
     }
-    
+
     /**
      * Execute a query and provide access to its result set through a Cursor
      * interface. For a query such as: {@code SELECT name, birth, phone FROM
@@ -257,7 +257,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
                     Log.v("DatabaseWindow", "mColumns[" + i + "] is "
                             + mColumns[i]);
                 }
-    
+
                 // Make note of the row ID column index for quick access to it
                 if ("_id".equals(columnName)) {
                     mRowIdColumnIndex = i;
@@ -330,7 +330,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
             mCount = startPos + mInitialRead;
             Thread t = new Thread(new QueryThread(mCursorState), "query thread");
             t.start();
-        } 
+        }
     }
 
     @Override
@@ -601,7 +601,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     }
 
     @Override
-    public void setWindow(CursorWindow window) {        
+    public void setWindow(CursorWindow window) {
         if (mWindow != null) {
             mCursorState++;
             queryThreadLock();
@@ -651,7 +651,7 @@ public class SQLiteCursor extends AbstractWindowedCursor {
     }
 
 
-	
+
 	@Override
 	public void fillWindow(int requiredPos, android.database.CursorWindow window) {
       int startPos = 0;

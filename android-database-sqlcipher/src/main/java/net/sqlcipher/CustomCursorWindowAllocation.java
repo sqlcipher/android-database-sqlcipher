@@ -19,11 +19,11 @@ public class CustomCursorWindowAllocation implements CursorWindowAllocation {
   public long getInitialAllocationSize() {
     return initialAllocationSize;
   }
-  
+
   public long getGrowthPaddingSize() {
     return growthPaddingSize;
   }
-  
+
   public long getMaxAllocationSize() {
     return maxAllocationSize;
   }

@@ -77,11 +77,11 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     public int getColumnCount() {
         return getColumnNames().length;
     }
-    
+
     public void deactivate() {
         deactivateInternal();
     }
-    
+
     /**
      * @hide
      */
@@ -92,10 +92,10 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
         }
         mDataSetObservable.notifyInvalidated();
     }
-    
+
     public boolean requery() {
         if (mSelfObserver != null && mSelfObserverRegistered == false) {
-        	
+
             mContentResolver.registerContentObserver(mNotifyUri, true, mSelfObserver);
             mSelfObserverRegistered = true;
         }
@@ -106,7 +106,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     public boolean isClosed() {
         return mClosed;
     }
-    
+
     public void close() {
         mClosed = true;
         mContentObservable.unregisterAll();
@@ -143,7 +143,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
         return true;
     }
 
-    
+
     public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
         // Default implementation, uses getString
         String result = getString(columnIndex);
@@ -159,7 +159,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
             buffer.sizeCopied = 0;
         }
     }
-    
+
     /* -------------------------------------------------------- */
     /* Implementation */
     public AbstractCursor() {
@@ -204,7 +204,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
 
         return result;
     }
-    
+
     /**
      * Copy data from cursor to CursorWindow
      * @param position start position of data
@@ -388,7 +388,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
 
     /**
      * Returns <code>true</code> if there are pending updates that have not yet been committed.
-     * 
+     *
      * @return <code>true</code> if there are pending updates that have not yet been committed.
      * @hide
      * @deprecated
@@ -435,7 +435,7 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
             mContentObservable.unregisterObserver(observer);
         }
     }
-    
+
     /**
      * This is hidden until the data set change model has been re-evaluated.
      * @hide
@@ -443,18 +443,18 @@ public abstract class AbstractCursor implements android.database.CrossProcessCur
     protected void notifyDataSetChange() {
         mDataSetObservable.notifyChanged();
     }
-    
+
     /**
      * This is hidden until the data set change model has been re-evaluated.
      * @hide
      */
     protected DataSetObservable getDataSetObservable() {
         return mDataSetObservable;
-        
+
     }
     public void registerDataSetObserver(DataSetObserver observer) {
         mDataSetObservable.registerObserver(observer);
-        
+
     }
 
     public void unregisterDataSetObserver(DataSetObserver observer) {

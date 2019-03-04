@@ -81,7 +81,7 @@ public abstract class SQLiteOpenHelper {
                             int version, SQLiteDatabaseHook hook) {
         this(context, name, factory, version, hook, new DefaultDatabaseErrorHandler());
     }
-    
+
     /**
      * Create a helper object to create, open, and/or manage a database.
      * The database is not actually created or opened until one of
@@ -250,7 +250,7 @@ public abstract class SQLiteOpenHelper {
             String path = mContext.getDatabasePath(mName).getPath();
             File databasePath = new File(path);
             File databasesDirectory = new File(mContext.getDatabasePath(mName).getParent());
-            
+
             if(!databasesDirectory.exists()){
                 databasesDirectory.mkdirs();
             }

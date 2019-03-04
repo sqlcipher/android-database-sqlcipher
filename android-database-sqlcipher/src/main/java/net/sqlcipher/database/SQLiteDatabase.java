@@ -548,7 +548,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     if(BuildConfig.DEBUG){
       Log.e(TAG, "Calling error handler for corrupt database (detected) " + mPath);
     }
-    
+
     // NOTE: DefaultDatabaseErrorHandler deletes the corrupt file, EXCEPT for memory database
     mErrorHandler.onCorruption(this);
   }
@@ -1244,7 +1244,7 @@ public class SQLiteDatabase extends SQLiteClosable {
     } catch (SQLiteDatabaseCorruptException e) {
       // Try to recover from this, if possible.
       // FUTURE TBD: should we consider this for other open failures?
-      
+
       if(BuildConfig.DEBUG){
         Log.e(TAG, "Calling error handler for corrupt database " + path, e);
       }

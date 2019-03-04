@@ -139,7 +139,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
         }
         mWindow = null;
     }
-    
+
     @Override
     public void close() {
         super.close();
@@ -148,7 +148,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
         } catch (RemoteException ex) {
             Log.w(TAG, "Remote process exception when closing");
         }
-        mWindow = null;        
+        mWindow = null;
     }
 
     @Override
@@ -189,7 +189,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
             if (result != false) {
                 // The window contains the old value, discard it
                 mWindow = null;
-    
+
                 // Fix up the position
                 mCount = mBulkCursor.count();
                 if (mPos < mCount) {
@@ -246,7 +246,7 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
 
             try {
                 boolean result = mBulkCursor.updateRows(mUpdatedRows);
-    
+
                 if (result == true) {
                     mUpdatedRows.clear();
 
@@ -288,31 +288,31 @@ public final class BulkCursorToCursorAdaptor extends AbstractWindowedCursor {
 	@Override
 	public void copyStringToBuffer(int columnIndex, CharArrayBuffer buffer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void registerContentObserver(ContentObserver observer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void registerDataSetObserver(DataSetObserver observer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void unregisterContentObserver(ContentObserver observer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void unregisterDataSetObserver(DataSetObserver observer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 

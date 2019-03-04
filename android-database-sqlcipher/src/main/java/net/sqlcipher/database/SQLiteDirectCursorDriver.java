@@ -21,11 +21,11 @@ import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
 
 /**
  * A cursor driver that uses the given query directly.
- * 
+ *
  * @hide
  */
 public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
-    private String mEditTable; 
+    private String mEditTable;
     private SQLiteDatabase mDatabase;
     private Cursor mCursor;
     private String mSql;
@@ -69,7 +69,7 @@ public class SQLiteDirectCursorDriver implements SQLiteCursorDriver {
             // Create the cursor
             if (factory == null) {
                 mCursor = new SQLiteCursor(mDatabase, this, mEditTable, query);
-                
+
             } else {
                 mCursor = factory.newCursor(mDatabase, this, mEditTable, query);
             }

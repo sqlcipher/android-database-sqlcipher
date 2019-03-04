@@ -152,7 +152,7 @@ namespace sqlcipher {
     env->ReleaseCharArrayElements(jKey, jKeyChar, JNI_ABORT);
     env->ReleaseStringUTFChars(key, password);
   }
-    
+
   void native_rawExecSQL(JNIEnv* env, jobject object, jstring sql)
   {
     sqlite3 * handle = (sqlite3 *)env->GetLongField(object, offset_db_handle);

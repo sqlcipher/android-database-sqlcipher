@@ -61,7 +61,7 @@ public class SQLiteContentHelper {
 	            fd = (android.os.ParcelFileDescriptor)m.invoke(file);
 	        } catch (Exception e) {
 	            android.util.Log.i("SQLiteContentHelper", "SQLiteCursor.java: " + e);
-	        }       
+	        }
 	        AssetFileDescriptor afd = new AssetFileDescriptor(fd, 0, file.length());
 	        return afd;
 	    } catch (IOException ex) {
@@ -95,7 +95,7 @@ public class SQLiteContentHelper {
             }
             MemoryFile file = new MemoryFile(null, bytes.length);
             file.writeBytes(bytes, 0, 0, bytes.length);
-            
+
          //   file.deactivate();
             return file;
         } finally {

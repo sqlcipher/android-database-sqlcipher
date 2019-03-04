@@ -1217,10 +1217,10 @@ public class DatabaseUtils {
     /*
     static public void createDbFromSqlStatements(
             Context context, String dbName, int dbVersion, String sqlStatements) {
-    	
+
     	//TODO TODO TODO what needs ot happen here
         SQLiteDatabase db = context.openOrCreateDatabase(dbName, 0, null);
-        
+
         // TODO: this is not quite safe since it assumes that all semicolons at the end of a line
         // terminate statements. It is possible that a text field contains ;\n. We will have to fix
         // this if that turns out to be a problem.

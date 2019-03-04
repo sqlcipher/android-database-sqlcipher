@@ -219,7 +219,7 @@ public class SQLiteQuery extends SQLiteProgram {
         }
     }
 
-    private final native int native_fill_window(CursorWindow window, 
+    private final native int native_fill_window(CursorWindow window,
                                                 int startPos, int requiredPos,
                                                 int offsetParam, int maxRead,
                                                 int lastPos);

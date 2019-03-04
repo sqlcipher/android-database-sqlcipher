@@ -115,7 +115,7 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
     int retryCount;
     int boundParams;
     CursorWindow * window;
-    
+
     if (statement == NULL) {
         LOGE("Invalid statement in fillWindow()");
         jniThrowException(env, "java/lang/IllegalStateException",
@@ -166,8 +166,8 @@ static jint native_fill_window(JNIEnv* env, jobject object, jobject javaWindow,
             LOGE("startPos %d > actual rows %d", startPos, num);
             return num;
         }
-    } 
-    
+    }
+
     while(startPos != 0 || numRows < maxRead) {
         err = sqlite3_step(statement);
         if (err == SQLITE_ROW) {

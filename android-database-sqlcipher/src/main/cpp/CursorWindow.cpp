@@ -1,16 +1,16 @@
 /*
  * Copyright (C) 2006-2007 The Android Open Source Project
  *
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0 
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
  * limitations under the License.
  */
 
@@ -165,7 +165,7 @@ row_slot_t * CursorWindow::getRowSlot(int row)
         chunkPtrOffset = rowChunk - mData + (ROW_SLOT_CHUNK_NUM_ROWS * sizeof(row_slot_t));
     }
     return (row_slot_t *)(rowChunk + (chunkPos * sizeof(row_slot_t)));
-    LOG_WINDOW("exit getRowSlot current row num %d, this row %d", mHeader->numRows, row);    
+    LOG_WINDOW("exit getRowSlot current row num %d, this row %d", mHeader->numRows, row);
 }
 
 row_slot_t * CursorWindow::allocRowSlot()
@@ -216,7 +216,7 @@ field_slot_t * CursorWindow::getFieldSlotWithCheck(int row, int column)
   if (row < 0 || row >= mHeader->numRows || column < 0 || column >= mHeader->numColumns) {
       LOGE("Bad request for field slot %d,%d. numRows = %d, numColumns = %d", row, column, mHeader->numRows, mHeader->numColumns);
       return NULL;
-  }        
+  }
   row_slot_t * rowSlot = getRowSlot(row);
   if (!rowSlot) {
       LOGE("Failed to find rowSlot for row %d", row);
@@ -225,9 +225,9 @@ field_slot_t * CursorWindow::getFieldSlotWithCheck(int row, int column)
   if (rowSlot->offset == 0 || rowSlot->offset >= mSize) {
       LOGE("Invalid rowSlot, offset = %d", rowSlot->offset);
       return NULL;
-  }  
+  }
   int fieldDirOffset = rowSlot->offset;
-  return ((field_slot_t *)offsetToPtr(fieldDirOffset)) + column;  
+  return ((field_slot_t *)offsetToPtr(fieldDirOffset)) + column;
 }
 
 uint32_t CursorWindow::read_field_slot(int row, int column, field_slot_t * slotOut)
@@ -236,7 +236,7 @@ uint32_t CursorWindow::read_field_slot(int row, int column, field_slot_t * slotO
     if (row < 0 || row >= mHeader->numRows || column < 0 || column >= mHeader->numColumns) {
         LOGE("Bad request for field slot %d,%d. numRows = %d, numColumns = %d", row, column, mHeader->numRows, mHeader->numColumns);
         return -1;
-    }        
+    }
     row_slot_t * rowSlot = getRowSlot(row);
     if (!rowSlot) {
         LOGE("Failed to find rowSlot for row %d", row);
@@ -259,7 +259,7 @@ uint32_t CursorWindow::read_field_slot(int row, int column, field_slot_t * slotO
 
 void CursorWindow::copyIn(uint32_t offset, uint8_t const * data, size_t size)
 {
-    assert(offset + size <= mSize);    
+    assert(offset + size <= mSize);
     memcpy(mData + offset, data, size);
 }
 
@@ -364,7 +364,7 @@ bool CursorWindow::getLong(unsigned int row, unsigned int col, int64_t * valueOu
     if (!fieldSlot || fieldSlot->type != FIELD_TYPE_INTEGER) {
         return false;
     }
-    
+
 #if WINDOW_STORAGE_INLINE_NUMERICS
     *valueOut = fieldSlot->data.l;
 #else
@@ -394,7 +394,7 @@ bool CursorWindow::getNull(unsigned int row, unsigned int col, bool * valueOut)
     if (!fieldSlot) {
         return false;
     }
-    
+
     if (fieldSlot->type != FIELD_TYPE_NULL) {
         *valueOut = false;
     } else {
