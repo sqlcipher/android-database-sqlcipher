@@ -36,13 +36,14 @@ android {
     }
   }
 
-  check.dependsOn editorconfigCheck
   clean.dependsOn cleanNative
-  preBuild.dependsOn([buildOpenSSL, buildAmalgamation])
+  check.dependsOn editorconfigCheck
+  buildNative.mustRunAfter buildAmalgamation
+  buildAmalgamation.mustRunAfter buildOpenSSL
+  preBuild.dependsOn([buildOpenSSL, buildAmalgamation, buildNative])
 
   afterEvaluate {
     android.libraryVariants.all { variant ->
-      variant.javaCompile.dependsOn(buildNative)
       variant.outputs.each { output ->
         def outputFile = output.outputFile
         if (outputFile != null && outputFile.name.endsWith(".aar")) {
