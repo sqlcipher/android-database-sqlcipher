@@ -16,7 +16,7 @@ android {
   }
 
   editorconfig {
-   includes = ["src/**", "build.gradle"]
+   includes = ["src/**", "*.gradle"]
    excludes = ["src/main/external/sqlcipher/**", "src/main/external/openssl-*/**"]
   }
 
