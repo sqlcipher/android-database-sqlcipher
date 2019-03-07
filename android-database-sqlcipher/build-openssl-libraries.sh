@@ -2,7 +2,7 @@
 
 MINIMUM_ANDROID_SDK_VERSION=$1
 MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
-OPENSSL=openssl-1.1.1
+OPENSSL=openssl-$3
 
 (cd src/main/external/;
  gunzip -c ${OPENSSL}.tar.gz | tar xf -

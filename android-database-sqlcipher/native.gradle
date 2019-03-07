@@ -8,7 +8,8 @@ task buildOpenSSL () {
       workingDir "${projectDir}"
       commandLine "./build-openssl-libraries.sh",
       "${minimumAndroidSdkVersion}",
-      "${minimumAndroid64BitSdkVersion}"
+      "${minimumAndroid64BitSdkVersion}",
+      "${opensslVersion}"
     }
   }
 }
