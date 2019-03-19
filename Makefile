@@ -1,7 +1,7 @@
 .POSIX:
 .PHONY: init clean distclean build-openssl build publish-local-snapshot \
 	publish-local-release publish-remote-snapshot public-remote-release check
-GRADLE = @./gradlew
+GRADLE = ./gradlew
 
 init:
 	git submodule update --init
@@ -65,6 +65,7 @@ publish-remote-release:
 	$(GRADLE) \
 	-PpublishSnapshot=false \
 	-PpublishLocal=false \
+	-PdebugBuild=false \
 	-PsigningKeyId="$$gpgKeyId" \
 	-PsigningKeyRingFile="$$gpgKeyRingFile" \
 	-PsigningKeyPassword="$$gpgPassword" \
