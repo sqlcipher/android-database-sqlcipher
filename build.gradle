@@ -56,8 +56,8 @@ ext {
   mavenDeveloperEmail = "support@zetetic.net"
   mavenDeveloperOrganization = "Zetetic LLC"
   mavenDeveloperUrl = "https://www.zetetic.net"
-  minimumAndroidSdkVersion = 26
-  minimumAndroid64BitSdkVersion = 26
+  minimumAndroidSdkVersion = 21
+  minimumAndroid64BitSdkVersion = 21
   targetAndroidSdkVersion = 26
   compileAndroidSdkVersion = 26
   mainProjectName = "android-database-sqlcipher"
