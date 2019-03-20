@@ -36,15 +36,26 @@ task buildAmalgamation () {
 task buildNative() {
   description "Build the native SQLCipher binaries"
   doLast {
+    executeNdkBuild(
+      "${nativeRootOutputDir}/libs32",
+      file("src/main/cpp").absolutePath,
+      file("src/main/cpp/Application32.mk").absolutePath,
+           "${sqlcipherCFlags}", "${otherSqlcipherCFlags}")
+    executeNdkBuild(
+      "${nativeRootOutputDir}/libs64",
+      file("src/main/cpp").absolutePath,
+      file("src/main/cpp/Application64.mk").absolutePath,
+           "${sqlcipherCFlags}", "${otherSqlcipherCFlags}")
     exec {
       workingDir "${nativeRootOutputDir}"
       commandLine "mkdir", "-p", "libs"
     }
-    executeNdkBuild(
-      "${nativeRootOutputDir}/libs",
-      file("src/main/cpp").absolutePath,
-      file("src/main/cpp/Application.mk").absolutePath,
-      "${sqlcipherCFlags}", "${otherSqlcipherCFlags}")
+    copy {
+      from fileTree("${nativeRootOutputDir}/libs32").include("*/*")
+      into "${nativeRootOutputDir}/libs"
+      from fileTree("${nativeRootOutputDir}/libs64").include("*/*")
+      into "${nativeRootOutputDir}/libs"
+    }
   }
 }
 
