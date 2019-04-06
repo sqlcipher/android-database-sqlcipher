@@ -36,6 +36,10 @@ android {
     }
   }
 
+  dependencies {
+    implementation "androidx.sqlite:sqlite:2.0.1"
+  }
+
   clean.dependsOn cleanNative
   check.dependsOn editorconfigCheck
   buildNative.mustRunAfter buildAmalgamation
