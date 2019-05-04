@@ -21,10 +21,10 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 public class SupportHelper implements SupportSQLiteOpenHelper {
     private SQLiteOpenHelper standardHelper;
-    private char[] passphrase;
+    private byte[] passphrase;
 
     SupportHelper(final SupportSQLiteOpenHelper.Configuration configuration,
-                  char[] passphrase, final String postKeySql) {
+                  byte[] passphrase, final String postKeySql) {
         SQLiteDatabase.loadLibs(configuration.context);
         this.passphrase = passphrase;
 
@@ -91,7 +91,7 @@ public class SupportHelper implements SupportSQLiteOpenHelper {
         SQLiteDatabase result = standardHelper.getWritableDatabase(passphrase);
 
         for (int i = 0; i < passphrase.length; i++) {
-            passphrase[i] = (char)0;
+            passphrase[i] = (byte)0;
         }
 
         return result;

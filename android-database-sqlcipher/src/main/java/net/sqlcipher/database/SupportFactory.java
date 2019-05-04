@@ -19,14 +19,14 @@ package net.sqlcipher.database;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 public class SupportFactory implements SupportSQLiteOpenHelper.Factory {
-    private final char[] passphrase;
+    private final byte[] passphrase;
     private final String postKeySql;
 
-    public SupportFactory(char[] passphrase) {
+    public SupportFactory(byte[] passphrase) {
         this(passphrase, null);
     }
 
-    public SupportFactory(char[] passphrase, String postKeySql) {
+    public SupportFactory(byte[] passphrase, String postKeySql) {
         this.passphrase = passphrase;
         this.postKeySql = postKeySql;
     }
