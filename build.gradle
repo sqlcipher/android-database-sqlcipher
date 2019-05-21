@@ -22,7 +22,7 @@ allprojects {
 }
 
 ext {
-  clientVersionNumber = "4.1.3"
+  clientVersionNumber = "4.2.0"
   mavenPackaging = "aar"
   mavenGroup = "net.zetetic"
   mavenArtifactId = "android-database-sqlcipher"
