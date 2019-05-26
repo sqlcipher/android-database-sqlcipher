@@ -24,23 +24,9 @@ public class SupportHelper implements SupportSQLiteOpenHelper {
     private byte[] passphrase;
 
     SupportHelper(final SupportSQLiteOpenHelper.Configuration configuration,
-                  byte[] passphrase, final String postKeySql) {
+                  byte[] passphrase, final SQLiteDatabaseHook hook) {
         SQLiteDatabase.loadLibs(configuration.context);
         this.passphrase = passphrase;
-
-        SQLiteDatabaseHook hook = new SQLiteDatabaseHook() {
-            @Override
-            public void preKey(SQLiteDatabase database) {
-                // unused
-            }
-
-            @Override
-            public void postKey(SQLiteDatabase database) {
-                if (postKeySql != null) {
-                    database.rawExecSQL(postKeySql);
-                }
-            }
-        };
 
         standardHelper =
             new SQLiteOpenHelper(configuration.context, configuration.name,

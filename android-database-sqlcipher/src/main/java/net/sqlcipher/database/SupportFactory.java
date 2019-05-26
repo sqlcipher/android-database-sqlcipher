@@ -20,19 +20,35 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 public class SupportFactory implements SupportSQLiteOpenHelper.Factory {
     private final byte[] passphrase;
-    private final String postKeySql;
+    private final SQLiteDatabaseHook hook;
 
     public SupportFactory(byte[] passphrase) {
-        this(passphrase, null);
+        this(passphrase, (SQLiteDatabaseHook)null);
     }
 
-    public SupportFactory(byte[] passphrase, String postKeySql) {
+    public SupportFactory(byte[] passphrase, final String postKeySql) {
+        this(passphrase, new SQLiteDatabaseHook() {
+            @Override
+            public void preKey(SQLiteDatabase database) {
+                // unused
+            }
+
+            @Override
+            public void postKey(SQLiteDatabase database) {
+                if (postKeySql != null) {
+                    database.rawExecSQL(postKeySql);
+                }
+            }
+        });
+    }
+
+    public SupportFactory(byte[] passphrase, SQLiteDatabaseHook hook) {
         this.passphrase = passphrase;
-        this.postKeySql = postKeySql;
+        this.hook = hook;
     }
 
     @Override
     public SupportSQLiteOpenHelper create(SupportSQLiteOpenHelper.Configuration configuration) {
-        return new SupportHelper(configuration, passphrase, postKeySql);
+        return new SupportHelper(configuration, passphrase, hook);
     }
 }
