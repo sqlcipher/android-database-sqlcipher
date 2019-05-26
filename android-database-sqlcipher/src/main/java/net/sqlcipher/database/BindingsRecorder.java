@@ -19,6 +19,15 @@ package net.sqlcipher.database;
 import android.util.SparseArray;
 import androidx.sqlite.db.SupportSQLiteProgram;
 
+/*
+    This class is a concrete implementation of SupportSQLiteProgram,
+    for use in supporting bind arguments for the SQLiteDatabase query()
+    methods that take a SupportSQLiteQuery parameter.
+
+    In Google's FrameworkSQLiteDatabase implementation of those query()
+    methods, it uses FrameworkSQLiteProgram, which has the same basic implementation
+    as does BindingsRecorder.
+ */
 class BindingsRecorder implements SupportSQLiteProgram {
   private SparseArray<Object> bindings=new SparseArray<>();
 
