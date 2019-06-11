@@ -64,8 +64,8 @@ ext {
   nativeRootOutputDir = "${projectDir}/${mainProjectName}/src/main"
   androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
   sqlcipherDir = "${projectDir}/${mainProjectName}/src/main/external/sqlcipher"
-  opensslVersion = "1.1.1b"
-  opensslDir = "${projectDir}/${mainProjectName}/src/main/external/openssl-${opensslVersion}"
+  opensslVersion = "1_1_1b"
+  opensslDir = "${projectDir}/${mainProjectName}/src/main/external/openssl-OpenSSL_${opensslVersion}"
   if(project.hasProperty('debugBuild') && debugBuild.toBoolean()) {
     otherSqlcipherCFlags = ""
     ndkBuildType="NDK_DEBUG=1"

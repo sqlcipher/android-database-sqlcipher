@@ -2,13 +2,15 @@
 
 MINIMUM_ANDROID_SDK_VERSION=$1
 MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
-OPENSSL=openssl-$3
+OPENSSL=OpenSSL_$3
 
 (cd src/main/external/;
+ wget https://github.com/openssl/openssl/archive/${OPENSSL}.tar.gz
  gunzip -c ${OPENSSL}.tar.gz | tar xf -
 )
 
-(cd src/main/external/${OPENSSL};
+pwd
+(cd src/main/external/openssl-${OPENSSL};
 
  if [ ! ${MINIMUM_ANDROID_SDK_VERSION} ]; then
      echo "MINIMUM_ANDROID_SDK_VERSION was not provided, include and rerun"

@@ -1,3 +1,5 @@
+*.tar.gz
+*.tar.gz.*
 .gradle
 build
 .DS_Store
