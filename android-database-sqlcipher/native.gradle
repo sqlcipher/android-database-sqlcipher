@@ -1,6 +1,9 @@
 task buildOpenSSL () {
   onlyIf {
     def armNativeFile = new File("${androidNativeRootDir}/armeabi/libcrypto.a")
+    if (armNativeFile.exists()) {
+      println ("${androidNativeRootDir}/armeabi/libcrypto.a exists nothing to do")
+    }
     return !armNativeFile.exists()
   }
   doLast {
