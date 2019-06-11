@@ -1,8 +1,12 @@
-task buildOpenSSL () {
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
+
+task buildOpenSSL() {
   onlyIf {
     def armNativeFile = new File("${androidNativeRootDir}/armeabi/libcrypto.a")
     if (armNativeFile.exists()) {
-      println ("${androidNativeRootDir}/armeabi/libcrypto.a exists nothing to do")
+      def out = services.get(StyledTextOutputFactory).create("")
+      out.style(Style.Normal).text("${androidNativeRootDir}/armeabi/libcrypto.a exists").style(Style.Info).println(' SKIPPED')
     }
     return !armNativeFile.exists()
   }
