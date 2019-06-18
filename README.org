@@ -4,7 +4,7 @@
 
 *** Compatibility
 
-    SQLCipher for Android runs on Android 4–Android 8, for =armeabi=, =armeabi-v7a=, =x86=, =x86_64=, and =arm64_v8a= architectures.
+    SQLCipher for Android supports API 14 and up on 32-bit devices, API 21 and up on 64-bit devices for =armeabi=, =armeabi-v7a=, =x86=, =x86_64=, and =arm64_v8a= architectures.
     
 *** Contributions
 
