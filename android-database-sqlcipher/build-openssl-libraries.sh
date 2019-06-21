@@ -3,6 +3,7 @@
 MINIMUM_ANDROID_SDK_VERSION=$1
 MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
 OPENSSL=openssl-$3
+ANDROID_NDK_ROOT=$ANDROID_HOME/ndk-bundle
 
 (cd src/main/external/;
  gunzip -c ${OPENSSL}.tar.gz | tar xf -
@@ -57,19 +58,10 @@ OPENSSL=openssl-$3
 
  rm -rf ${ANDROID_LIB_ROOT}
  
- for SQLCIPHER_TARGET_PLATFORM in armeabi armeabi-v7a x86 x86_64 arm64-v8a
+ for SQLCIPHER_TARGET_PLATFORM in armeabi-v7a x86 x86_64 arm64-v8a
  do
      echo "Building libcrypto.a for ${SQLCIPHER_TARGET_PLATFORM}"
      case "${SQLCIPHER_TARGET_PLATFORM}" in
-         armeabi)
-             TOOLCHAIN_ARCH=arm
-             TOOLCHAIN_PREFIX=arm-linux-androideabi
-             TOOLCHAIN_FOLDER=arm-linux-androideabi
-             CONFIGURE_ARCH=android-arm
-             ANDROID_API_VERSION=${MINIMUM_ANDROID_SDK_VERSION}
-             OFFSET_BITS=32
-             TOOLCHAIN_DIR=${ANDROID_TOOLCHAIN_DIR}-armeabi
-             ;;
          armeabi-v7a)
              TOOLCHAIN_ARCH=arm
              TOOLCHAIN_PREFIX=arm-linux-androideabi
@@ -116,8 +108,7 @@ OPENSSL=openssl-$3
      python ${ANDROID_NDK_ROOT}/build/tools/make_standalone_toolchain.py \
             --arch ${TOOLCHAIN_ARCH} \
             --api ${ANDROID_API_VERSION} \
-            --install-dir ${TOOLCHAIN_DIR} \
-            --unified-headers
+            --install-dir ${TOOLCHAIN_DIR}
 
      if [ $? -ne 0 ]; then
          echo "Error executing make_standalone_toolchain.py for ${TOOLCHAIN_ARCH}"

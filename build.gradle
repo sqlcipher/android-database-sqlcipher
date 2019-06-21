@@ -56,7 +56,7 @@ ext {
   mavenDeveloperEmail = "support@zetetic.net"
   mavenDeveloperOrganization = "Zetetic LLC"
   mavenDeveloperUrl = "https://www.zetetic.net"
-  minimumAndroidSdkVersion = 14
+  minimumAndroidSdkVersion = 16
   minimumAndroid64BitSdkVersion = 21
   targetAndroidSdkVersion = 26
   compileAndroidSdkVersion = 26
