@@ -1,6 +1,13 @@
-task buildOpenSSL () {
+import org.gradle.internal.logging.text.StyledTextOutputFactory
+import static org.gradle.internal.logging.text.StyledTextOutput.Style
+
+task buildOpenSSL() {
   onlyIf {
     def armNativeFile = new File("${androidNativeRootDir}/armeabi/libcrypto.a")
+    if (armNativeFile.exists()) {
+      def out = services.get(StyledTextOutputFactory).create("")
+      out.style(Style.Normal).text("${androidNativeRootDir}/armeabi/libcrypto.a exists").style(Style.Info).println(' SKIPPED')
+    }
     return !armNativeFile.exists()
   }
   doLast {
@@ -119,6 +126,15 @@ def gitClean(directory) {
 def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile,
                     cflags, otherSqlcipherCFlags, androidVersion) {
   logger.info "Executing NDK build command"
+
+  def out = services.get(StyledTextOutputFactory).create("")
+  out.style(Style.Normal).text("SQLCIPHER_CFLAGS=").style(Style.Info).println("${cflags}")
+  out.style(Style.Normal).text("OPENSSL_DIR=").style(Style.Info).println("${opensslDir}")
+  out.style(Style.Normal).text("SQLCIPHER_DIR=").style(Style.Info).println("${sqlcipherDir}")
+  out.style(Style.Normal).text("SQLCIPHER_OTHER_CFLAGS=").style(Style.Info).println("${otherSqlcipherCFlags}")
+  out.style(Style.Normal).text("ANDROID_NATIVE_ROOT_DIR=").style(Style.Info).println("${androidNativeRootDir}")
+  out.style(Style.Normal).text("NDK_APP_PLATFORM=").style(Style.Info).println("${androidVersion}")
+
   exec {
     def outputDirectory = "NDK_LIBS_OUT=${outputDir}"
     def applicationFile = "NDK_APPLICATION_MK=${applicationMkFile}"
