@@ -10,17 +10,17 @@ OPENSSL=openssl-$3
 
 (cd src/main/external/${OPENSSL};
 
- if [ ! ${MINIMUM_ANDROID_SDK_VERSION} ]; then
+ if [[ ! ${MINIMUM_ANDROID_SDK_VERSION} ]]; then
      echo "MINIMUM_ANDROID_SDK_VERSION was not provided, include and rerun"
      exit 1
  fi
 
- if [ ! ${MINIMUM_ANDROID_64_BIT_SDK_VERSION} ]; then
+ if [[ ! ${MINIMUM_ANDROID_64_BIT_SDK_VERSION} ]]; then
      echo "MINIMUM_ANDROID_64_BIT_SDK_VERSION was not provided, include and rerun"
      exit 1
  fi
 
- if [ ! ${ANDROID_NDK_ROOT} ]; then
+ if [[ ! ${ANDROID_NDK_ROOT} ]]; then
      echo "ANDROID_NDK_ROOT environment variable not set, set and rerun"
      exit 1
  fi
