@@ -14,14 +14,14 @@ task buildOpenSSL() {
     exec {
       workingDir "${projectDir}"
       commandLine "./build-openssl-libraries.sh",
-      "${minimumAndroidSdkVersion}",
-      "${minimumAndroid64BitSdkVersion}",
-      "${opensslVersion}"
+        "${minimumAndroidSdkVersion}",
+        "${minimumAndroid64BitSdkVersion}",
+        "${opensslVersion}"
     }
   }
 }
 
-task buildAmalgamation () {
+task buildAmalgamation() {
   onlyIf {
     def amalgamation = new File("${projectDir}/src/main/external/sqlcipher/sqlite3.c")
     return !amalgamation.exists()
@@ -35,7 +35,7 @@ task buildAmalgamation () {
     exec {
       workingDir "${projectDir}/src/main/external/sqlcipher"
       environment("CFLAGS", "${sqlcipherCFlags}")
-      commandLine "make",  "sqlite3.c"
+      commandLine "make", "sqlite3.c"
     }
   }
 }
@@ -47,14 +47,14 @@ task buildNative() {
       "${nativeRootOutputDir}/libs32",
       file("src/main/cpp").absolutePath,
       file("src/main/cpp/Application32.mk").absolutePath,
-            "${sqlcipherCFlags}", "${otherSqlcipherCFlags}",
-            "${minimumAndroidSdkVersion}")
+      "${sqlcipherCFlags}", "${otherSqlcipherCFlags}",
+      "${minimumAndroidSdkVersion}")
     executeNdkBuild(
       "${nativeRootOutputDir}/libs64",
       file("src/main/cpp").absolutePath,
       file("src/main/cpp/Application64.mk").absolutePath,
-            "${sqlcipherCFlags}", "${otherSqlcipherCFlags}",
-            "${minimumAndroid64BitSdkVersion}")
+      "${sqlcipherCFlags}", "${otherSqlcipherCFlags}",
+      "${minimumAndroid64BitSdkVersion}")
     exec {
       workingDir "${nativeRootOutputDir}"
       commandLine "mkdir", "-p", "libs"
@@ -73,7 +73,7 @@ task cleanOpenSSL() {
   doLast {
     logger.info "Cleaning OpenSSL source"
     File file = new File("${opensslDir}")
-    if(file.exists()){
+    if (file.exists()) {
       file.deleteDir()
     }
   }
@@ -86,8 +86,8 @@ task cleanSQLCipher() {
     gitClean("${sqlcipherDir}")
     File amalgamationSource = new File("${sqlcipherDir}/sqlite3.c")
     File amalgamationHeader = new File("${sqlcipherDir}/sqlite3.h")
-    if(amalgamationSource.exists()) amalgamationSource.delete()
-    if(amalgamationHeader.exists()) amalgamationHeader.delete()
+    if (amalgamationSource.exists()) amalgamationSource.delete()
+    if (amalgamationHeader.exists()) amalgamationHeader.delete()
   }
 }
 
@@ -97,7 +97,7 @@ task cleanNative() {
     logger.info "Cleaning native build artifacts"
     ["libs", "libs32", "libs64", "obj"].each {
       File file = new File("${projectDir}/src/main/${it}")
-      if(file.exists()){
+      if (file.exists()) {
         file.deleteDir()
       }
     }
@@ -138,15 +138,15 @@ def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile,
   exec {
     def outputDirectory = "NDK_LIBS_OUT=${outputDir}"
     def applicationFile = "NDK_APPLICATION_MK=${applicationMkFile}"
-    def environmentVariables = ["SQLCIPHER_CFLAGS": "${cflags}",
-                                "OPENSSL_DIR": "${opensslDir}",
-                                "SQLCIPHER_DIR": "${sqlcipherDir}",
+    def environmentVariables = ["SQLCIPHER_CFLAGS"       : "${cflags}",
+                                "OPENSSL_DIR"            : "${opensslDir}",
+                                "SQLCIPHER_DIR"          : "${sqlcipherDir}",
                                 "SQLCIPHER_OTHER_CFLAGS" : "${otherSqlcipherCFlags}",
                                 "ANDROID_NATIVE_ROOT_DIR": "${androidNativeRootDir}",
-                                "NDK_APP_PLATFORM": "${androidVersion}"]
+                                "NDK_APP_PLATFORM"       : "${androidVersion}"]
     environment(environmentVariables)
     commandLine "ndk-build", "${ndkBuildType}",
-    "--environment-overrides", outputDirectory,
-    "-C", androidMkDirectory, applicationFile
+      "--environment-overrides", outputDirectory,
+      "-C", androidMkDirectory, applicationFile
   }
 }
