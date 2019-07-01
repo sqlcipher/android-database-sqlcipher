@@ -26,22 +26,6 @@ public class SupportFactory implements SupportSQLiteOpenHelper.Factory {
         this(passphrase, (SQLiteDatabaseHook)null);
     }
 
-    public SupportFactory(byte[] passphrase, final String postKeySql) {
-        this(passphrase, new SQLiteDatabaseHook() {
-            @Override
-            public void preKey(SQLiteDatabase database) {
-                // unused
-            }
-
-            @Override
-            public void postKey(SQLiteDatabase database) {
-                if (postKeySql != null) {
-                    database.rawExecSQL(postKeySql);
-                }
-            }
-        });
-    }
-
     public SupportFactory(byte[] passphrase, SQLiteDatabaseHook hook) {
         this.passphrase = passphrase;
         this.hook = hook;
