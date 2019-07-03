@@ -602,7 +602,7 @@ namespace sqlcipher {
      concatenated with the given message
   */
   void throw_sqlite3_exception(JNIEnv* env, sqlite3* handle, const char* message) {
-    if (handle) {
+    if (handle && sqlite3_errcode(handle) != SQLITE_OK) {
       throw_sqlite3_exception(env, sqlite3_errcode(handle),
                               sqlite3_errmsg(handle), message);
     } else {
