@@ -60,7 +60,7 @@ implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
 
 (replacing `4.2.0` with the version you want)
 
-[![Latest version from Maven Central](https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.png)
+![Latest version from Maven Central](https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.png)
 
 #### Using SQLCipher for Android With Room
 
