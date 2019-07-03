@@ -44,19 +44,71 @@ Error: file is encrypted or is not a database
 
 ### Application Integration
 
-We’ve packaged up a very simple SDK for any Android developer to add SQLCipher into their app with the following three steps:
+You have a two main options for using SQLCipher for Android in your app: 
 
-1. Add a [reference](https://search.maven.org/search?q=a:android-database-sqlcipher) to the AAR package: `implementation 'net.zetetic:android-database-sqlcipher:Current.Version.Here@aar'`
-2. Update the package import path from `android.database.sqlite.*` to `net.sqlcipher.database.*` in any source files that reference it. The original `android.database.Cursor` may still be used unchanged.
-3. Initialize the database library and pass a variable argument to the open database method with a password:
+- Using it with Room or other consumers of the `androidx.sqlite` API
 
+- Using the native SQLCipher for Android classes
+
+In both cases, you will need to add a dependency on `net.zetetic:android-database-sqlcipher`,
+such as having the following line in your module's `build.gradle` `dependencies`
+closure:
+
+```gradle
+implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
 ```
-// First initilize the native database libraries with the context
-SQLiteDatabase.loadLibs(this);
 
-// Request a database connection with passwrod
-SQLiteDatabase.openOrCreateDatabase(databasePath.getAbsolutePath(), password, null);
+(replacing `4.2.0` with the version you want)
+
+[![Latest version from Maven Central](https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.png)
+
+#### Using SQLCipher for Android With Room
+
+SQLCipher for Android has a `SupportFactory` class in the `net.sqlcipher.database` package
+that can be used to configure Room to use SQLCipher for Android.
+
+There are two `SupportFactory` constructors:
+
+- Both take a `byte[]` to use as the passphrase (if you have a `char[]`, use
+`SQLiteDatabase.getBytes()` to get a suitable `byte[]` to use)
+
+- One constructor has a second parameter: a `SQLiteDatabaseHook` that you can use
+for executing SQL statements before or after the passphrase is used to decrypt
+the database
+
+Then, pass your `SupportFactory` to `openHelperFactory()` on your `RoomDatabase.Builder`:
+
+```java
+final byte[] passphrase = SQLiteDatabase.getBytes(userEnteredPassphrase);
+final SupportFactory factory = new SupportFactory(passphrase);
+final SomeDatabase room = Room.databaseBuilder(activity, SomeDatabase.class, DB_NAME)
+  .openHelperFactory(factory)
+  .build();
 ```
+
+Now, Room will make all of its database requests using SQLCipher for Android instead
+of the framework copy of SQLCipher.
+
+Note that `SupportFactory` should work with other consumers of the `androidx.sqlite` API;
+Room is merely a prominent example.
+
+#### Using SQLCipher for Android's Native API
+
+If you have existing SQLite code using classes like `SQLiteDatabase` and `SQLiteOpenHelper`,
+converting your code to use SQLCipher for Android mostly is a three-step process:
+
+1. Replace all `android.database.sqlite.*` `import` statements with ones that
+use `net.sqlcipher.database.*` (e.g., convert `android.database.sqlite.SQLiteDatabase`
+to `net.sqlcipher.database.SQLiteDatabase`)
+
+2. Before attempting to open a database, call `SQLiteDatabase.loadLibs()`, passing
+in a `Context` (e.g., add this to `onCreate()` of your `Application` subclass, using
+the `Application` itself as the `Context`)
+
+3. When opening a database (e.g., `SQLiteDatabase.openOrCreateDatabase()`), pass
+in the passphrase as a `char[]` or `byte[]`
+
+The rest of your code may not need any changes.
 
 An article covering both integration of SQLCipher into an Android application as well as building the source can be found [here](https://www.zetetic.net/sqlcipher/sqlcipher-for-android/).
 
