@@ -70,16 +70,17 @@ class BindingsRecorder implements SupportSQLiteProgram {
     final String[] result=new String[bindings.size()];
 
     for (int i=0;i<bindings.size();i++) {
-      Object binding=bindings.get(i);
+      int key=bindings.keyAt(i);
+      Object binding=bindings.get(key);
 
       if (binding!=null) {
-        result[i]=bindings.get(i).toString();
+        result[i]=bindings.get(key).toString();
       }
       else {
         result[i]=""; // SQLCipher does not like null binding values
       }
     }
 
-    return(result);
+    return result;
   }
 }
