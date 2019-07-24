@@ -54,6 +54,7 @@ import android.content.ContentValues;
 
 import android.content.Context;
 
+import android.os.CancellationSignal;
 import android.os.Debug;
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -62,6 +63,8 @@ import android.util.Log;
 import android.util.Pair;
 
 import java.io.UnsupportedEncodingException;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 /**
  * Exposes methods to manage a SQLCipher database.
@@ -73,7 +76,8 @@ import java.io.UnsupportedEncodingException;
  * applications.
  *
  */
-public class SQLiteDatabase extends SQLiteClosable {
+public class SQLiteDatabase extends SQLiteClosable implements
+    SupportSQLiteDatabase {
   private static final String TAG = "Database";
   private static final int EVENT_DB_OPERATION = 52000;
   private static final int EVENT_DB_CORRUPT = 75004;
@@ -741,7 +745,7 @@ public class SQLiteDatabase extends SQLiteClosable {
    * @throws IllegalStateException if the database is not open
    */
   public void beginTransaction() {
-    beginTransactionWithListener(null /* transactionStatusCallback */);
+    beginTransactionWithListener((SQLiteTransactionListener)null /* transactionStatusCallback */);
   }
 
   /**
@@ -2260,6 +2264,28 @@ public class SQLiteDatabase extends SQLiteClosable {
      * @throws IllegalStateException if the database is not open
      */
     public int delete(String table, String whereClause, String[] whereArgs) {
+        Object[] args = new Object[whereArgs.length];
+
+        System.arraycopy(whereArgs, 0, args, 0, whereArgs.length);
+
+        return delete(table, whereClause, args);
+    }
+
+    /**
+     * Convenience method for deleting rows in the database.
+     *
+     * @param table the table to delete from
+     * @param whereClause the optional WHERE clause to apply when deleting.
+     *            Passing null will delete all rows.
+     *
+     * @return the number of rows affected if a whereClause is passed in, 0
+     *         otherwise. To remove all rows and get a count pass "1" as the
+     *         whereClause.
+     *
+     * @throws SQLException If the SQL string is invalid for some reason
+     * @throws IllegalStateException if the database is not open
+     */
+    public int delete(String table, String whereClause, Object[] whereArgs) {
         SQLiteStatement statement = null;
         lock();
         try {
@@ -2908,6 +2934,97 @@ public class SQLiteDatabase extends SQLiteClosable {
         charBuffer.get(result);
         return result;
     }
+
+    /* begin SQLiteSupportDatabase methods */
+
+    @Override
+    public android.database.Cursor query(String query) {
+        return rawQuery(query, null);
+    }
+
+    @Override
+    public android.database.Cursor query(String query, Object[] bindArgs) {
+        return rawQuery(query, bindArgs);
+    }
+
+    @Override
+    public android.database.Cursor query(SupportSQLiteQuery query) {
+        return query(query, null);
+    }
+
+    @Override
+    public android.database.Cursor query(final SupportSQLiteQuery supportQuery,
+                                         CancellationSignal cancellationSignal) {
+        BindingsRecorder hack=new BindingsRecorder();
+
+        supportQuery.bindTo(hack);
+
+        return rawQuery(supportQuery.getSql(), hack.getBindings());
+    }
+
+    @Override
+    public long insert(String table, int conflictAlgorithm,
+                       ContentValues values)
+        throws android.database.SQLException {
+        return insertWithOnConflict(table, null, values, conflictAlgorithm);
+    }
+
+    @Override
+    public int update(String table, int conflictAlgorithm, ContentValues values,
+                      String whereClause, Object[] whereArgs) {
+        String[] args = new String[whereArgs.length];
+
+        for (int i = 0; i < whereArgs.length; i++) {
+            args[i] = whereArgs[i].toString();
+        }
+
+        return updateWithOnConflict(table,  values, whereClause, args, conflictAlgorithm);
+    }
+
+    @Override
+    public void beginTransactionWithListener(
+        final android.database.sqlite.SQLiteTransactionListener transactionListener) {
+        beginTransactionWithListener(new SQLiteTransactionListener() {
+            @Override
+            public void onBegin() {
+                transactionListener.onBegin();
+            }
+
+            @Override
+            public void onCommit() {
+                transactionListener.onCommit();
+            }
+
+            @Override
+            public void onRollback() {
+                transactionListener.onRollback();
+            }
+        });
+    }
+
+    @Override
+    public void beginTransactionWithListenerNonExclusive(
+        final android.database.sqlite.SQLiteTransactionListener transactionListener) {
+        beginTransactionWithListenerNonExclusive(
+            new SQLiteTransactionListener() {
+                @Override
+                public void onBegin() {
+                    transactionListener.onBegin();
+                }
+
+                @Override
+                public void onCommit() {
+                    transactionListener.onCommit();
+                }
+
+                @Override
+                public void onRollback() {
+                    transactionListener.onRollback();
+                }
+            });
+    }
+
+    /* end SQLiteSupportDatabase methods */
 
     private void beginTransactionWithListenerInternal(SQLiteTransactionListener transactionListener,
                                                       SQLiteDatabaseTransactionType transactionType) {

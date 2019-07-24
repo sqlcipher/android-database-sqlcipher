@@ -17,6 +17,7 @@
 package net.sqlcipher.database;
 
 import android.util.Log;
+import androidx.sqlite.db.SupportSQLiteProgram;
 
 /**
  * A base class for compiled SQLite programs.
@@ -24,7 +25,8 @@ import android.util.Log;
  * SQLiteProgram is not internally synchronized so code using a SQLiteProgram from multiple
  * threads should perform its own synchronization when using the SQLiteProgram.
  */
-public abstract class SQLiteProgram extends SQLiteClosable {
+public abstract class SQLiteProgram extends SQLiteClosable implements
+    SupportSQLiteProgram {
 
     private static final String TAG = "SQLiteProgram";
 
@@ -181,6 +183,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      *
      * @param index The 1-based index to the parameter to bind null to
      */
+    @Override
     public void bindNull(int index) {
         if (mClosed) {
             throw new IllegalStateException("program already closed");
@@ -203,6 +206,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @param index The 1-based index to the parameter to bind
      * @param value The value to bind
      */
+    @Override
     public void bindLong(int index, long value) {
         if (mClosed) {
             throw new IllegalStateException("program already closed");
@@ -225,6 +229,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @param index The 1-based index to the parameter to bind
      * @param value The value to bind
      */
+    @Override
     public void bindDouble(int index, double value) {
         if (mClosed) {
             throw new IllegalStateException("program already closed");
@@ -247,6 +252,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @param index The 1-based index to the parameter to bind
      * @param value The value to bind
      */
+    @Override
     public void bindString(int index, String value) {
         if (value == null) {
             throw new IllegalArgumentException("the bind value at index " + index + " is null");
@@ -272,6 +278,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
      * @param index The 1-based index to the parameter to bind
      * @param value The value to bind
      */
+    @Override
     public void bindBlob(int index, byte[] value) {
         if (value == null) {
             throw new IllegalArgumentException("the bind value at index " + index + " is null");
@@ -293,6 +300,7 @@ public abstract class SQLiteProgram extends SQLiteClosable {
     /**
      * Clears all existing bindings. Unset bindings are treated as NULL.
      */
+    @Override
     public void clearBindings() {
         if (mClosed) {
             throw new IllegalStateException("program already closed");

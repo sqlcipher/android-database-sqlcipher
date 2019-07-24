@@ -17,6 +17,7 @@
 package net.sqlcipher.database;
 
 import android.os.SystemClock;
+import androidx.sqlite.db.SupportSQLiteStatement;
 
 /**
  * A pre-compiled statement against a {@link SQLiteDatabase} that can be reused.
@@ -27,7 +28,8 @@ import android.os.SystemClock;
  * SQLiteStatement is not internally synchronized so code using a SQLiteStatement from multiple
  * threads should perform its own synchronization when using the SQLiteStatement.
  */
-public class SQLiteStatement extends SQLiteProgram
+public class SQLiteStatement extends SQLiteProgram implements
+    SupportSQLiteStatement
 {
     /**
      * Don't use SQLiteStatement constructor directly, please use
@@ -46,6 +48,7 @@ public class SQLiteStatement extends SQLiteProgram
      * @throws android.database.SQLException If the SQL string is invalid for
      *         some reason
      */
+    @Override
     public void execute() {
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
@@ -71,6 +74,7 @@ public class SQLiteStatement extends SQLiteProgram
      * @throws android.database.SQLException If the SQL string is invalid for
      *         some reason
      */
+    @Override
     public long executeInsert() {
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
@@ -88,6 +92,7 @@ public class SQLiteStatement extends SQLiteProgram
         }
     }
 
+    @Override
     public int executeUpdateDelete() {
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
@@ -113,6 +118,7 @@ public class SQLiteStatement extends SQLiteProgram
      *
      * @throws android.database.sqlite.SQLiteDoneException if the query returns zero rows
      */
+    @Override
     public long simpleQueryForLong() {
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");
@@ -138,6 +144,7 @@ public class SQLiteStatement extends SQLiteProgram
      *
      * @throws android.database.sqlite.SQLiteDoneException if the query returns zero rows
      */
+    @Override
     public String simpleQueryForString() {
         if (!mDatabase.isOpen()) {
             throw new IllegalStateException("database " + mDatabase.getPath() + " already closed");

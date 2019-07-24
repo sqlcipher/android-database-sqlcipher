@@ -8,7 +8,6 @@ android-database-sqlcipher/.externalNativeBuild/
 android-database-sqlcipher/src/main/libs*
 android-database-sqlcipher/src/main/obj
 android-database-sqlcipher/src/main/external/openssl-*/
-
-local.properties
+.idea/
 *.iml
-.idea
+local.properties
