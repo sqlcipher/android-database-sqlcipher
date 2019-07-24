@@ -1,7 +1,7 @@
 ### Download Source and Binaries
 
 The latest AAR binary package information can be [here](https://www.zetetic.net/sqlcipher/open-source), the source can be found [here](https://github.com/sqlcipher/android-database-sqlcipher).
-<p><a href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a></p>
+<p><a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a></p>
 
 ### Compatibility
 
@@ -60,7 +60,7 @@ implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
 
 (replacing `4.2.0` with the version you want)
 
-![Latest version from Maven Central](https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.png)
+<a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a>
 
 #### Using SQLCipher for Android With Room
 
