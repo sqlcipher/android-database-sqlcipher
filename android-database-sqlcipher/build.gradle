@@ -5,58 +5,45 @@ apply from: "maven.gradle"
 
 android {
 
-  compileSdkVersion "${compileAndroidSdkVersion}" as Integer
+    compileSdkVersion "${compileAndroidSdkVersion}" as Integer
 
-  defaultConfig {
-    versionName "${clientVersionNumber}"
-    minSdkVersion "${minimumAndroidSdkVersion}"
-    targetSdkVersion "${targetAndroidSdkVersion}"
-    versionCode 1
-    versionName "${clientVersionNumber}"
-  }
-
-  editorconfig {
-   includes = ["src/**", "*.gradle"]
-   excludes = ["src/main/external/sqlcipher/**", "src/main/external/openssl-*/**"]
-  }
-
-  buildTypes {
-    debug {
-      debuggable true
+    defaultConfig {
+        versionName "${clientVersionNumber}"
+        minSdkVersion "${minimumAndroidSdkVersion}"
+        targetSdkVersion "${targetAndroidSdkVersion}"
+        versionCode 1
+        versionName "${clientVersionNumber}"
+        archivesBaseName = "${archivesBaseName}-${versionName}"
     }
-    release {
-      debuggable false
-      minifyEnabled false
+
+    editorconfig {
+        includes = ["src/**", "*.gradle"]
+        excludes = ["src/main/external/sqlcipher/**", "src/main/external/openssl-*/**"]
     }
-  }
 
-  sourceSets {
-    main {
-      jniLibs.srcDirs "${rootProject.ext.nativeRootOutputDir}/libs"
-    }
-  }
-
-  dependencies {
-    implementation "androidx.sqlite:sqlite:2.0.1"
-  }
-
-  clean.dependsOn cleanNative
-  check.dependsOn editorconfigCheck
-  buildNative.mustRunAfter buildAmalgamation
-  buildAmalgamation.mustRunAfter buildOpenSSL
-  preBuild.dependsOn([buildOpenSSL, buildAmalgamation, buildNative])
-
-  afterEvaluate {
-    android.libraryVariants.all { variant ->
-      variant.outputs.each { output ->
-        def outputFile = output.outputFile
-        if (outputFile != null && outputFile.name.endsWith(".aar")) {
-          def buildSuffix = variant.buildType.debuggable ? "-debug" : ""
-          def versionFileName = "${archivesBaseName}-${clientVersionNumber}${buildSuffix}.aar"
-          output.outputFileName = versionFileName
+    buildTypes {
+        debug {
+            debuggable true
         }
-      }
+        release {
+            debuggable false
+            minifyEnabled false
+        }
     }
-  }
 
+    sourceSets {
+        main {
+            jniLibs.srcDirs "${rootProject.ext.nativeRootOutputDir}/libs"
+        }
+    }
+
+    dependencies {
+        implementation "androidx.sqlite:sqlite:2.0.1"
+    }
+
+    clean.dependsOn cleanNative
+    check.dependsOn editorconfigCheck
+    buildNative.mustRunAfter buildAmalgamation
+    buildAmalgamation.mustRunAfter buildOpenSSL
+    preBuild.dependsOn([buildOpenSSL, buildAmalgamation, buildNative])
 }
