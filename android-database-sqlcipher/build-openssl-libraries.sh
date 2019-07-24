@@ -119,7 +119,7 @@ OPENSSL=openssl-$3
             --install-dir ${TOOLCHAIN_DIR} \
             --unified-headers
 
-     if [ $? -ne 0 ]; then
+     if [[ $? -ne 0 ]]; then
          echo "Error executing make_standalone_toolchain.py for ${TOOLCHAIN_ARCH}"
          exit 1
      fi
@@ -134,7 +134,7 @@ OPENSSL=openssl-$3
                 ${OPENSSL_CONFIGURE_OPTIONS} \
                 --sysroot=${TOOLCHAIN_DIR}/sysroot
 
-     if [ $? -ne 0 ]; then
+     if [[ $? -ne 0 ]]; then
          echo "Error executing:./Configure ${CONFIGURE_ARCH} ${OPENSSL_CONFIGURE_OPTIONS}"
          exit 1
      fi
@@ -142,7 +142,7 @@ OPENSSL=openssl-$3
      make clean
      make build_libs
      
-     if [ $? -ne 0 ]; then
+     if [[ $? -ne 0 ]]; then
          echo "Error executing make for platform:${SQLCIPHER_TARGET_PLATFORM}"
          exit 1
      fi
