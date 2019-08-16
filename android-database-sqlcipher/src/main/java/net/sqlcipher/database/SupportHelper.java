@@ -75,11 +75,11 @@ public class SupportHelper implements SupportSQLiteOpenHelper {
     @Override
     public SupportSQLiteDatabase getWritableDatabase() {
         SQLiteDatabase result = standardHelper.getWritableDatabase(passphrase);
-
-        for (int i = 0; i < passphrase.length; i++) {
-            passphrase[i] = (byte)0;
+        if(passphrase != null) {
+            for (int i = 0; i < passphrase.length; i++) {
+              passphrase[i] = (byte)0;
+            }
         }
-
         return result;
     }
 
