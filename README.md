@@ -5,7 +5,7 @@ The latest AAR binary package information can be [here](https://www.zetetic.net/
 
 ### Compatibility
 
-SQLCipher for Android runs on Android 4–Android 9, for `armeabi`, `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
+SQLCipher for Android runs on Android 4.1–Android 10, for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
     
 ### Contributions
 
@@ -76,6 +76,9 @@ There are two `SupportFactory` constructors:
 for executing SQL statements before or after the passphrase is used to decrypt
 the database
 
+- One constructor option includes a boolean parameter to opt out of the clearing
+the passphrase used to access the SQLCipher database.
+
 Then, pass your `SupportFactory` to `openHelperFactory()` on your `RoomDatabase.Builder`:
 
 ```java
@@ -114,7 +117,7 @@ An article covering both integration of SQLCipher into an Android application as
 
 ### Building
 
-In order to build `android-database-sqlcipher` from source you will need both the Android SDK, Gradle, and the Android NDK. We currently recommend using Android NDK version `r15c`, however we plan to update to a newer NDK release when possible. To complete the `make` command, the `ANDROID_NDK_ROOT` environment variable must be defined which should point to your NDK root. Once you have cloned the repo, change directory into the root of the repository and run the following commands:
+In order to build `android-database-sqlcipher` from source you will need both the Android SDK, Gradle, and the Android NDK. We currently recommend using Android NDK version `r20`. To complete the `make` command, the `ANDROID_NDK_HOME` environment variable must be defined which should point to your NDK root. Once you have cloned the repo, change directory into the root of the repository and run the following commands:
 
 ```
 # this only needs to be done once

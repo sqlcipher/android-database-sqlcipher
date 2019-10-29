@@ -41,6 +41,12 @@ android {
         implementation "androidx.sqlite:sqlite:2.0.1"
     }
 
+    editorconfig {
+        excludes = ['src/main/cpp/sqlite3.*',
+                    'src/main/external/sqlcipher/**',
+                    'src/main/external/openssl-*/**']
+    }
+
     clean.dependsOn cleanNative
     check.dependsOn editorconfigCheck
     buildNative.mustRunAfter buildAmalgamation

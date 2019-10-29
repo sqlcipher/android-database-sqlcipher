@@ -55,7 +55,7 @@
 #define WINDOW_STORAGE_INLINE_NUMERICS 1
 
 using std::make_pair;
-using std::tr1::unordered_map;
+using std::unordered_map;
 
 namespace sqlcipher {
 

@@ -54,7 +54,7 @@ ext {
   mavenDeveloperEmail = "support@zetetic.net"
   mavenDeveloperOrganization = "Zetetic LLC"
   mavenDeveloperUrl = "https://www.zetetic.net"
-  minimumAndroidSdkVersion = 14
+  minimumAndroidSdkVersion = 16
   minimumAndroid64BitSdkVersion = 21
   targetAndroidSdkVersion = 26
   compileAndroidSdkVersion = 26
@@ -62,13 +62,13 @@ ext {
   nativeRootOutputDir = "${projectDir}/${mainProjectName}/src/main"
   androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
   sqlcipherDir = "${projectDir}/${mainProjectName}/src/main/external/sqlcipher"
-  opensslVersion = "1.1.1b"
+  opensslVersion = "1.1.1d"
   opensslDir = "${projectDir}/${mainProjectName}/src/main/external/openssl-${opensslVersion}"
   if(project.hasProperty('debugBuild') && debugBuild.toBoolean()) {
-    otherSqlcipherCFlags = ""
+    otherSqlcipherCFlags = "-fstack-protector-all"
     ndkBuildType="NDK_DEBUG=1"
   } else {
-    otherSqlcipherCFlags = "-DLOG_NDEBUG"
+    otherSqlcipherCFlags = "-DLOG_NDEBUG -fstack-protector-all"
     ndkBuildType="NDK_DEBUG=0"
   }
   sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +

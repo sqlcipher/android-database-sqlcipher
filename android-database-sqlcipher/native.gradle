@@ -3,10 +3,10 @@ import static org.gradle.internal.logging.text.StyledTextOutput.Style
 
 task buildOpenSSL() {
   onlyIf {
-    def armNativeFile = new File("${androidNativeRootDir}/armeabi/libcrypto.a")
+    def armNativeFile = new File("${androidNativeRootDir}/armeabi-v7a/libcrypto.a")
     if (armNativeFile.exists()) {
       def out = services.get(StyledTextOutputFactory).create("")
-      out.style(Style.Normal).text("${androidNativeRootDir}/armeabi/libcrypto.a exists").style(Style.Info).println(' SKIPPED')
+      out.style(Style.Normal).text("${androidNativeRootDir}/armeabi-v7a/libcrypto.a exists").style(Style.Info).println(' SKIPPED')
     }
     return !armNativeFile.exists()
   }
@@ -23,7 +23,7 @@ task buildOpenSSL() {
 
 task buildAmalgamation() {
   onlyIf {
-    def amalgamation = new File("${projectDir}/src/main/external/sqlcipher/sqlite3.c")
+    def amalgamation = new File("${projectDir}/src/main/cpp/sqlite3.c")
     return !amalgamation.exists()
   }
   doLast {
@@ -36,6 +36,10 @@ task buildAmalgamation() {
       workingDir "${projectDir}/src/main/external/sqlcipher"
       environment("CFLAGS", "${sqlcipherCFlags}")
       commandLine "make", "sqlite3.c"
+    }
+    exec {
+      workingDir "${projectDir}/src/main/external/sqlcipher"
+      commandLine "cp", "sqlite3.c", "sqlite3.h", "${nativeRootOutputDir}/cpp/"
     }
   }
 }
@@ -86,8 +90,12 @@ task cleanSQLCipher() {
     gitClean("${sqlcipherDir}")
     File amalgamationSource = new File("${sqlcipherDir}/sqlite3.c")
     File amalgamationHeader = new File("${sqlcipherDir}/sqlite3.h")
+    File amalgamationDestinationSource = new File("${nativeRootOutputDir}/cpp/sqlite3.c")
+    File amalgamationDestinationHeader = new File("${nativeRootOutputDir}/cpp/sqlite3.h")
     if (amalgamationSource.exists()) amalgamationSource.delete()
     if (amalgamationHeader.exists()) amalgamationHeader.delete()
+    if (amalgamationDestinationSource.exists()) amalgamationDestinationSource.delete()
+    if (amalgamationDestinationHeader.exists()) amalgamationDestinationHeader.delete()
   }
 }
 
@@ -145,7 +153,7 @@ def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile,
                                 "ANDROID_NATIVE_ROOT_DIR": "${androidNativeRootDir}",
                                 "NDK_APP_PLATFORM"       : "${androidVersion}"]
     environment(environmentVariables)
-    commandLine "ndk-build", "${ndkBuildType}",
+      commandLine "ndk-build", "V=1", "${ndkBuildType}",
       "--environment-overrides", outputDirectory,
       "-C", androidMkDirectory, applicationFile
   }
