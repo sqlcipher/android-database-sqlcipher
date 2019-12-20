@@ -55,10 +55,11 @@ such as having the following line in your module's `build.gradle` `dependencies`
 closure:
 
 ```gradle
-implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
+implementation 'net.zetetic:android-database-sqlcipher:4.3.0'
+implementation "androidx.sqlite:sqlite:2.0.1"
 ```
 
-(replacing `4.2.0` with the version you want)
+(replacing `4.3.0` with the version you want)
 
 <a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a>
 
