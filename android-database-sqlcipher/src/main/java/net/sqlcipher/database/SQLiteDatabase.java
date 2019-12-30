@@ -2264,11 +2264,7 @@ public class SQLiteDatabase extends SQLiteClosable implements
      * @throws IllegalStateException if the database is not open
      */
     public int delete(String table, String whereClause, String[] whereArgs) {
-        Object[] args = new Object[whereArgs.length];
-
-        System.arraycopy(whereArgs, 0, args, 0, whereArgs.length);
-
-        return delete(table, whereClause, args);
+      return delete(table, whereClause, (Object[])whereArgs);
     }
 
     /**
