@@ -78,7 +78,7 @@ All three take a `byte[]` to use as the passphrase (if you have a `char[]`, use
 `SQLiteDatabase.getBytes()` to get a suitable `byte[]` to use).
 
 Two offer a `SQLiteDatabaseHook` parameter that you can use
-for executing SQL statements before or after the passphrase is used to decrypt
+for executing SQL statements before or after the passphrase is used to key
 the database.
 
 The three-parameter constructor also offers `clearPassphrase`, which defaults
