@@ -68,17 +68,27 @@ implementation "androidx.sqlite:sqlite:2.0.1"
 SQLCipher for Android has a `SupportFactory` class in the `net.sqlcipher.database` package
 that can be used to configure Room to use SQLCipher for Android.
 
-There are two `SupportFactory` constructors:
+There are three `SupportFactory` constructors:
 
-- Both take a `byte[]` to use as the passphrase (if you have a `char[]`, use
-`SQLiteDatabase.getBytes()` to get a suitable `byte[]` to use)
+- `SupportFactory(byte[] passphrase)`
+- `SupportFactory(byte[] passphrase, SQLiteDatabaseHook hook)`
+- `SupportFactory(byte[] passphrase, SQLiteDatabaseHook hook, boolean clearPassphrase)`
 
-- One constructor has a second parameter: a `SQLiteDatabaseHook` that you can use
-for executing SQL statements before or after the passphrase is used to decrypt
-the database
+All three take a `byte[]` to use as the passphrase (if you have a `char[]`, use
+`SQLiteDatabase.getBytes()` to get a suitable `byte[]` to use).
 
-- One constructor option includes a boolean parameter to opt out of the clearing
-the passphrase used to access the SQLCipher database.
+Two offer a `SQLiteDatabaseHook` parameter that you can use
+for executing SQL statements before or after the passphrase is used to key
+the database.
+
+The three-parameter constructor also offers `clearPassphrase`, which defaults
+to `true` in the other two constructors. If `clearPassphrase` is set to `true`,
+this will zero out the bytes of the `byte[]` after we open the database. This
+is safest from a security standpoint, but it does mean that the `SupportFactory`
+instance is a single-use object. Attempting to reuse the `SupportFactory`
+instance later will result in being unable to open the database, because the
+passphrase will be wrong. If you think that you might need to reuse the
+`SupportFactory` instance, pass `false` for `clearPassphrase`.
 
 Then, pass your `SupportFactory` to `openHelperFactory()` on your `RoomDatabase.Builder`:
 
