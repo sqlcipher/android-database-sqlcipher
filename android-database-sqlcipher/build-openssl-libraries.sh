@@ -55,7 +55,7 @@ OPENSSL=openssl-$3
  no-srtp"
 
  rm -rf ${ANDROID_LIB_ROOT}
- 
+
  for SQLCIPHER_TARGET_PLATFORM in armeabi-v7a x86 x86_64 arm64-v8a
  do
      echo "Building libcrypto.a for ${SQLCIPHER_TARGET_PLATFORM}"
@@ -99,7 +99,7 @@ OPENSSL=openssl-$3
      make clean
      PATH=${TOOLCHAIN_BIN_PATH}:${PATH} \
          make build_libs
-     
+
      if [[ $? -ne 0 ]]; then
          echo "Error executing make for platform:${SQLCIPHER_TARGET_PLATFORM}"
          exit 1
