@@ -6,7 +6,7 @@ The latest AAR binary package information can be [here](https://www.zetetic.net/
 ### Compatibility
 
 SQLCipher for Android runs on Android 4.1–Android 10, for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
-    
+
 ### Contributions
 
 We welcome contributions, to contribute to SQLCipher for Android, a [contributor agreement](https://www.zetetic.net/contributions/) needs to be submitted. All submissions should be based on the `master` branch.
@@ -44,7 +44,7 @@ Error: file is encrypted or is not a database
 
 ### Application Integration
 
-You have a two main options for using SQLCipher for Android in your app: 
+You have a two main options for using SQLCipher for Android in your app:
 
 - Using it with Room or other consumers of the `androidx.sqlite` API
 
