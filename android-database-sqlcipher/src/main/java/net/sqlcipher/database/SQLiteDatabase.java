@@ -2951,11 +2951,13 @@ public class SQLiteDatabase extends SQLiteClosable implements
     @Override
     public android.database.Cursor query(final SupportSQLiteQuery supportQuery,
                                          CancellationSignal cancellationSignal) {
-        BindingsRecorder hack=new BindingsRecorder();
-
-        supportQuery.bindTo(hack);
-
-        return rawQuery(supportQuery.getSql(), hack.getBindings());
+        String sql = supportQuery.getSql();
+        int argumentCount = supportQuery.getArgCount();
+        Object[] args = new Object[argumentCount];
+        SQLiteDirectCursorDriver driver = new SQLiteDirectCursorDriver(this, sql, null);
+        SQLiteQuery query = new SQLiteQuery(this, sql, 0, args);
+        supportQuery.bindTo(query);
+        return new CrossProcessCursorWrapper(new SQLiteCursor(this, driver, null, query));
     }
 
     @Override
