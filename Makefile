@@ -18,6 +18,9 @@ build-openssl:
 check:
 	$(GRADLE) check
 
+format:
+	$(GRADLE) editorconfigFormat
+
 build-debug: check
 	$(GRADLE) android-database-sqlcipher:bundleDebugAar \
 	-PdebugBuild=true
