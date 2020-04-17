@@ -55,7 +55,7 @@ such as having the following line in your module's `build.gradle` `dependencies`
 closure:
 
 ```gradle
-implementation 'net.zetetic:android-database-sqlcipher:4.3.0'
+implementation "net.zetetic:android-database-sqlcipher:4.3.0"
 implementation "androidx.sqlite:sqlite:2.0.1"
 ```
 
