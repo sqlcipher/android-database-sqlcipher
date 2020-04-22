@@ -48,7 +48,6 @@ import android.util.Log;
 
     /** the following are for debugging purposes */
     private String mSqlStmt = null;
-    private Throwable mStackTrace = null;
 
     /** when in cache and is in use, this member is set */
     private boolean mInUse = false;
@@ -59,7 +58,6 @@ import android.util.Log;
         }
         mDatabase = db;
         mSqlStmt = sql;
-        mStackTrace = new DatabaseObjectNotClosedException().fillInStackTrace();
         this.nHandle = db.mNativeHandle;
         compile(sql, true);
     }
@@ -145,10 +143,6 @@ import android.util.Log;
             if (SQLiteDebug.DEBUG_ACTIVE_CURSOR_FINALIZATION) {
                 Log.v(TAG, "** warning ** Finalized DbObj (id#" + nStatement + ")");
             }
-            int len = mSqlStmt.length();
-            Log.w(TAG, "Releasing statement in a finalizer. Please ensure " +
-                    "that you explicitly call close() on your cursor: " +
-                    mSqlStmt.substring(0, (len > 100) ? 100 : len), mStackTrace);
             releaseSqlStatement();
         } finally {
             super.finalize();
