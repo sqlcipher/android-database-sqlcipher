@@ -20,7 +20,7 @@ allprojects {
 }
 
 ext {
-  clientVersionNumber = "4.3.0"
+  clientVersionNumber = "4.4.0"
   mavenPackaging = "aar"
   mavenGroup = "net.zetetic"
   mavenArtifactId = "android-database-sqlcipher"
@@ -62,7 +62,7 @@ ext {
   nativeRootOutputDir = "${projectDir}/${mainProjectName}/src/main"
   androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
   sqlcipherDir = "${projectDir}/${mainProjectName}/src/main/external/sqlcipher"
-  opensslVersion = "1.1.1d"
+  opensslVersion = "1.1.1g"
   opensslDir = "${projectDir}/${mainProjectName}/src/main/external/openssl-${opensslVersion}"
   if(project.hasProperty('debugBuild') && debugBuild.toBoolean()) {
     otherSqlcipherCFlags = "-fstack-protector-all"
