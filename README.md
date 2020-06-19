@@ -64,7 +64,6 @@ If you use Proguard obfuscation, don't forget to add new rules:
 ```
 #sql-cipher
 -keep class net.sqlcipher.** { *; }
--keep class net.sqlcipher.database.* { *; }
 ```
 
 (replacing `4.4.0` with the version you want)
