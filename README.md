@@ -58,6 +58,14 @@ closure:
 implementation "net.zetetic:android-database-sqlcipher:4.4.0"
 implementation "androidx.sqlite:sqlite:2.0.1"
 ```
+Proguard:
+If you use Proguard obfuscation, don't forget to add new rules:
+
+```
+#sql-cipher
+-keep class net.sqlcipher.** { *; }
+-keep class net.sqlcipher.database.* { *; }
+```
 
 (replacing `4.4.0` with the version you want)
 
