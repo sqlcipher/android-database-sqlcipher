@@ -58,6 +58,11 @@ closure:
 implementation "net.zetetic:android-database-sqlcipher:4.4.0"
 implementation "androidx.sqlite:sqlite:2.0.1"
 ```
+
+(replacing `4.4.0` with the version you want)
+
+<a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a>
+
 Proguard:
 If you use Proguard obfuscation, don't forget to add new rules:
 
@@ -65,10 +70,6 @@ If you use Proguard obfuscation, don't forget to add new rules:
 #sql-cipher
 -keep class net.sqlcipher.** { *; }
 ```
-
-(replacing `4.4.0` with the version you want)
-
-<a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a>
 
 #### Using SQLCipher for Android With Room
 
