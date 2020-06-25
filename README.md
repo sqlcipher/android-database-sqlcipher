@@ -126,6 +126,15 @@ The rest of your code may not need any changes.
 
 An article covering both integration of SQLCipher into an Android application as well as building the source can be found [here](https://www.zetetic.net/sqlcipher/sqlcipher-for-android/).
 
+### ProGuard
+
+For applications which utilize ProGuard, a few additional rules must be included when using SQLCipher for Android. These rules instruct ProGuard to omit the renaming of the internal SQLCipher classes which are used via lookup from the JNI layer. It is worth noting that since SQLCipher or Android is based on open source code there is little value in obfuscating the library anyway. The more important use of ProGuard is to protect your application code and business logic.
+
+``
+-keep,includedescriptorclasses class net.sqlcipher.** { *; }
+-keep,includedescriptorclasses interface net.sqlcipher.** { *; }
+```
+
 ### Building
 
 In order to build `android-database-sqlcipher` from source you will need both the Android SDK, Gradle, and the Android NDK. We currently recommend using Android NDK version `r20`. To complete the `make` command, the `ANDROID_NDK_HOME` environment variable must be defined which should point to your NDK root. Once you have cloned the repo, change directory into the root of the repository and run the following commands:
