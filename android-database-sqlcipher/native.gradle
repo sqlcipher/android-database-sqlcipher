@@ -85,18 +85,15 @@ task cleanOpenSSL() {
 
 task cleanSQLCipher() {
   description "Clean the SQLCipher source"
-  doLast {
-    logger.info "Cleaning SQLCipher source"
-    gitClean("${sqlcipherDir}")
-    File amalgamationSource = new File("${sqlcipherDir}/sqlite3.c")
-    File amalgamationHeader = new File("${sqlcipherDir}/sqlite3.h")
-    File amalgamationDestinationSource = new File("${nativeRootOutputDir}/cpp/sqlite3.c")
-    File amalgamationDestinationHeader = new File("${nativeRootOutputDir}/cpp/sqlite3.h")
-    if (amalgamationSource.exists()) amalgamationSource.delete()
-    if (amalgamationHeader.exists()) amalgamationHeader.delete()
-    if (amalgamationDestinationSource.exists()) amalgamationDestinationSource.delete()
-    if (amalgamationDestinationHeader.exists()) amalgamationDestinationHeader.delete()
-  }
+  gitClean("${sqlcipherDir}")
+  exec {
+    workingDir "${sqlcipherDir}"
+    commandLine "make", "clean"
+    }
+  File amalgamationDestinationSource = new File("${nativeRootOutputDir}/cpp/sqlite3.c")
+  File amalgamationDestinationHeader = new File("${nativeRootOutputDir}/cpp/sqlite3.h")
+  if (amalgamationDestinationSource.exists()) amalgamationDestinationSource.delete()
+  if (amalgamationDestinationHeader.exists()) amalgamationDestinationHeader.delete()
 }
 
 task cleanNative() {
