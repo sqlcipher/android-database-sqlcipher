@@ -150,7 +150,7 @@ def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile,
                                 "ANDROID_NATIVE_ROOT_DIR": "${androidNativeRootDir}",
                                 "NDK_APP_PLATFORM"       : "${androidVersion}"]
     environment(environmentVariables)
-      commandLine "ndk-build", "V=1", "${ndkBuildType}",
+      commandLine "${android.ndkDirectory}/ndk-build", "V=1", "${ndkBuildType}",
       "--environment-overrides", outputDirectory,
       "-C", androidMkDirectory, applicationFile
   }
