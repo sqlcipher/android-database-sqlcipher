@@ -88,8 +88,9 @@ task cleanSQLCipher() {
   gitClean("${sqlcipherDir}")
   exec {
     workingDir "${sqlcipherDir}"
+    ignoreExitValue true
     commandLine "make", "clean"
-    }
+  }
   File amalgamationDestinationSource = new File("${nativeRootOutputDir}/cpp/sqlite3.c")
   File amalgamationDestinationHeader = new File("${nativeRootOutputDir}/cpp/sqlite3.h")
   if (amalgamationDestinationSource.exists()) amalgamationDestinationSource.delete()
