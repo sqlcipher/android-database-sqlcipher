@@ -140,12 +140,9 @@ For applications which utilize ProGuard, a few additional rules must be included
 In order to build `android-database-sqlcipher` from source you will need both the Android SDK, Gradle, and the Android NDK. We currently recommend using Android NDK version `r20`. To complete the `make` command, the `ANDROID_NDK_HOME` environment variable must be defined which should point to your NDK root. Once you have cloned the repo, change directory into the root of the repository and run the following commands:
 
 ```
-# this only needs to be done once
-make init
-
-# to build the source for debug:
-make build-debug
-# or for a release build:
+SQLCIPHER_ROOT=/some/path/to/sqlcipher-folder \
+OPENSSL_ROOT=/some/path/to/openssl-folder \
+SQLCIPHER_ANDROID_VERSION="4.4.1" \
 make build-release
 ```
 

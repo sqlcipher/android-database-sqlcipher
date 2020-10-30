@@ -2,13 +2,10 @@
 
 MINIMUM_ANDROID_SDK_VERSION=$1
 MINIMUM_ANDROID_64_BIT_SDK_VERSION=$2
-OPENSSL=openssl-$3
+OPENSSL_DIR=$3
+ANDROID_LIB_ROOT=$4
 
-(cd src/main/external/;
- gunzip -c ${OPENSSL}.tar.gz | tar xf -
-)
-
-(cd src/main/external/${OPENSSL};
+(cd ${OPENSSL_DIR};
 
  if [[ ! ${MINIMUM_ANDROID_SDK_VERSION} ]]; then
      echo "MINIMUM_ANDROID_SDK_VERSION was not provided, include and rerun"
@@ -45,7 +42,6 @@ OPENSSL=openssl-$3
  esac
 
  NDK_TOOLCHAIN_VERSION=4.9
- ANDROID_LIB_ROOT=../android-libs
  OPENSSL_CONFIGURE_OPTIONS="-fPIC -fstack-protector-all no-idea no-camellia \
  no-seed no-bf no-cast no-rc2 no-rc4 no-rc5 no-md2 \
  no-md4 no-ecdh no-sock no-ssl3 \

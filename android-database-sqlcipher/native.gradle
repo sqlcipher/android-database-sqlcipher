@@ -16,32 +16,38 @@ task buildOpenSSL() {
       commandLine "./build-openssl-libraries.sh",
         "${minimumAndroidSdkVersion}",
         "${minimumAndroid64BitSdkVersion}",
-        "${opensslVersion}"
+        "${opensslDir}",
+        "${androidNativeRootDir}"
     }
   }
 }
 
 task buildAmalgamation() {
   onlyIf {
-    def amalgamation = new File("${projectDir}/src/main/cpp/sqlite3.c")
+    def amalgamation = new File("${sqlcipherDir}/sqlite3.c")
     return !amalgamation.exists()
   }
   doLast {
     exec {
-      workingDir "${projectDir}/src/main/external/sqlcipher"
+      workingDir "${sqlcipherDir}"
       environment("CFLAGS", "${sqlcipherCFlags}")
       commandLine "./configure", "--enable-tempstore=yes", "--with-crypto-lib=none"
     }
     exec {
-      workingDir "${projectDir}/src/main/external/sqlcipher"
+      workingDir "${sqlcipherDir}"
       environment("CFLAGS", "${sqlcipherCFlags}")
       commandLine "make", "sqlite3.c"
     }
-    exec {
-      workingDir "${projectDir}/src/main/external/sqlcipher"
-      commandLine "cp", "sqlite3.c", "sqlite3.h", "${nativeRootOutputDir}/cpp/"
-    }
   }
+}
+
+task copyAmalgamation() {
+    doLast {
+        exec {
+            workingDir "${sqlcipherDir}"
+            commandLine "cp", "sqlite3.c", "sqlite3.h", "${nativeRootOutputDir}/cpp/"
+        }
+    }
 }
 
 task buildNative() {
@@ -76,25 +82,27 @@ task cleanOpenSSL() {
   description "Clean the OpenSSL source"
   doLast {
     logger.info "Cleaning OpenSSL source"
-    File file = new File("${opensslDir}")
-    if (file.exists()) {
-      file.deleteDir()
+    exec {
+      workingDir "${opensslDir}"
+      ignoreExitValue true
+      commandLine "make", "clean"
     }
   }
 }
 
 task cleanSQLCipher() {
-  description "Clean the SQLCipher source"
-  gitClean("${sqlcipherDir}")
-  exec {
-    workingDir "${sqlcipherDir}"
-    ignoreExitValue true
-    commandLine "make", "clean"
-  }
-  File amalgamationDestinationSource = new File("${nativeRootOutputDir}/cpp/sqlite3.c")
-  File amalgamationDestinationHeader = new File("${nativeRootOutputDir}/cpp/sqlite3.h")
-  if (amalgamationDestinationSource.exists()) amalgamationDestinationSource.delete()
-  if (amalgamationDestinationHeader.exists()) amalgamationDestinationHeader.delete()
+    description "Clean the SQLCipher source"
+    doLast {
+        exec {
+            workingDir "${sqlcipherDir}"
+            ignoreExitValue true
+            commandLine "make", "clean"
+        }
+        File amalgamationDestinationSource = new File("${nativeRootOutputDir}/cpp/sqlite3.c")
+        File amalgamationDestinationHeader = new File("${nativeRootOutputDir}/cpp/sqlite3.h")
+        if (amalgamationDestinationSource.exists()) amalgamationDestinationSource.delete()
+        if (amalgamationDestinationHeader.exists()) amalgamationDestinationHeader.delete()
+    }
 }
 
 task cleanNative() {
@@ -110,8 +118,9 @@ task cleanNative() {
   }
 }
 
-task distclean(dependsOn: [clean, cleanSQLCipher, cleanOpenSSL]) {
+task distclean() {
   description "Clean build, SQLCipher, and OpenSSL artifacts"
+  dependsOn clean, cleanSQLCipher, cleanOpenSSL
   doLast {
     new File("${androidNativeRootDir}/").deleteDir()
   }
@@ -132,7 +141,6 @@ def gitClean(directory) {
 def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile,
                     cflags, otherSqlcipherCFlags, androidVersion) {
   logger.info "Executing NDK build command"
-
   def out = services.get(StyledTextOutputFactory).create("")
   out.style(Style.Normal).text("SQLCIPHER_CFLAGS=").style(Style.Info).println("${cflags}")
   out.style(Style.Normal).text("OPENSSL_DIR=").style(Style.Info).println("${opensslDir}")

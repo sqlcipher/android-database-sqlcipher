@@ -20,7 +20,11 @@ allprojects {
 }
 
 ext {
-  clientVersionNumber = "4.4.0"
+  if(project.hasProperty('sqlcipherAndroidClientVersion')) {
+    clientVersionNumber = "${sqlcipherAndroidClientVersion}"
+  } else {
+    clientVersionNumber = "UndefinedBuildNumber"
+  }
   mavenPackaging = "aar"
   mavenGroup = "net.zetetic"
   mavenArtifactId = "android-database-sqlcipher"
@@ -60,10 +64,18 @@ ext {
   compileAndroidSdkVersion = 26
   mainProjectName = "android-database-sqlcipher"
   nativeRootOutputDir = "${projectDir}/${mainProjectName}/src/main"
-  androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
-  sqlcipherDir = "${projectDir}/${mainProjectName}/src/main/external/sqlcipher"
   opensslVersion = "1.1.1g"
-  opensslDir = "${projectDir}/${mainProjectName}/src/main/external/openssl-${opensslVersion}"
+  if(project.hasProperty('sqlcipherRoot')) {
+    sqlcipherDir = "${sqlcipherRoot}"
+  }
+  if(project.hasProperty('opensslAndroidLibRoot')) {
+    androidNativeRootDir = "${opensslAndroidLibRoot}"
+  } else {
+    androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
+  }
+  if(project.hasProperty('opensslRoot')) {
+    opensslDir = "${opensslRoot}"
+  }
   if(project.hasProperty('debugBuild') && debugBuild.toBoolean()) {
     otherSqlcipherCFlags = "-fstack-protector-all"
     ndkBuildType="NDK_DEBUG=1"
@@ -71,27 +83,31 @@ ext {
     otherSqlcipherCFlags = "-DLOG_NDEBUG -fstack-protector-all"
     ndkBuildType="NDK_DEBUG=0"
   }
-  sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +
-    "-DSQLITE_SOUNDEX " +
-    "-DHAVE_USLEEP=1 " +
-    "-DSQLITE_MAX_VARIABLE_NUMBER=99999 " +
-    "-DSQLITE_TEMP_STORE=3 " +
-    "-DSQLITE_THREADSAFE=1 " +
-    "-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 " +
-    "-DNDEBUG=1 " +
-    "-DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 " +
-    "-DSQLITE_ENABLE_LOAD_EXTENSION " +
-    "-DSQLITE_ENABLE_COLUMN_METADATA " +
-    "-DSQLITE_ENABLE_UNLOCK_NOTIFY " +
-    "-DSQLITE_ENABLE_RTREE " +
-    "-DSQLITE_ENABLE_STAT3 " +
-    "-DSQLITE_ENABLE_STAT4 " +
-    "-DSQLITE_ENABLE_JSON1 " +
-    "-DSQLITE_ENABLE_FTS3_PARENTHESIS " +
-    "-DSQLITE_ENABLE_FTS4 " +
-    "-DSQLITE_ENABLE_FTS5 " +
-    "-DSQLCIPHER_CRYPTO_OPENSSL " +
-    "-DSQLITE_ENABLE_DBSTAT_VTAB"
+  if(project.hasProperty('sqlcipherCFlags')) {
+         sqlcipherCFlags = "${sqlcipherCFlags}"
+  } else {
+         sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +
+                "-DSQLITE_SOUNDEX " +
+                "-DHAVE_USLEEP=1 " +
+                "-DSQLITE_MAX_VARIABLE_NUMBER=99999 " +
+                "-DSQLITE_TEMP_STORE=3 " +
+                "-DSQLITE_THREADSAFE=1 " +
+                "-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 " +
+                "-DNDEBUG=1 " +
+                "-DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 " +
+                "-DSQLITE_ENABLE_LOAD_EXTENSION " +
+                "-DSQLITE_ENABLE_COLUMN_METADATA " +
+                "-DSQLITE_ENABLE_UNLOCK_NOTIFY " +
+                "-DSQLITE_ENABLE_RTREE " +
+                "-DSQLITE_ENABLE_STAT3 " +
+                "-DSQLITE_ENABLE_STAT4 " +
+                "-DSQLITE_ENABLE_JSON1 " +
+                "-DSQLITE_ENABLE_FTS3_PARENTHESIS " +
+                "-DSQLITE_ENABLE_FTS4 " +
+                "-DSQLITE_ENABLE_FTS5 " +
+                "-DSQLCIPHER_CRYPTO_OPENSSL " +
+                "-DSQLITE_ENABLE_DBSTAT_VTAB"
+  }
 }
 
 task clean(type: Delete) {

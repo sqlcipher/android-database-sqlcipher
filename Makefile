@@ -3,9 +3,6 @@
 	publish-local-release publish-remote-snapshot public-remote-release check
 GRADLE = ./gradlew
 
-init:
-	git submodule update --init
-
 clean:
 	$(GRADLE) clean
 
@@ -25,9 +22,14 @@ build-debug: check
 	$(GRADLE) android-database-sqlcipher:bundleDebugAar \
 	-PdebugBuild=true
 
-build-release: check
+build-release:
 	$(GRADLE) android-database-sqlcipher:bundleReleaseAar \
-	-PdebugBuild=false
+	-PdebugBuild=false \
+	-PsqlcipherRoot="$(SQLCIPHER_ROOT)" \
+	-PopensslRoot="$(OPENSSL_ROOT)" \
+	-PopensslAndroidLibRoot="$(OPENSSL_ANDROID_LIB_ROOT)" \
+	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
+	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)"
 
 publish-local-snapshot:
 	@ $(collect-signing-info) \
@@ -74,6 +76,11 @@ publish-remote-release:
 	-PsigningKeyPassword="$$gpgPassword" \
 	-PnexusUsername="$$nexusUsername" \
 	-PnexusPassword="$$nexusPassword" \
+	-PsqlcipherRoot="$(SQLCIPHER_ROOT)" \
+	-PopensslRoot="$(OPENSSL_ROOT)" \
+	-PopensslAndroidLibRoot="$(OPENSSL_ANDROID_LIB_ROOT)" \
+	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
+	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)"
 	uploadArchives
 
 collect-nexus-info := \
