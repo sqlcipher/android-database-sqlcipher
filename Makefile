@@ -80,7 +80,7 @@ publish-remote-release:
 	-PopensslRoot="$(OPENSSL_ROOT)" \
 	-PopensslAndroidLibRoot="$(OPENSSL_ANDROID_LIB_ROOT)" \
 	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
-	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)"
+	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)" \
 	uploadArchives
 
 collect-nexus-info := \
