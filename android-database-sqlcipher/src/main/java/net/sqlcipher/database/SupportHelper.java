@@ -88,10 +88,10 @@ public class SupportHelper implements SupportSQLiteOpenHelper {
                   isCleared = isCleared && (b == (byte)0);
                 }
                 if (isCleared) {
-                  throw new IllegalStateException("The passphrase appears to be cleared. This happens by" +
-                                                  "default the first time you use the factory to open a database, so we can remove the" +
-                                                  "cleartext passphrase from memory. If you close the database yourself, please use a" +
-                                                  "fresh SupportFactory to reopen it. If something else (e.g., Room) closed the" +
+                  throw new IllegalStateException("The passphrase appears to be cleared. This happens by " +
+                                                  "default the first time you use the factory to open a database, so we can remove the " +
+                                                  "cleartext passphrase from memory. If you close the database yourself, please use a " +
+                                                  "fresh SupportFactory to reopen it. If something else (e.g., Room) closed the " +
                                                   "database, and you cannot control that, use SupportFactory boolean constructor option " +
                                                   "to opt out of the automatic password clearing step. See the project README for more information.", ex);
                 }
