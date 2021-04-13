@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Community support
+    url: https://discuss.zetetic.net/c/sqlcipher/5
+    about: Integration problem or question about SQLCipher for Android, feel free to ask here.
+  - name: 🔨 Build issue
+    url: https://discuss.zetetic.net/c/sqlcipher/5
+    about: Experience an issue building SQLCipher for Android? Start here.
+  - name: 📃 SQLCipher documentation
+    url: https://www.zetetic.net/sqlcipher/sqlcipher-api/
+    about: SQLCipher documentation can be found here.
+  - name: 📖 Contribution instructions
+    url: https://www.zetetic.net/contributions/
+    about: Want to contribute to SQLCipher for Android? Start here.
