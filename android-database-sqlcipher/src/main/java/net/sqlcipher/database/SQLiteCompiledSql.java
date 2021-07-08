@@ -100,13 +100,8 @@ import android.util.Log;
             if (SQLiteDebug.DEBUG_ACTIVE_CURSOR_FINALIZATION) {
                 Log.v(TAG, "closed and deallocated DbObj (id#" + nStatement +")");
             }
-            try {
-                mDatabase.lock();
-                native_finalize();
-                nStatement = 0;
-            } finally {
-                mDatabase.unlock();
-            }
+            native_finalize();
+            nStatement = 0;
         }
     }
 
