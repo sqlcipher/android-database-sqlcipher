@@ -16,13 +16,14 @@
 
 package net.sqlcipher;
 
-import net.sqlcipher.database.SQLiteAbortException;
-import net.sqlcipher.database.SQLiteConstraintException;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteAbortException;
+import android.database.sqlite.SQLiteConstraintException;
 import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteDatabaseCorruptException;
-import net.sqlcipher.database.SQLiteDiskIOException;
-import net.sqlcipher.database.SQLiteException;
-import net.sqlcipher.database.SQLiteFullException;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
+import android.database.sqlite.SQLiteDiskIOException;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteFullException;
 import net.sqlcipher.database.SQLiteProgram;
 import net.sqlcipher.database.SQLiteStatement;
 

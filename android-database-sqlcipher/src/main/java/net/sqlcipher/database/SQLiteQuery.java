@@ -17,6 +17,8 @@
 package net.sqlcipher.database;
 import net.sqlcipher.*;
 
+import android.database.sqlite.SQLiteDatabaseCorruptException;
+import android.database.sqlite.SQLiteMisuseException;
 import android.os.SystemClock;
 import android.util.Log;
 
