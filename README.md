@@ -55,11 +55,11 @@ such as having the following line in your module's `build.gradle` `dependencies`
 closure:
 
 ```gradle
-implementation "net.zetetic:android-database-sqlcipher:4.4.2"
+implementation "net.zetetic:android-database-sqlcipher:4.4.3"
 implementation "androidx.sqlite:sqlite:2.0.1"
 ```
 
-(replacing `4.4.2` with the version you want)
+(replacing `4.4.3` with the version you want)
 
 <a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a>
 
@@ -142,7 +142,7 @@ In order to build `android-database-sqlcipher` from source you will need both th
 ```
 SQLCIPHER_ROOT=/some/path/to/sqlcipher-folder \
 OPENSSL_ROOT=/some/path/to/openssl-folder \
-SQLCIPHER_ANDROID_VERSION="4.4.2" \
+SQLCIPHER_ANDROID_VERSION="4.4.3" \
 SQLCIPHER_CFLAGS="-DSQLITE_HAS_CODEC" \
 OPENSSL_ANDROID_LIB_ROOT=/some/path/for/android/native/lib/creation \
 make build-release
