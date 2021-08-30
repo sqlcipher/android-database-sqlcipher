@@ -64,7 +64,6 @@ ext {
   compileAndroidSdkVersion = 26
   mainProjectName = "android-database-sqlcipher"
   nativeRootOutputDir = "${projectDir}/${mainProjectName}/src/main"
-  opensslVersion = "1.1.1g"
   if(project.hasProperty('sqlcipherRoot')) {
     sqlcipherDir = "${sqlcipherRoot}"
   }
