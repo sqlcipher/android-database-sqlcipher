@@ -7,7 +7,8 @@ clean:
 	$(GRADLE) clean
 
 distclean:
-	$(GRADLE) distclean
+	$(GRADLE) distclean \
+	-PsqlcipherRoot="$(SQLCIPHER_ROOT)"
 
 build-openssl:
 	$(GRADLE) buildOpenSSL
@@ -18,16 +19,19 @@ check:
 format:
 	$(GRADLE) editorconfigFormat
 
-build-debug: check
+build-debug:
 	$(GRADLE) android-database-sqlcipher:bundleDebugAar \
-	-PdebugBuild=true
+	-PdebugBuild=true \
+	-PsqlcipherRoot="$(SQLCIPHER_ROOT)" \
+	-PopensslRoot="$(OPENSSL_ROOT)" \
+	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
+	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)"
 
 build-release:
 	$(GRADLE) android-database-sqlcipher:bundleReleaseAar \
 	-PdebugBuild=false \
 	-PsqlcipherRoot="$(SQLCIPHER_ROOT)" \
 	-PopensslRoot="$(OPENSSL_ROOT)" \
-	-PopensslAndroidLibRoot="$(OPENSSL_ANDROID_LIB_ROOT)" \
 	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
 	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)"
 

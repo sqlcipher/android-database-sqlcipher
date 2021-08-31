@@ -11,6 +11,10 @@ task buildOpenSSL() {
     return !armNativeFile.exists()
   }
   doLast {
+    def nativeRootDirectory = new File("${androidNativeRootDir}")
+    if(!nativeRootDirectory.exists()){
+      nativeRootDirectory.mkdirs()
+    }
     exec {
       workingDir "${projectDir}"
       commandLine "./build-openssl-libraries.sh",
@@ -79,13 +83,13 @@ task buildNative() {
 }
 
 task cleanOpenSSL() {
-  description "Clean the OpenSSL source"
+  description "Clean the OpenSSL native libraries"
   doLast {
-    logger.info "Cleaning OpenSSL source"
+    logger.info "Cleaning OpenSSL native libraries"
     exec {
-      workingDir "${opensslDir}"
+      workingDir "${androidNativeRootDir}"
       ignoreExitValue true
-      commandLine "make", "clean"
+      commandLine "rm", "-rf"
     }
   }
 }

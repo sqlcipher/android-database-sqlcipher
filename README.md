@@ -144,7 +144,6 @@ SQLCIPHER_ROOT=/some/path/to/sqlcipher-folder \
 OPENSSL_ROOT=/some/path/to/openssl-folder \
 SQLCIPHER_ANDROID_VERSION="4.4.3" \
 SQLCIPHER_CFLAGS="-DSQLITE_HAS_CODEC" \
-OPENSSL_ANDROID_LIB_ROOT=/some/path/for/android/native/lib/creation \
 make build-release
 ```
 
