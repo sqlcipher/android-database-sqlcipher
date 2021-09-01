@@ -143,9 +143,10 @@ In order to build `android-database-sqlcipher` from source you will need both th
 SQLCIPHER_ROOT=/some/path/to/sqlcipher-folder \
 OPENSSL_ROOT=/some/path/to/openssl-folder \
 SQLCIPHER_ANDROID_VERSION="4.4.3" \
-SQLCIPHER_CFLAGS="-DSQLITE_HAS_CODEC" \
 make build-release
 ```
+
+You may also optionally include `SQLCIPHER_CFLAGS` to override the default features SQLCipher core is compiled with. If `SQLCIPHER_CFLAGS` is defined, make sure `-DSQLITE_HAS_CODEC` is included in the list of flags.
 
 ### License
 
