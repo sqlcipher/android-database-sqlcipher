@@ -24,6 +24,7 @@ build-debug:
 	-PdebugBuild=true \
 	-PsqlcipherRoot="$(SQLCIPHER_ROOT)" \
 	-PopensslRoot="$(OPENSSL_ROOT)" \
+	-PopenssslAndroidNativeRoot="$(OPENSSL_ANDROID_LIB_ROOT)" \
 	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
 	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)"
 
@@ -32,7 +33,7 @@ build-release:
 	-PdebugBuild=false \
 	-PsqlcipherRoot="$(SQLCIPHER_ROOT)" \
 	-PopensslRoot="$(OPENSSL_ROOT)" \
-	-PopenssslAndroidNativeRoot="$(OPENSSL_ANDROID_LIB_ROOT)"
+	-PopenssslAndroidNativeRoot="$(OPENSSL_ANDROID_LIB_ROOT)" \
 	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
 	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)"
 
