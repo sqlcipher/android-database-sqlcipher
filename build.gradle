@@ -67,8 +67,8 @@ ext {
   if(project.hasProperty('sqlcipherRoot')) {
     sqlcipherDir = "${sqlcipherRoot}"
   }
-  if(project.hasProperty('openssslAndroidNativeRoot')) {
-    androidNativeRootDir = "${openssslAndroidNativeRoot}"
+  if(project.hasProperty('opensslAndroidNativeRoot') && "${opensslAndroidNativeRoot}") {
+    androidNativeRootDir = "${opensslAndroidNativeRoot}"
   } else {
     androidNativeRootDir = "${nativeRootOutputDir}/external/android-libs"
   }
