@@ -50,7 +50,6 @@ android {
     clean.dependsOn cleanNative
     check.dependsOn editorconfigCheck
     buildNative.mustRunAfter buildAmalgamation
-    buildAmalgamation.mustRunAfter buildOpenSSL
-    preBuild.dependsOn([buildOpenSSL, buildAmalgamation, copyAmalgamation, buildNative])
+    preBuild.dependsOn([buildAmalgamation, copyAmalgamation, buildNative])
     buildNative.mustRunAfter(copyAmalgamation)
 }

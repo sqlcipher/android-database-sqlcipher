@@ -124,7 +124,7 @@ task cleanNative() {
 
 task distclean() {
   description "Clean build, SQLCipher, and OpenSSL artifacts"
-  dependsOn clean, cleanSQLCipher, cleanOpenSSL
+  dependsOn clean, cleanSQLCipher
   doLast {
     new File("${androidNativeRootDir}/").deleteDir()
   }
@@ -146,22 +146,29 @@ def executeNdkBuild(outputDir, androidMkDirectory, applicationMkFile,
                     cflags, otherSqlcipherCFlags, androidVersion) {
   logger.info "Executing NDK build command"
   def out = services.get(StyledTextOutputFactory).create("")
+  def cryptoLib = "openssl"
+  if (opensslDir.contains("wolfssl")) {
+    cryptoLib = "wolfssl"
+  }
   out.style(Style.Normal).text("SQLCIPHER_CFLAGS=").style(Style.Info).println("${cflags}")
   out.style(Style.Normal).text("OPENSSL_DIR=").style(Style.Info).println("${opensslDir}")
   out.style(Style.Normal).text("SQLCIPHER_DIR=").style(Style.Info).println("${sqlcipherDir}")
   out.style(Style.Normal).text("SQLCIPHER_OTHER_CFLAGS=").style(Style.Info).println("${otherSqlcipherCFlags}")
   out.style(Style.Normal).text("ANDROID_NATIVE_ROOT_DIR=").style(Style.Info).println("${androidNativeRootDir}")
   out.style(Style.Normal).text("NDK_APP_PLATFORM=").style(Style.Info).println("${androidVersion}")
+  out.style(Style.Normal).text("CRYPTO_LIB=").style(Style.Info).println("${cryptoLib}")
 
   exec {
     def outputDirectory = "NDK_LIBS_OUT=${outputDir}"
     def applicationFile = "NDK_APPLICATION_MK=${applicationMkFile}"
+
     def environmentVariables = ["SQLCIPHER_CFLAGS"       : "${cflags}",
                                 "OPENSSL_DIR"            : "${opensslDir}",
                                 "SQLCIPHER_DIR"          : "${sqlcipherDir}",
                                 "SQLCIPHER_OTHER_CFLAGS" : "${otherSqlcipherCFlags}",
                                 "ANDROID_NATIVE_ROOT_DIR": "${androidNativeRootDir}",
-                                "NDK_APP_PLATFORM"       : "${androidVersion}"]
+                                "NDK_APP_PLATFORM"       : "${androidVersion}",
+                                "CRYPTO_LIB"             : "${cryptoLib}"]
     environment(environmentVariables)
       commandLine "${android.ndkDirectory}/ndk-build", "V=1", "${ndkBuildType}",
       "--environment-overrides", outputDirectory,
