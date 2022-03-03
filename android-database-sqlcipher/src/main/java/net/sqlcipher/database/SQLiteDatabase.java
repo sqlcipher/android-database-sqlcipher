@@ -3180,12 +3180,15 @@ public class SQLiteDatabase extends SQLiteClosable implements
     }
 
     private Pair<Boolean, String> getResultFromPragma(String command) {
+        Pair<Boolean, String> result = new Pair(false, "");
         Cursor cursor = rawQuery(command, new Object[]{});
-        if(cursor == null) return new Pair(false, "");
-        cursor.moveToFirst();
-        String value = cursor.getString(0);
+        if(cursor == null) return result;
+        if(cursor.moveToFirst()){
+          String value = cursor.getString(0);
+          result = new Pair(true, value);
+        }
         cursor.close();
-        return new Pair(true, value);
+        return result;
     }
 
 
