@@ -1,4 +1,4 @@
-apply plugin: "maven"
+apply plugin: "maven-publish"
 apply plugin: "signing"
 import org.gradle.plugins.signing.Sign
 
@@ -36,48 +36,34 @@ gradle.taskGraph.whenReady { taskGraph ->
   }
 }
 
+
+
 afterEvaluate { project ->
-  uploadArchives {
-    repositories {
-      mavenDeployer {
-        beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-        pom.groupId = mavenGroup
-        pom.artifactId = mavenArtifactId
-        pom.version = mavenVersionName
-
-        repository(url: getReleaseRepositoryUrl()) {
-          authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-        }
-        snapshotRepository(url: getSnapshotRepositoryUrl()) {
-          authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-        }
-
-        pom.project {
-          name mavenArtifactId
-          packaging mavenPackaging
-          description mavenPomDescription
-          url mavenPomUrl
-
-          scm {
-            url mavenScmUrl
-            connection mavenScmConnection
-            developerConnection mavenScmDeveloperConnection
-          }
-
+  publishing {
+    publications {
+      mavenJava(MavenPublication) {
+        groupId = mavenGroup
+        artifactId = mavenArtifactId
+        version = mavenPomDescription
+        pom {
+          name = mavenArtifactId
+          description = mavenPomDescription
+          url = mavenPomUrl
           licenses {
             license {
-              url mavenLicenseUrl
+              url = mavenLicenseUrl
             }
           }
-
           developers {
             developer {
-              name mavenDeveloperName
-              email mavenDeveloperEmail
-              organization mavenDeveloperOrganization
-              organizationUrl mavenDeveloperUrl
+              name = mavenDeveloperName
+              email = mavenDeveloperEmail
             }
+          }
+          scm {
+            connection = mavenScmConnection
+            developerConnection = mavenScmDeveloperConnection
+            url = mavenScmUrl
           }
         }
       }
@@ -85,7 +71,7 @@ afterEvaluate { project ->
   }
 
   signing {
-    required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
+    required { isReleaseBuild() }
     sign configurations.archives
   }
 

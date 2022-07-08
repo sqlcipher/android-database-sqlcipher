@@ -24,10 +24,12 @@ android {
     buildTypes {
         debug {
             debuggable true
+            buildConfigField("String", "VERSION_NAME", "\"${clientVersionNumber}\"")
         }
         release {
             debuggable false
             minifyEnabled false
+            buildConfigField("String", "VERSION_NAME", "\"${clientVersionNumber}\"")
         }
     }
 
