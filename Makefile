@@ -87,7 +87,7 @@ publish-remote-release:
 	-PopensslAndroidLibRoot="$(OPENSSL_ANDROID_LIB_ROOT)" \
 	-PsqlcipherCFlags="$(SQLCIPHER_CFLAGS)" \
 	-PsqlcipherAndroidClientVersion="$(SQLCIPHER_ANDROID_VERSION)" \
-	uploadArchives
+	android-database-sqlcipher:publish
 
 collect-nexus-info := \
 	read -p "Enter Nexus username:" nexusUsername; \

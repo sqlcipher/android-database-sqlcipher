@@ -42,9 +42,10 @@ afterEvaluate { project ->
   publishing {
     publications {
       mavenJava(MavenPublication) {
+        from components.release
         groupId = mavenGroup
         artifactId = mavenArtifactId
-        version = mavenPomDescription
+        version = mavenVersionName
         pom {
           name = mavenArtifactId
           description = mavenPomDescription
@@ -68,10 +69,20 @@ afterEvaluate { project ->
         }
       }
     }
+    repositories {
+        maven {
+            def releasesRepoUrl = getReleaseRepositoryUrl()
+            url = releasesRepoUrl
+            credentials {
+                    username = getRepositoryUsername()
+                    password = getRepositoryPassword()
+            }
+        }
+      }
   }
 
   signing {
-    required { isReleaseBuild() }
+    required { isReleaseBuild() && gradle.taskGraph.hasTask("publish") }
     sign configurations.archives
   }
 
