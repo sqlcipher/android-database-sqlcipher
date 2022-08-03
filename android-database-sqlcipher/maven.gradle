@@ -71,8 +71,10 @@ afterEvaluate { project ->
     }
     repositories {
         maven {
-            def releasesRepoUrl = getReleaseRepositoryUrl()
-            url = releasesRepoUrl
+            def repoUrl = isReleaseBuild()
+                ? getReleaseRepositoryUrl()
+                : getSnapshotRepositoryUrl();
+            url = repoUrl
             credentials {
                     username = getRepositoryUsername()
                     password = getRepositoryPassword()
@@ -83,7 +85,7 @@ afterEvaluate { project ->
 
   signing {
     required { isReleaseBuild() && gradle.taskGraph.hasTask("publish") }
-    sign configurations.archives
+    sign publishing.publications.mavenJava
   }
 
   task androidSourcesJar(type: Jar) {
