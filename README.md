@@ -5,7 +5,7 @@ The latest AAR binary package information can be [here](https://www.zetetic.net/
 
 ### Compatibility
 
-SQLCipher for Android runs on Android 4.1–Android 12, for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
+SQLCipher for Android runs on Android 4.1–Android 13, for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
 
 ### Contributions
 
@@ -55,11 +55,11 @@ such as having the following line in your module's `build.gradle` `dependencies`
 closure:
 
 ```gradle
-implementation "net.zetetic:android-database-sqlcipher:4.5.0"
+implementation "net.zetetic:android-database-sqlcipher:4.5.2"
 implementation "androidx.sqlite:sqlite:2.0.1"
 ```
 
-(replacing `4.5.0` with the version you want)
+(replacing `4.5.2` with the version you want)
 
 <a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a>
 
@@ -144,11 +144,12 @@ To complete the `make` command, the `ANDROID_NDK_HOME` environment variable must
 ```
 SQLCIPHER_ROOT=/some/path/to/sqlcipher-folder \
 OPENSSL_ROOT=/some/path/to/openssl-folder \
-SQLCIPHER_ANDROID_VERSION="4.5.0" \
+SQLCIPHER_CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2" \
+SQLCIPHER_ANDROID_VERSION="4.5.2" \
 make build-release
 ```
 
-You may also optionally include `SQLCIPHER_CFLAGS` to override the default features SQLCipher core is compiled with. If `SQLCIPHER_CFLAGS` is defined, make sure `-DSQLITE_HAS_CODEC` is included in the list of flags.
+You may specify other build flags/features within `SQLCIPHER_CFLAGS`, however, specifying `-DSQLITE_HAS_CODEC` and `-DSQLITE_TEMP_STORE` is necessary In the list of flags.
 
 ### License
 
