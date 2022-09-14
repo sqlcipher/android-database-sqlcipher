@@ -73,7 +73,7 @@ afterEvaluate { project ->
         maven {
             def repoUrl = isReleaseBuild()
                 ? getReleaseRepositoryUrl()
-                : getSnapshotRepositoryUrl();
+                : getSnapshotRepositoryUrl()
             url = repoUrl
             credentials {
                     username = getRepositoryUsername()
