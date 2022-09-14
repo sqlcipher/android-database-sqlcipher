@@ -149,7 +149,7 @@ SQLCIPHER_ANDROID_VERSION="4.5.2" \
 make build-release
 ```
 
-You may specify other build flags/features within `SQLCIPHER_CFLAGS`, however, specifying `-DSQLITE_HAS_CODEC` and `-DSQLITE_TEMP_STORE` is necessary In the list of flags.
+You may specify other build flags/features within `SQLCIPHER_CFLAGS`, however, specifying `-DSQLITE_HAS_CODEC` and `-DSQLITE_TEMP_STORE` is necessary in the list of flags.
 
 ### License
 
