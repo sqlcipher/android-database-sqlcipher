@@ -55,11 +55,11 @@ such as having the following line in your module's `build.gradle` `dependencies`
 closure:
 
 ```gradle
-implementation "net.zetetic:android-database-sqlcipher:4.5.2"
+implementation "net.zetetic:android-database-sqlcipher:4.5.3"
 implementation "androidx.sqlite:sqlite:2.0.1"
 ```
 
-(replacing `4.5.2` with the version you want)
+(replacing `4.5.3` with the version you want)
 
 <a title="Latest version from Maven Central" href="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher"><img src="https://maven-badges.herokuapp.com/maven-central/net.zetetic/android-database-sqlcipher/badge.svg"></a>
 
@@ -145,7 +145,7 @@ To complete the `make` command, the `ANDROID_NDK_HOME` environment variable must
 SQLCIPHER_ROOT=/some/path/to/sqlcipher-folder \
 OPENSSL_ROOT=/some/path/to/openssl-folder \
 SQLCIPHER_CFLAGS="-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2" \
-SQLCIPHER_ANDROID_VERSION="4.5.2" \
+SQLCIPHER_ANDROID_VERSION="4.5.3" \
 make build-release
 ```
 
