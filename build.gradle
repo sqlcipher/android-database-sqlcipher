@@ -7,7 +7,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:7.2.1'
+    classpath 'com.android.tools.build:gradle:7.3.1'
     classpath "gradle.plugin.org.ec4j.gradle:editorconfig-gradle-plugin:0.0.3"
   }
 }
