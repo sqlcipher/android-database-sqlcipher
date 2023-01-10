@@ -86,9 +86,11 @@ ext {
      && project.sqlcipherCFlags?.trim()
      && project.sqlcipherCFlags?.contains('SQLITE_HAS_CODEC')
      && project.sqlcipherCFlags?.contains('SQLITE_TEMP_STORE')) {
-         sqlcipherCFlags = "${sqlcipherCFlags}"
+       sqlcipherCFlags = "${sqlcipherCFlags}"
   } else {
-        throw new InvalidUserDataException("SQLCIPHER_CFLAGS environment variable must be specified and include at least '-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2'")
+    if(!project.gradle.startParameter.taskNames.toString().contains('clean')){
+      throw new InvalidUserDataException("SQLCIPHER_CFLAGS environment variable must be specified and include at least '-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2'")
+    }
   }
 }
 
