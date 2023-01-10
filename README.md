@@ -5,7 +5,7 @@ The latest AAR binary package information can be [here](https://www.zetetic.net/
 
 ### Compatibility
 
-SQLCipher for Android runs on Android from 4.1 (Jelly Bean), for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
+SQLCipher for Android runs on Android from 4.4 (KitKat), for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
 
 ### Contributions
 
