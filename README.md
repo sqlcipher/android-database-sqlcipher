@@ -56,7 +56,7 @@ closure:
 
 ```gradle
 implementation "net.zetetic:android-database-sqlcipher:4.5.3"
-implementation "androidx.sqlite:sqlite:2.0.1"
+implementation "androidx.sqlite:sqlite:2.1.0"
 ```
 
 (replacing `4.5.3` with the version you want)
