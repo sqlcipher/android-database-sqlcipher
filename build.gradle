@@ -82,30 +82,10 @@ ext {
     otherSqlcipherCFlags = "-DLOG_NDEBUG -fstack-protector-all"
     ndkBuildType="NDK_DEBUG=0"
   }
-  if(project.hasProperty('sqlcipherCFlags')) {
+  if(project.hasProperty('sqlcipherCFlags') && project.sqlcipherCFlags?.trim()) {
          sqlcipherCFlags = "${sqlcipherCFlags}"
   } else {
-         sqlcipherCFlags = "-DSQLITE_HAS_CODEC " +
-                "-DSQLITE_SOUNDEX " +
-                "-DHAVE_USLEEP=1 " +
-                "-DSQLITE_MAX_VARIABLE_NUMBER=99999 " +
-                "-DSQLITE_TEMP_STORE=3 " +
-                "-DSQLITE_THREADSAFE=1 " +
-                "-DSQLITE_DEFAULT_JOURNAL_SIZE_LIMIT=1048576 " +
-                "-DNDEBUG=1 " +
-                "-DSQLITE_ENABLE_MEMORY_MANAGEMENT=1 " +
-                "-DSQLITE_ENABLE_LOAD_EXTENSION " +
-                "-DSQLITE_ENABLE_COLUMN_METADATA " +
-                "-DSQLITE_ENABLE_UNLOCK_NOTIFY " +
-                "-DSQLITE_ENABLE_RTREE " +
-                "-DSQLITE_ENABLE_STAT3 " +
-                "-DSQLITE_ENABLE_STAT4 " +
-                "-DSQLITE_ENABLE_JSON1 " +
-                "-DSQLITE_ENABLE_FTS3_PARENTHESIS " +
-                "-DSQLITE_ENABLE_FTS4 " +
-                "-DSQLITE_ENABLE_FTS5 " +
-                "-DSQLCIPHER_CRYPTO_OPENSSL " +
-                "-DSQLITE_ENABLE_DBSTAT_VTAB"
+        throw new InvalidUserDataException("SQLCIPHER_CFLAGS environment variable must be specified and include at least '-DSQLITE_HAS_CODEC -DSQLITE_TEMP_STORE=2'")
   }
 }
 
