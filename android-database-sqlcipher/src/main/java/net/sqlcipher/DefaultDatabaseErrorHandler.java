@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SQLiteException;
+import android.database.sqlite.SQLiteException;
 
 import android.util.Log;
 import android.util.Pair;

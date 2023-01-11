@@ -23,6 +23,8 @@ import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.DefaultDatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabaseHook;
 import net.sqlcipher.database.SQLiteDatabase.CursorFactory;
+
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 
 /**
