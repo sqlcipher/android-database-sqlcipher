@@ -19,7 +19,7 @@ package net.sqlcipher;
 /**
  * An exception that indicates there was an error with SQL parsing or execution.
  */
-public class SQLException extends RuntimeException
+public class SQLException extends android.database.SQLException
 {
     public SQLException() {}
 
