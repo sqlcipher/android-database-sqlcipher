@@ -2970,12 +2970,13 @@ public class SQLiteDatabase extends SQLiteClosable implements
     @Override
     public int update(String table, int conflictAlgorithm, ContentValues values,
                       String whereClause, Object[] whereArgs) {
-        String[] args = new String[whereArgs.length];
-
-        for (int i = 0; i < whereArgs.length; i++) {
+        int whereArgsLength = whereArgs == null
+          ? 0
+          : whereArgs.length;
+        String[] args = new String[whereArgsLength];
+        for (int i = 0; i < whereArgsLength; i++) {
             args[i] = whereArgs[i].toString();
         }
-
         return updateWithOnConflict(table,  values, whereClause, args, conflictAlgorithm);
     }
 
