@@ -2875,9 +2875,7 @@ public class SQLiteDatabase extends SQLiteClosable implements
      * @hide
      */
     public void resetCompiledSqlCache() {
-        synchronized(mCompiledQueries) {
-            mCompiledQueries.clear();
-        }
+        deallocCachedSqlStatements();
     }
 
     /**
