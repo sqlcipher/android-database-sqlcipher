@@ -623,6 +623,20 @@ namespace sqlcipher {
     }
   }
 
+  void throw_sqlite3_exception_errcode(JNIEnv* env,
+                                       int errcode,
+                                       int extended_err_code,
+                                       const char* message) {
+    if (errcode == SQLITE_DONE) {
+      throw_sqlite3_exception(env, errcode, NULL, message);
+    } else {
+      char temp[55];
+      sprintf(temp, "error code %d (extended error code %d)",
+              errcode, extended_err_code);
+      throw_sqlite3_exception(env, errcode, temp, message);
+    }
+  }
+
   /* throw a SQLiteException for a given error code, sqlite3message, and
      user message
   */

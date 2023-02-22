@@ -55,7 +55,9 @@ static void native_execute(JNIEnv* env, jobject object)
 
     // Throw an exception if an error occured
     if (err != SQLITE_DONE) {
-        throw_sqlite3_exception_errcode(env, err, sqlite3_errmsg(handle));
+      throw_sqlite3_exception_errcode(env, err,
+                                      sqlite3_extended_errcode(handle),
+                                      sqlite3_errmsg(handle));
     }
 
     // Reset the statment so it's ready to use again

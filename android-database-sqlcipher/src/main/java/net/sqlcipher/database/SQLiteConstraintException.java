@@ -15,11 +15,10 @@
  */
 
 package net.sqlcipher.database;
-
 /**
  * An exception that indicates that an integrity constraint was violated.
  */
-public class SQLiteConstraintException extends SQLiteException {
+public class SQLiteConstraintException extends android.database.sqlite.SQLiteConstraintException {
     public SQLiteConstraintException() {}
 
     public SQLiteConstraintException(String error) {

@@ -71,7 +71,7 @@ public class DatabaseUtils {
             code = 3;
         } else if (e instanceof SQLiteAbortException) {
             code = 4;
-        } else if (e instanceof SQLiteConstraintException) {
+        } else if (e instanceof android.database.sqlite.SQLiteConstraintException) {
             code = 5;
         } else if (e instanceof SQLiteDatabaseCorruptException) {
             code = 6;
@@ -145,7 +145,7 @@ public class DatabaseUtils {
             case 4:
                 throw new SQLiteAbortException(msg);
             case 5:
-                throw new SQLiteConstraintException(msg);
+                throw new net.sqlcipher.database.SQLiteConstraintException(msg);
             case 6:
                 throw new SQLiteDatabaseCorruptException(msg);
             case 7:

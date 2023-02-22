@@ -42,6 +42,10 @@ void throw_sqlite3_exception_errcode(JNIEnv* env, int errcode, const char* messa
 
 void throw_sqlite3_exception(JNIEnv* env, int errcode,
                              const char* sqlite3Message, const char* message);
-}
 
+void throw_sqlite3_exception_errcode(JNIEnv* env,
+                                     int errcode,
+                                     int extended_err_code,
+                                     const char* message);
+}
 #endif // _SQLITE3_EXCEPTION_H
