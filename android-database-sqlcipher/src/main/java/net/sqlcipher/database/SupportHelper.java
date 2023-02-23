@@ -16,7 +16,7 @@
 
 package net.sqlcipher.database;
 
-import net.sqlcipher.database.SQLiteException;
+import android.database.sqlite.SQLiteException;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import androidx.sqlite.db.SupportSQLiteOpenHelper;
 

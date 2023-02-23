@@ -19,6 +19,7 @@ package net.sqlcipher.database;
 import java.io.File;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.DefaultDatabaseErrorHandler;
 import net.sqlcipher.database.SQLiteDatabaseHook;

@@ -22,7 +22,7 @@ import net.sqlcipher.CrossProcessCursorWrapper;
 import net.sqlcipher.DatabaseUtils;
 import net.sqlcipher.DatabaseErrorHandler;
 import net.sqlcipher.DefaultDatabaseErrorHandler;
-import net.sqlcipher.SQLException;
+import net.sqlcipher.database.SQLiteStatement;
 import net.sqlcipher.database.SQLiteDebug.DbStats;
 import net.sqlcipher.database.SQLiteDatabaseHook;
 import net.sqlcipher.database.SQLiteQueryStats;
@@ -53,6 +53,9 @@ import java.util.zip.ZipInputStream;
 import android.content.ContentValues;
 
 import android.content.Context;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
+import android.database.sqlite.SQLiteException;
 
 import android.os.CancellationSignal;
 import android.os.Debug;

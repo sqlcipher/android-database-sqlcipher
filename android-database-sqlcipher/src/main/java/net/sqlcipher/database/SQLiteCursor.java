@@ -19,7 +19,6 @@ package net.sqlcipher.database;
 import net.sqlcipher.AbstractWindowedCursor;
 import net.sqlcipher.BuildConfig;
 import net.sqlcipher.CursorWindow;
-import net.sqlcipher.SQLException;
 
 import java.lang.ref.WeakReference;
 import java.util.HashMap;
@@ -29,6 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import android.database.CharArrayBuffer;
 import android.database.DataSetObserver;
+import android.database.SQLException;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;

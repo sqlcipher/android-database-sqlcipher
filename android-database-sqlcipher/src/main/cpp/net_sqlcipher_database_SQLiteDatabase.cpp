@@ -645,28 +645,28 @@ namespace sqlcipher {
     const char* exceptionClass;
     switch (errcode) {
     case SQLITE_IOERR:
-      exceptionClass = "net/sqlcipher/database/SQLiteDiskIOException";
+      exceptionClass = "android/database/sqlite/SQLiteDiskIOException";
       break;
     case SQLITE_CORRUPT:
-      exceptionClass = "net/sqlcipher/database/SQLiteDatabaseCorruptException";
+      exceptionClass = "android/database/sqlite/SQLiteDatabaseCorruptException";
       break;
     case SQLITE_CONSTRAINT:
-      exceptionClass = "net/sqlcipher/database/SQLiteConstraintException";
+      exceptionClass = "android/database/sqlite/SQLiteConstraintException";
       break;
     case SQLITE_ABORT:
-      exceptionClass = "net/sqlcipher/database/SQLiteAbortException";
+      exceptionClass = "android/database/sqlite/SQLiteAbortException";
       break;
     case SQLITE_DONE:
-      exceptionClass = "net/sqlcipher/database/SQLiteDoneException";
+      exceptionClass = "android/database/sqlite/SQLiteDoneException";
       break;
     case SQLITE_FULL:
-      exceptionClass = "net/sqlcipher/database/SQLiteFullException";
+      exceptionClass = "android/database/sqlite/SQLiteFullException";
       break;
     case SQLITE_MISUSE:
-      exceptionClass = "net/sqlcipher/database/SQLiteMisuseException";
+      exceptionClass = "android/database/sqlite/SQLiteMisuseException";
       break;
     default:
-      exceptionClass = "net/sqlcipher/database/SQLiteException";
+      exceptionClass = "android/database/sqlite/SQLiteException";
       break;
     }
 
