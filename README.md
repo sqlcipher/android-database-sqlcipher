@@ -5,7 +5,7 @@ The latest AAR binary package information can be [here](https://www.zetetic.net/
 
 ### Compatibility
 
-SQLCipher for Android runs on Android from 4.1 (Jelly Bean), for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
+SQLCipher for Android runs on Android from 4.4 (KitKat), for `armeabi-v7a`, `x86`, `x86_64`, and `arm64_v8a` architectures.
 
 ### Contributions
 
@@ -137,7 +137,7 @@ For applications which utilize ProGuard, a few additional rules must be included
 
 ### Building
 
-In order to build `android-database-sqlcipher` from source you will need both the Android SDK, Gradle, Android NDK, SQLCipher core source directory, and an OpenSSL source directory. We currently recommend using Android NDK LTS version `23.0.7599858`.
+In order to build `android-database-sqlcipher` from source you will need both the Android SDK, Gradle, Android NDK, SQLCipher core source directory, and an OpenSSL source directory. We currently recommend using Android NDK LTS version `25.1.8937393` (r25b).
 
 To complete the `make` command, the `ANDROID_NDK_HOME` environment variable must be defined which should point to your NDK root. Once you have cloned the repo, change directory into the root of the repository and run the following commands:
 
