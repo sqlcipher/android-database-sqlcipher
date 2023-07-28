@@ -93,7 +93,7 @@ import android.util.Log;
         }
     }
 
-    /* package */ void releaseSqlStatement() {
+    /* package */ synchronized void releaseSqlStatement() {
         // Note that native_finalize() checks to make sure that nStatement is
         // non-null before destroying it.
         if (nStatement != 0) {
