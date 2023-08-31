@@ -1,3 +1,8 @@
+### Deprecated Library
+
+The `android-database-sqlcipher` project has been [officially deprecated](https://www.zetetic.net/blog/2023/08/31/sqlcipher-4.5.5-release#sqlcipher-android-455). The long-term replacement is [`sqlcipher-android`](https://github.com/sqlcipher/sqlcipher-android). Instructions for migrating from `android-database-sqlcipher` to `sqlcipher-android`may be found [here](https://www.zetetic.net/sqlcipher/sqlcipher-for-android-migration/).
+
+
 ### Download Source and Binaries
 
 The latest AAR binary package information can be [here](https://www.zetetic.net/sqlcipher/open-source), the source can be found [here](https://github.com/sqlcipher/android-database-sqlcipher).
